@@ -1,0 +1,482 @@
+@import '@fontsource-variable/inter/wght.css';
+@import '@fontsource-variable/geist/wght.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* ── Surfaces ───────────────────────────────────────── */
+    --canvas: 240 20% 98.4%;
+    --surface: 0 0% 100%;
+    --surface-2: 240 20% 98.8%;
+    --surface-3: 240 16% 96.5%;
+    --surface-inset: 240 18% 97.3%;
+
+    /* ── Lines — hairlines, used sparingly ──────────────── */
+    --line: 240 14% 92.5%;
+    --line-strong: 240 10% 86%;
+    --line-soft: 240 14% 94.5%;
+
+    /* ── Veils — translucent grouping without borders ───── */
+    --veil: 240 26% 96.1%;
+    --veil-strong: 240 22% 93.6%;
+
+    /* ── Ink ────────────────────────────────────────────── */
+    --ink: 240 14% 10%;
+    --ink-muted: 240 6% 36%;
+    --ink-subtle: 240 5% 41%;
+    --ink-faint: 240 6% 42%;
+    --ink-inverse: 0 0% 100%;
+
+    /* ── Deep surface — stays dark in both themes ───────── */
+    --onyx: 240 14% 9%;
+    --onyx-2: 240 12% 14%;
+    --onyx-fg: 0 0% 100%;
+    --onyx-muted: 240 8% 72%;
+
+    /* ── Brand (single accent) ──────────────────────────── */
+    --brand: 249 68% 56%;
+    --brand-hover: 249 66% 51%;
+    --brand-active: 249 64% 46%;
+    --brand-fg: 0 0% 100%;
+    --brand-soft: 249 100% 97.2%;
+    --brand-softer: 249 100% 98.6%;
+    --brand-ring: 249 68% 56%;
+    --brand-ink: 249 62% 45%;
+
+    /* ── Semantics ──────────────────────────────────────── */
+    --success: 154 62% 34%;
+    --success-soft: 152 62% 95.5%;
+    --success-ink: 155 65% 27%;
+
+    --info: 213 88% 50%;
+    --info-soft: 212 100% 96.5%;
+    --info-ink: 215 80% 40%;
+
+    --warning: 33 92% 46%;
+    --warning-soft: 40 96% 94.5%;
+    --warning-ink: 28 78% 34%;
+
+    --danger: 356 72% 51%;
+    --danger-soft: 356 100% 96.8%;
+    --danger-ink: 356 66% 42%;
+
+    /* ── Elevation ──────────────────────────────────────── */
+    --shadow-xs: 0 1px 2px 0 rgb(17 18 28 / 0.04);
+    --shadow-sm: 0 1px 2px -1px rgb(17 18 28 / 0.06), 0 1px 3px 0 rgb(17 18 28 / 0.04);
+    --shadow-md: 0 2px 4px -2px rgb(17 18 28 / 0.05), 0 6px 16px -6px rgb(17 18 28 / 0.08);
+    --shadow-lg: 0 4px 8px -4px rgb(17 18 28 / 0.06), 0 16px 36px -12px rgb(17 18 28 / 0.12);
+    --shadow-xl: 0 8px 16px -8px rgb(17 18 28 / 0.08), 0 32px 64px -16px rgb(17 18 28 / 0.18);
+    --shadow-pop:
+      0 0 0 1px rgb(17 18 28 / 0.04), 0 8px 12px -6px rgb(17 18 28 / 0.06),
+      0 24px 48px -12px rgb(17 18 28 / 0.14);
+    --shadow-ring: 0 0 0 1px hsl(var(--line)), 0 1px 2px 0 rgb(17 18 28 / 0.03);
+
+    /* ── Hero atmosphere ────────────────────────────────── */
+    --hero-1: 249 88% 66%;
+    --hero-2: 28 92% 62%;
+    --hero-3: 190 88% 60%;
+    --hero-veil: 0 0% 100%;
+    --hero-opacity: 0.62;
+    --hero-grain: 0.035;
+
+    --rail-w: 4.25rem;
+    --rail-open-w: 15rem;
+    --page-max: 78rem;
+    /* Slide-over width. Deliberately past half the viewport — a settings surface
+       needs room for real forms — but clamped so it stays sane on a laptop and
+       doesn't sprawl on an ultrawide. Both the panel and the list's
+       yield-room padding derive from this one value. */
+    --panel-w: clamp(34rem, 56vw, 72rem);
+
+    /* Page washes — see `body`. */
+    --wash-1: 250 84% 95.5%;
+    --wash-2: 212 86% 95.5%;
+    --wash-3: 258 70% 96.5%;
+  }
+
+  [data-theme='dark'] {
+    --canvas: 240 10% 5.5%;
+    --surface: 240 8% 8.2%;
+    --surface-2: 240 8% 10.5%;
+    --surface-3: 240 7% 13.5%;
+    --surface-inset: 240 9% 7%;
+
+    --line: 240 8% 16.5%;
+    --line-strong: 240 7% 24%;
+    --line-soft: 240 8% 13.5%;
+
+    --veil: 240 9% 11%;
+    --veil-strong: 240 8% 14%;
+
+    --ink: 240 20% 98%;
+    --ink-muted: 240 6% 68%;
+    --ink-subtle: 240 6% 58%;
+    --ink-faint: 240 6% 54%;
+    --ink-inverse: 240 14% 8%;
+
+    --onyx: 240 9% 12%;
+    --onyx-2: 240 8% 17%;
+    --onyx-fg: 0 0% 98%;
+    --onyx-muted: 240 6% 66%;
+
+    --brand: 250 88% 68%;
+    --brand-hover: 250 90% 73%;
+    --brand-active: 250 84% 63%;
+    --brand-fg: 250 40% 8%;
+    --brand-soft: 250 40% 16%;
+    --brand-softer: 250 34% 12.5%;
+    --brand-ring: 250 88% 68%;
+    --brand-ink: 250 92% 82%;
+
+    --success: 152 58% 46%;
+    --success-soft: 154 40% 14%;
+    --success-ink: 152 62% 68%;
+
+    --info: 212 92% 62%;
+    --info-soft: 214 52% 16%;
+    --info-ink: 212 92% 76%;
+
+    --warning: 36 94% 58%;
+    --warning-soft: 34 50% 15%;
+    --warning-ink: 40 94% 72%;
+
+    --danger: 358 82% 62%;
+    --danger-soft: 357 45% 16%;
+    --danger-ink: 358 92% 78%;
+
+    --hero-1: 250 92% 68%;
+    --hero-2: 26 90% 58%;
+    --hero-3: 190 84% 56%;
+    --hero-veil: 240 10% 5.5%;
+    --hero-opacity: 0.5;
+    --hero-grain: 0.05;
+
+    --wash-1: 250 60% 12%;
+    --wash-2: 212 55% 11%;
+    --wash-3: 258 50% 10%;
+
+    --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+    --shadow-sm: 0 1px 2px -1px rgb(0 0 0 / 0.4), 0 1px 3px 0 rgb(0 0 0 / 0.3);
+    --shadow-md: 0 2px 4px -2px rgb(0 0 0 / 0.4), 0 6px 16px -6px rgb(0 0 0 / 0.5);
+    --shadow-lg: 0 4px 8px -4px rgb(0 0 0 / 0.4), 0 16px 36px -12px rgb(0 0 0 / 0.6);
+    --shadow-xl: 0 8px 16px -8px rgb(0 0 0 / 0.5), 0 32px 64px -16px rgb(0 0 0 / 0.7);
+    --shadow-pop:
+      0 0 0 1px rgb(255 255 255 / 0.06), 0 8px 12px -6px rgb(0 0 0 / 0.4), 0 24px 48px -12px rgb(0 0 0 / 0.6);
+    --shadow-ring: 0 0 0 1px hsl(var(--line)), 0 1px 2px 0 rgb(0 0 0 / 0.2);
+  }
+
+  * {
+    border-color: hsl(var(--line));
+  }
+
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply bg-canvas font-sans text-base text-ink antialiased;
+    /* Not a flat fill. Two very wide, very pale washes — violet from the top
+       left, a cooler blue from the top right — over the canvas, fixed so they
+       don't slide while you scroll. Wide enough that no edge or band is
+       visible; the glass cards need something to sit on. */
+    background-image:
+      radial-gradient(115% 85% at 8% -12%, hsl(var(--wash-1)) 0%, transparent 58%),
+      radial-gradient(105% 75% at 96% -6%, hsl(var(--wash-2)) 0%, transparent 54%),
+      radial-gradient(90% 60% at 50% 108%, hsl(var(--wash-3)) 0%, transparent 60%);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    font-feature-settings:
+      'cv05' 1,
+      'cv11' 1,
+      'ss03' 1;
+    font-variation-settings: 'opsz' 20;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: hsl(var(--brand) / 0.18);
+  }
+
+  /* Consistent, calm focus treatment everywhere */
+  :focus-visible {
+    outline: 2px solid hsl(var(--brand-ring) / 0.7);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply text-ink;
+    font-variation-settings: 'opsz' 28;
+    text-wrap: balance;
+  }
+
+  input,
+  textarea,
+  select,
+  button {
+    font: inherit;
+    letter-spacing: inherit;
+  }
+
+  [type='number']::-webkit-inner-spin-button,
+  [type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* Scrollbars — thin and unobtrusive */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--ink) / 0.14) transparent;
+  }
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--ink) / 0.13);
+    border-radius: 999px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: hsl(var(--ink) / 0.24);
+  }
+}
+
+@layer components {
+  /* A genuinely elevated surface. Used sparingly — most content sits on the canvas. */
+  .surface-card {
+    @apply rounded-3xl bg-surface shadow-ring;
+  }
+
+  /* Frosted glass. Genuinely translucent — enough of the hero artwork reads
+     through it to look like glass rather than a tinted card — with a bright
+     inner hairline for the lit top edge and a soft cast shadow underneath.
+     Needs something behind it to work, so it belongs on surfaces that sit over
+     the hero band, not on a bare canvas. */
+  .glass {
+    background: hsl(var(--surface) / 0.42);
+    backdrop-filter: blur(30px) saturate(190%);
+    -webkit-backdrop-filter: blur(30px) saturate(190%);
+    box-shadow:
+      inset 0 1px 0 0 hsl(0 0% 100% / 0.7),
+      0 0 0 1px hsl(var(--line) / 0.75),
+      0 2px 4px -2px rgb(17 18 28 / 0.05),
+      0 16px 40px -20px rgb(17 18 28 / 0.18);
+  }
+
+  [data-theme='dark'] .glass {
+    background: hsl(var(--surface) / 0.44);
+    box-shadow:
+      inset 0 1px 0 0 hsl(0 0% 100% / 0.07),
+      0 0 0 1px hsl(var(--line) / 0.9),
+      0 2px 4px -2px rgb(0 0 0 / 0.4),
+      0 16px 40px -20px rgb(0 0 0 / 0.6);
+  }
+
+  .glass-panel {
+    background: hsl(var(--surface) / 0.74);
+    backdrop-filter: blur(34px) saturate(190%);
+    -webkit-backdrop-filter: blur(34px) saturate(190%);
+    box-shadow:
+      inset 0 1px 0 0 hsl(0 0% 100% / 0.75),
+      0 0 0 1px hsl(var(--line) / 0.8),
+      0 8px 16px -10px rgb(17 18 28 / 0.1),
+      0 32px 64px -24px rgb(17 18 28 / 0.3);
+  }
+
+  [data-theme='dark'] .glass-panel {
+    background: hsl(var(--surface) / 0.72);
+    box-shadow:
+      inset 0 1px 0 0 hsl(0 0% 100% / 0.08),
+      0 0 0 1px hsl(var(--line)),
+      0 8px 16px -10px rgb(0 0 0 / 0.5),
+      0 32px 64px -24px rgb(0 0 0 / 0.7);
+  }
+
+  /* Translucent grouping with no border. The default way to group. */
+  .veil {
+    background: hsl(var(--veil) / 0.8);
+    backdrop-filter: blur(8px);
+  }
+
+  .veil-strong {
+    background: hsl(var(--veil-strong) / 0.9);
+  }
+
+  /* Tabular figures for all metrics, tables, money */
+  .tnum {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings:
+      'tnum' 1,
+      'cv05' 1;
+  }
+
+  /* Display face — headlines and hero-scale numerals.
+     Geist is geometric and squared-off, which reads engineered rather than
+     literary at large sizes. Inter still handles all dense UI text. */
+  .headline {
+    font-family: 'Geist Variable', 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.028em;
+    line-height: 1.06;
+    font-feature-settings:
+      'ss01' 1,
+      'cv01' 1;
+  }
+
+  /* Headline-adjacent numerals: same face, always tabular. */
+  .display {
+    font-family: 'Geist Variable', 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.024em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Small uppercase label that replaces most card headers. */
+  .eyebrow {
+    @apply text-2xs font-semibold uppercase tracking-[0.09em] text-ink-faint;
+  }
+
+  /* ── Hero atmosphere ──────────────────────────────────
+     A soft mesh that fades into the page rather than ending
+     in a hard rectangle. */
+  .hero-mesh {
+    position: absolute;
+    inset: -30% -6% 0;
+    pointer-events: none;
+    opacity: var(--hero-opacity);
+    background:
+      radial-gradient(52% 72% at 10% 14%, hsl(var(--hero-1) / 0.62) 0%, transparent 64%),
+      radial-gradient(46% 62% at 72% 6%, hsl(var(--hero-2) / 0.48) 0%, transparent 62%),
+      radial-gradient(58% 80% at 44% 44%, hsl(var(--hero-3) / 0.34) 0%, transparent 68%),
+      radial-gradient(38% 52% at 92% 30%, hsl(var(--hero-1) / 0.3) 0%, transparent 62%);
+    filter: blur(34px) saturate(126%);
+    mask-image: linear-gradient(to bottom, black 0%, black 44%, transparent 96%);
+    -webkit-mask-image: linear-gradient(to bottom, black 0%, black 44%, transparent 96%);
+  }
+
+  /* Bottom fade for the hero artwork. Eased rather than linear: a straight alpha
+     ramp has a detectable start, which reads as an edge on strongly coloured art.
+     These stops approximate an ease-out curve so the image has no discernible
+     boundary — it is simply there at the top and gone by the content. */
+  .hero-fade {
+    --fade: linear-gradient(
+      to bottom,
+      rgb(0 0 0 / 1) 0%,
+      rgb(0 0 0 / 1) 20%,
+      rgb(0 0 0 / 0.97) 32%,
+      rgb(0 0 0 / 0.9) 42%,
+      rgb(0 0 0 / 0.78) 51%,
+      rgb(0 0 0 / 0.63) 60%,
+      rgb(0 0 0 / 0.46) 69%,
+      rgb(0 0 0 / 0.3) 78%,
+      rgb(0 0 0 / 0.17) 86%,
+      rgb(0 0 0 / 0.07) 93%,
+      rgb(0 0 0 / 0) 100%
+    );
+    mask-image: var(--fade);
+    -webkit-mask-image: var(--fade);
+  }
+
+  .hero-grain {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: var(--hero-grain);
+    background-image: radial-gradient(hsl(var(--ink)) 0.5px, transparent 0.5px);
+    background-size: 3px 3px;
+    mask-image: linear-gradient(to bottom, black 0%, transparent 82%);
+    -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 82%);
+  }
+
+  /* Hairline that reads as structure, not as a box edge. */
+  .rule {
+    @apply h-px w-full bg-line-soft;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .mask-fade-r {
+    mask-image: linear-gradient(to right, black 82%, transparent 100%);
+  }
+  .mask-fade-b {
+    mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+  }
+
+  .mask-fade-t {
+    mask-image: linear-gradient(to top, black 78%, transparent 100%);
+  }
+
+  /* Floating chrome — the nav rail and any detached panel. */
+  .chrome {
+    background: hsl(var(--surface) / 0.72);
+    backdrop-filter: saturate(190%) blur(30px);
+    -webkit-backdrop-filter: saturate(190%) blur(30px);
+    box-shadow:
+      0 0 0 1px hsl(var(--line) / 0.9),
+      0 1px 2px rgb(17 18 28 / 0.04),
+      0 12px 32px -12px rgb(17 18 28 / 0.14);
+  }
+
+  [data-theme='dark'] .chrome {
+    box-shadow:
+      0 0 0 1px hsl(var(--line)),
+      0 1px 2px rgb(0 0 0 / 0.4),
+      0 12px 32px -12px rgb(0 0 0 / 0.6);
+  }
+
+  /* A slide-over is anchored to the viewport, but the content column is capped
+     at --page-max and centred — so on a wide screen the column's right gutter
+     swallows the room the list needs and the rows crush. While a panel is open
+     the column spans the full width instead, and the page's own
+     `pr-[--panel-w]` does the yielding. */
+  [data-side-panel='open'] .page-column {
+    max-width: none;
+  }
+
+  /* A slide-over is nearly full-bleed on a phone, so frosted glass there just
+     smears the list underneath. Opaque below sm, glass from sm up. Declared
+     after .chrome so it wins at equal specificity. */
+  .chrome-solid-sm {
+    background: hsl(var(--surface));
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  @media (min-width: 640px) {
+    .chrome-solid-sm {
+      background: hsl(var(--surface) / 0.74);
+      backdrop-filter: saturate(190%) blur(34px);
+      -webkit-backdrop-filter: saturate(190%) blur(34px);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
