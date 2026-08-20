@@ -173,7 +173,7 @@ export default function MarketplacePage() {
                 <SelectValue>
                   <span className="flex items-center gap-2">
                     <span className="text-base">{meta.flag}</span>
-                    <span className="truncate font-medium">{meta.name}</span>
+                    <span className="truncate font-medium">{t(meta.name)}</span>
                   </span>
                 </SelectValue>
               </SelectTrigger>
@@ -182,7 +182,7 @@ export default function MarketplacePage() {
                   <SelectItem key={c.code} value={c.code} hint={c.dial}>
                     <span className="flex items-center gap-2">
                       <span>{c.flag}</span>
-                      {c.name}
+                      {t(c.name)}
                     </span>
                   </SelectItem>
                 ))}
@@ -190,7 +190,7 @@ export default function MarketplacePage() {
                   <SelectItem key={c.code} value={c.code} disabled hint={t('Waitlist')}>
                     <span className="flex items-center gap-2">
                       <span>{c.flag}</span>
-                      {c.name}
+                      {t(c.name)}
                     </span>
                   </SelectItem>
                 ))}
@@ -389,11 +389,18 @@ export default function MarketplacePage() {
             <EmptyState
               icon={<Search />}
               title={t('No numbers match that')}
-              description={`We couldn't find ${
-                types.length
-                  ? types.map((t) => NUMBER_TYPE_META[t].label.toLowerCase()).join(' or ')
-                  : 'numbers'
-              } in ${region === 'any' ? meta.name : region}${debounced ? ` containing ${debounced}` : ''}. Widening the search usually helps.`}
+              description={t(
+                debounced
+                  ? "We couldn't find {what} in {where} containing {q}. Widening the search usually helps."
+                  : "We couldn't find {what} in {where}. Widening the search usually helps.",
+                {
+                  what: types.length
+                    ? types.map((ty) => t(NUMBER_TYPE_META[ty].label).toLowerCase()).join(` ${t('or')} `)
+                    : t('numbers'),
+                  where: region === 'any' ? t(meta.name) : region,
+                  q: debounced,
+                },
+              )}
               action={
                 <Button variant="primary" onClick={reset} icon={<RotateCcw />}>
                   {t('Clear filters')}
@@ -449,8 +456,10 @@ export default function MarketplacePage() {
                             <Tooltip
                               content={
                                 kycStage === 'approved'
-                                  ? 'Your entity is verified — this provisions immediately.'
-                                  : `The ${meta.name} regulator requires a verified entity for this range.`
+                                  ? t('Your entity is verified — this provisions immediately.')
+                                  : t('The {country} regulator requires a verified entity for this range.', {
+                                      country: t(meta.name),
+                                    })
                               }
                             >
                               <span

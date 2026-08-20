@@ -142,6 +142,7 @@ export function PhoneInput({
   className?: string
   placeholder?: string
 }) {
+  const { t } = useI18n()
   const meta = COUNTRIES.find((c) => c.code === country) ?? COUNTRIES[0]
   return (
     <div
@@ -166,7 +167,7 @@ export function PhoneInput({
             <SelectItem key={c.code} value={c.code} hint={c.dial}>
               <span className="flex items-center gap-2">
                 <span>{c.flag}</span>
-                {c.name}
+                {t(c.name)}
               </span>
             </SelectItem>
           ))}

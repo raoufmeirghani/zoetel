@@ -7,20 +7,29 @@ import { z } from 'zod'
 import {
   ArrowLeft,
   ArrowRight,
+  Bot,
   Building2,
   Check,
+  Cable,
   CircleCheck,
+  Code2,
   Eye,
   EyeOff,
   Globe,
   Headphones,
+  Headset,
+  MessageSquare,
+  MoreHorizontal,
   Phone,
+  PhoneOutgoing,
   Rocket,
   ShieldCheck,
   Sparkles,
   TrendingDown,
   User,
+  Users,
   Zap,
+  type LucideIcon,
 } from 'lucide-react'
 import { Logo, Wordmark } from '@/components/layout/logo'
 import { Button } from '@/components/ui/button'
@@ -352,8 +361,10 @@ export default function OnboardingFlow() {
                               setAccountType(opt.value)
                             }}
                             className={cn(
-                              'flex w-full items-start gap-4 rounded-2xl p-4 text-start transition-all duration-200',
-                              active ? 'bg-brand-softer ring-1 ring-brand/40' : 'veil hover:bg-veil-strong',
+                              'flex w-full items-start gap-4 rounded-2xl p-4 text-start ring-1 transition-all duration-200 sm:p-4.5',
+                              active
+                                ? 'bg-brand-softer ring-brand/40'
+                                : 'veil ring-line-soft hover:bg-veil-strong hover:ring-line-strong',
                             )}
                           >
                             <span
@@ -452,7 +463,7 @@ export default function OnboardingFlow() {
                               <SelectItem key={c.code} value={c.code} hint={c.dial}>
                                 <span className="flex items-center gap-2">
                                   <span>{c.flag}</span>
-                                  {c.name}
+                                  {t(c.name)}
                                 </span>
                               </SelectItem>
                             ))}
@@ -519,7 +530,7 @@ export default function OnboardingFlow() {
                                 <SelectItem key={c.code} value={c.code}>
                                   <span className="flex items-center gap-2">
                                     <span>{c.flag}</span>
-                                    {c.name}
+                                    {t(c.name)}
                                   </span>
                                 </SelectItem>
                               ))}
@@ -571,9 +582,10 @@ export default function OnboardingFlow() {
                       'This only shapes the tips and examples we show you — nothing is locked either way.',
                     )}
                   >
-                    <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
+                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-3.5">
                       {USE_CASES.map((u, i) => {
                         const active = values.useCase === u.id
+                        const Icon = USE_CASE_ICONS[u.id] ?? Sparkles
                         return (
                           <motion.button
                             key={u.id}
@@ -582,16 +594,33 @@ export default function OnboardingFlow() {
                             transition={{ delay: i * 0.035, duration: 0.3, ease: EASE }}
                             onClick={() => form.setValue('useCase', u.id)}
                             className={cn(
-                              'flex flex-col items-start gap-1 rounded-2xl p-3.5 text-start transition-all duration-150',
-                              active ? 'bg-brand-softer ring-1 ring-brand/40' : 'veil hover:bg-veil-strong',
+                              'flex flex-col items-start gap-3.5 rounded-2xl p-4 text-start ring-1 transition-all duration-150 sm:p-4.5',
+                              active
+                                ? 'bg-brand-softer ring-brand/40'
+                                : 'veil ring-line-soft hover:bg-veil-strong hover:ring-line-strong',
                             )}
                           >
                             <span
-                              className={cn('text-sm font-semibold', active ? 'text-brand-ink' : 'text-ink')}
+                              className={cn(
+                                'grid size-9 shrink-0 place-items-center rounded-xl transition-colors',
+                                active ? 'bg-brand text-brand-fg' : 'bg-veil-strong text-ink-muted',
+                              )}
                             >
-                              {t(u.label)}
+                              <Icon className="size-[18px]" />
                             </span>
-                            <span className="text-xs leading-relaxed text-ink-subtle">{t(u.blurb)}</span>
+                            <span className="block">
+                              <span
+                                className={cn(
+                                  'block text-sm font-semibold',
+                                  active ? 'text-brand-ink' : 'text-ink',
+                                )}
+                              >
+                                {t(u.label)}
+                              </span>
+                              <span className="mt-1 block text-xs leading-relaxed text-ink-subtle">
+                                {t(u.blurb)}
+                              </span>
+                            </span>
                           </motion.button>
                         )
                       })}
@@ -632,8 +661,12 @@ export default function OnboardingFlow() {
                     </div>
                     {docs.length > 3 && (
                       <p className="mt-3 text-center text-xs text-ink-faint">
-                        {docs.length - 3} more document{docs.length - 3 === 1 ? '' : 's'} can be added from the
-                        verification page after setup.
+                        {t(
+                          docs.length - 3 === 1
+                            ? '{n} more document can be added from the verification page after setup.'
+                            : '{n} more documents can be added from the verification page after setup.',
+                          { n: docs.length - 3 },
+                        )}
                       </p>
                     )}
                     <Nav
@@ -704,8 +737,10 @@ export default function OnboardingFlow() {
                             key={p.value}
                             onClick={() => setPlan(p.value)}
                             className={cn(
-                              'flex w-full items-start gap-4 rounded-2xl p-4 text-start transition-all duration-200',
-                              active ? 'bg-brand-softer ring-1 ring-brand/40' : 'veil hover:bg-veil-strong',
+                              'flex w-full items-start gap-4 rounded-2xl p-4 text-start ring-1 transition-all duration-200 sm:p-4.5',
+                              active
+                                ? 'bg-brand-softer ring-brand/40'
+                                : 'veil ring-line-soft hover:bg-veil-strong hover:ring-line-strong',
                             )}
                           >
                             <span
@@ -775,8 +810,9 @@ export default function OnboardingFlow() {
                         {t('{name} is ready', { name: values.workspaceName || t('Your workspace') })}
                       </h1>
                       <p className="mx-auto mt-3 max-w-md text-md leading-relaxed text-ink-muted">
-                        One thing left: give your workspace a phone number. Local Cairo lines activate the
-                        moment you check out.
+                        {t(
+                          'One thing left: give your workspace a phone number. Local Cairo lines activate the moment you check out.',
+                        )}
                       </p>
                     </motion.div>
 
@@ -838,6 +874,24 @@ export default function OnboardingFlow() {
       </main>
     </div>
   )
+}
+
+/**
+ * One icon per use case.
+ *
+ * Lives here rather than in `countries.ts` so the data file stays data. Keyed by
+ * id, so a use case without an icon falls back rather than crashing.
+ */
+const USE_CASE_ICONS: Record<string, LucideIcon> = {
+  'ai-voice': Bot,
+  'contact-center': Headset,
+  'sip-trunk': Cable,
+  'call-center': PhoneOutgoing,
+  sms: MessageSquare,
+  crm: Users,
+  pbx: Phone,
+  api: Code2,
+  other: MoreHorizontal,
 }
 
 const RAIL_COPY: Record<string, { quote: string; by: string }> = {

@@ -34,13 +34,13 @@ export const DOC_META: Record<DocKind, { label: string; hint: string; accept: st
   },
   commercial_registration: {
     label: 'Commercial registration',
-    hint: 'Issued within the last 12 months (سجل تجاري).',
+    hint: 'Issued within the last 12 months.',
     accept: '.pdf,image/*',
     example: 'PDF preferred · max 10 MB',
   },
   tax_certificate: {
     label: 'Tax certificate',
-    hint: 'Tax card showing your registered tax ID (البطاقة الضريبية).',
+    hint: 'Tax card showing your registered tax ID.',
     accept: '.pdf,image/*',
     example: 'PDF preferred · max 10 MB',
   },

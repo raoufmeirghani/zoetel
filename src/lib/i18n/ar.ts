@@ -1273,9 +1273,8 @@ export const ar: Dictionary = {
   // ── Verification document hints ─────────────────────────────────────────
   'Photo page showing the machine-readable zone.': 'صفحة الصورة مع المنطقة المقروءة آليًا.',
   'Both sides, in one file or two uploads.': 'الوجهان، في ملف واحد أو رفعتين.',
-  'Issued within the last 12 months (سجل تجاري).': 'صادر خلال آخر 12 شهرًا (سجل تجاري).',
-  'Tax card showing your registered tax ID (البطاقة الضريبية).':
-    'البطاقة الضريبية موضّحًا بها رقمك الضريبي المسجَّل.',
+  'Issued within the last 12 months.': 'صادر خلال آخر 12 شهرًا (سجل تجاري).',
+  'Tax card showing your registered tax ID.': 'البطاقة الضريبية موضّحًا بها رقمك الضريبي المسجَّل.',
   'Trade or operating licence for your activity.': 'رخصة تجارية أو رخصة تشغيل لنشاطك.',
   'JPG, PNG or PDF · max 10 MB': 'JPG أو PNG أو PDF · 10 ميجابايت كحد أقصى',
   'PDF preferred · max 10 MB': 'يُفضَّل PDF · 10 ميجابايت كحد أقصى',
@@ -1347,4 +1346,30 @@ export const ar: Dictionary = {
   browse: 'استعرض',
   'File is too large': 'الملف كبير جدًا',
   '{doc} uploaded': 'تم رفع {doc}',
+  // ── Countries ───────────────────────────────────────────────────────────
+  Egypt: 'مصر',
+  'United Arab Emirates': 'الإمارات العربية المتحدة',
+  'Saudi Arabia': 'السعودية',
+  'United States': 'الولايات المتحدة',
+  Germany: 'ألمانيا',
+  Kenya: 'كينيا',
+  Nigeria: 'نيجيريا',
+  Morocco: 'المغرب',
+
+  '{n} more document can be added from the verification page after setup.':
+    'يمكن إضافة مستند واحد آخر من صفحة التحقق بعد الإعداد.',
+  '{n} more documents can be added from the verification page after setup.':
+    'يمكن إضافة {n} مستندات أخرى من صفحة التحقق بعد الإعداد.',
+  "We couldn't find {what} in {where}. Widening the search usually helps.":
+    'لم نجد {what} في {where}. توسيع نطاق البحث يساعد عادةً.',
+  "We couldn't find {what} in {where} containing {q}. Widening the search usually helps.":
+    'لم نجد {what} في {where} تحتوي على {q}. توسيع نطاق البحث يساعد عادةً.',
+  or: 'أو',
+  numbers: 'أرقامًا',
+  'Your entity is verified — this provisions immediately.': 'كيانك موثّق — يُفعَّل هذا فورًا.',
+  'The {country} regulator requires a verified entity for this range.':
+    'تشترط الجهة المنظِّمة في {country} كيانًا موثّقًا لهذا النطاق.',
+  'One thing left: give your workspace a phone number. Local Cairo lines activate the moment you check out.':
+    'بقيت خطوة واحدة: أعطِ مساحة عملك رقم هاتف. الخطوط المحلية في القاهرة تُفعَّل لحظة إتمام الشراء.',
+  'SIP trunk': 'وصلة SIP',
 }

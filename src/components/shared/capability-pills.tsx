@@ -3,6 +3,7 @@ import type { Capability } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { Tooltip } from '@/components/ui/tooltip'
 import { COUNTRIES } from '@/lib/data/countries'
+import { useI18n } from '@/lib/i18n'
 
 const CAP_ICON = {
   voice: Phone,
@@ -55,12 +56,13 @@ export function CountryFlag({
   className?: string
   showName?: boolean
 }) {
+  const { t } = useI18n()
   const c = COUNTRIES.find((x) => x.code === code)
   if (!c) return null
   return (
     <span className={cn('inline-flex items-center gap-1.5', className)}>
       <span className="text-base leading-none">{c.flag}</span>
-      {showName && <span>{c.name}</span>}
+      {showName && <span>{t(c.name)}</span>}
     </span>
   )
 }

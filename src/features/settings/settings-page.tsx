@@ -256,7 +256,7 @@ export default function SettingsPage() {
                       <SelectItem key={c.code} value={c.code} hint={c.dial}>
                         <span className="flex items-center gap-2">
                           <span>{c.flag}</span>
-                          {c.name}
+                          {t(c.name)}
                         </span>
                       </SelectItem>
                     ))}
@@ -397,7 +397,7 @@ export default function SettingsPage() {
                       <SelectItem key={c.code} value={c.code}>
                         <span className="flex items-center gap-2">
                           <span>{c.flag}</span>
-                          {c.name}
+                          {t(c.name)}
                         </span>
                       </SelectItem>
                     ))}

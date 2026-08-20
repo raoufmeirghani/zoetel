@@ -1,4 +1,5 @@
-import { motion } from 'framer-motion'
+import { Check, ChevronDown, Languages } from 'lucide-react'
+import { Menu, MenuContent, MenuItem, MenuLabel, MenuSeparator, MenuTrigger } from '@/components/ui/menu'
 import { LOCALES, useI18n, type Locale } from '@/lib/i18n'
 import { cn } from '@/lib/utils'
 
@@ -11,12 +12,15 @@ const ORDER = Object.keys(LOCALES) as Locale[]
  * menu beside the theme — both are display preferences and neither needs to be
  * on screen. Onboarding is the exception: someone who cannot read the page
  * cannot be expected to find a control labelled in the language they don't
- * read. So each locale is named in its own script and both are visible at once.
- * "العربية" is legible to the person who needs it without them parsing a single
- * English word.
+ * read. So the trigger names the current language in its own script, and the
+ * menu names every language in its own — "العربية" is legible to the person who
+ * needs it without them parsing a single English word.
  *
- * Picking a locale also flips the writing direction, so this is the switch that
- * mirrors the whole product — worth it being an obvious object, not a hint.
+ * A menu rather than a segmented control: two locales fit in a row, five will
+ * not, and a control whose shape changes when a language ships is a control
+ * that has to be redesigned twice. This one only grows downward.
+ *
+ * Picking a locale also flips the writing direction, so the menu says so.
  */
 export function LocaleSwitch({
   size = 'md',
@@ -29,45 +33,50 @@ export function LocaleSwitch({
   const { locale, setLocale, t } = useI18n()
 
   return (
-    <div
-      role="radiogroup"
-      aria-label={t('Language')}
-      className={cn(
-        'chrome inline-flex shrink-0 items-center rounded-full p-0.5',
-        size === 'sm' ? 'h-9 sm:h-8' : 'h-10 sm:h-9',
-        className,
-      )}
-    >
-      {ORDER.map((l) => {
-        const active = l === locale
-        return (
-          <button
-            key={l}
-            type="button"
-            role="radio"
-            aria-checked={active}
-            onClick={() => setLocale(l)}
-            // The native name is the label. A flag would be wrong — Arabic is
-            // not a country — and an abbreviation only helps someone who
-            // already reads the alphabet it is abbreviated in.
-            lang={l}
-            className={cn(
-              'relative inline-flex h-full items-center rounded-full px-2.5 font-medium transition-colors',
-              size === 'sm' ? 'text-xs' : 'text-xs sm:text-sm',
-              active ? 'text-ink' : 'text-ink-subtle hover:text-ink',
-            )}
-          >
-            {active && (
-              <motion.span
-                layoutId="locale-switch"
-                className="absolute inset-0 rounded-full bg-veil-strong"
-                transition={{ type: 'spring', stiffness: 480, damping: 38 }}
-              />
-            )}
-            <span className="relative whitespace-nowrap">{LOCALES[l].native}</span>
-          </button>
-        )
-      })}
-    </div>
+    <Menu>
+      <MenuTrigger
+        aria-label={t('Language')}
+        className={cn(
+          'chrome inline-flex shrink-0 items-center gap-1.5 rounded-full pe-2.5 ps-3',
+          'text-ink-subtle transition-colors hover:text-ink data-[state=open]:text-ink',
+          size === 'sm' ? 'h-9 text-xs sm:h-8' : 'h-10 text-sm sm:h-9',
+          className,
+        )}
+      >
+        <Languages className="size-4 shrink-0 text-ink-faint" />
+        {/* The trigger is set in the language it names, so the glyphs
+            themselves tell you which one is active. */}
+        <span lang={locale} className="font-medium">
+          {LOCALES[locale].native}
+        </span>
+        <ChevronDown className="size-3.5 shrink-0 text-ink-faint" />
+      </MenuTrigger>
+
+      <MenuContent align="end" className="min-w-[13rem]">
+        <MenuLabel>{t('Language')}</MenuLabel>
+        <MenuSeparator />
+        {ORDER.map((l) => {
+          const active = l === locale
+          return (
+            <MenuItem key={l} onSelect={() => setLocale(l)}>
+              {/* `lang` without `dir`: the script renders right-to-left on its
+                  own, and forcing the direction here would right-align this row
+                  against the menu it sits in. */}
+              <span lang={l} className="flex-1">
+                {LOCALES[l].native}
+              </span>
+              {/* Direction is part of the choice, not a side effect of it. */}
+              <span className="font-mono text-2xs uppercase text-ink-faint">
+                {LOCALES[l].dir === 'rtl' ? t('RTL') : t('LTR')}
+              </span>
+              {/* Always occupies its slot so the tags above stay in a column. */}
+              <span className="grid size-4 shrink-0 place-items-center">
+                {active && <Check className="!text-brand" />}
+              </span>
+            </MenuItem>
+          )
+        })}
+      </MenuContent>
+    </Menu>
   )
 }
