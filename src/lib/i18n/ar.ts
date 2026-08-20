@@ -1203,4 +1203,32 @@ export const ar: Dictionary = {
   'Invoice {number} is open': 'الفاتورة {number} مفتوحة',
   '{amount} accrued so far. It settles automatically from your wallet on {date}.':
     'تراكم حتى الآن {amount}. وتُسدَّد تلقائيًا من محفظتك في {date}.',
+
+  // ── Figures with units ──────────────────────────────────────────────────
+  // A number and its unit have to be one key: split across two nodes, the bidi
+  // algorithm reorders them and "69 days of runway" renders as "days of runway 69".
+  '{amount}/mo': '{amount}/شهر',
+  '{n} min': '{n} دقيقة',
+  '{n} ms': '{n} ملّي ثانية',
+  '{n} min this month': '{n} دقيقة هذا الشهر',
+  'MOS {n}': 'MOS {n}',
+  '{n} numbers · renews on the 1st': '{n} أرقام · تُجدَّد في الأول من الشهر',
+  'vs last month': 'مقابل الشهر الماضي',
+  'Below your {amount} threshold — calls stop at zero.': 'أقل من حدّك {amount} — تتوقف المكالمات عند صفر.',
+  'Balance {amount}': 'الرصيد {amount}',
+  'Pay {amount}': 'ادفع {amount}',
+  '{n} selected': 'تم اختيار {n}',
+  'Showing the first 40 of {n}. Narrow the search to see further.':
+    'يُعرض أول 40 من {n}. ضيّق البحث لرؤية المزيد.',
+  'A receipt for {amount} was added to your billing history.': 'أُضيف إيصال بقيمة {amount} إلى سجل فواتيرك.',
+  '{number} is routing calls. Place a test call to hear it for yourself.':
+    '{number} يوجّه المكالمات الآن. أجرِ مكالمة تجريبية لتسمعه بنفسك.',
+  '{name} is ready': '{name} جاهزة',
+  'Your workspace': 'مساحة عملك',
+  '{calls} active calls will be dropped and {numbers} numbers will stop receiving traffic.':
+    'ستُقطع {calls} مكالمة جارية وتتوقف {numbers} أرقام عن استقبال المكالمات.',
+
+  // ── Accessibility labels with a name ────────────────────────────────────
+  'Actions for {name}': 'إجراءات {name}',
+  'Remove {name}': 'إزالة {name}',
 }

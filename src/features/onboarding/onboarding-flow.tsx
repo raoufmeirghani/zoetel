@@ -755,7 +755,7 @@ export default function OnboardingFlow() {
                       transition={{ delay: 0.18, duration: 0.42, ease: EASE }}
                     >
                       <h1 className="headline mt-8 text-balance text-3xl text-ink">
-                        {values.workspaceName || 'Your workspace'} is ready
+                        {t('{name} is ready', { name: values.workspaceName || t('Your workspace') })}
                       </h1>
                       <p className="mx-auto mt-3 max-w-md text-md leading-relaxed text-ink-muted">
                         One thing left: give your workspace a phone number. Local Cairo lines activate the

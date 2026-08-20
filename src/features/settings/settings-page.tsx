@@ -577,7 +577,7 @@ export default function SettingsPage() {
                           onCheckedChange={(v) =>
                             setPrefs((p) => ({ ...p, [item.id]: { ...p[item.id], email: v } }))
                           }
-                          aria-label={`${t(item.label)} email`}
+                          aria-label={`${t(item.label)} · ${t('Email')}`}
                         />
                       </span>
                       <span className="flex w-10 shrink-0 justify-center">
@@ -587,7 +587,7 @@ export default function SettingsPage() {
                           onCheckedChange={(v) =>
                             setPrefs((p) => ({ ...p, [item.id]: { ...p[item.id], inApp: v } }))
                           }
-                          aria-label={`${t(item.label)} in-app`}
+                          aria-label={`${t(item.label)} · ${t('In-app')}`}
                         />
                       </span>
                     </li>

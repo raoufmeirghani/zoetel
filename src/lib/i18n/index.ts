@@ -31,11 +31,31 @@ export function translate(locale: Locale, key: string, vars?: Record<string, str
   return interpolate(DICTS[locale][key] ?? key, vars)
 }
 
+/**
+ * Splits a translated string on its `{placeholder}` markers so a caller can
+ * render the substituted values as elements rather than text.
+ *
+ * This exists because a figure and its unit have to be one translation key —
+ * split across two nodes, the bidi algorithm reorders them and "69 days of
+ * runway" comes out as "days of runway 69" — but the design often wants the
+ * figure itself styled differently from the words around it. `t()` returns a
+ * string and can't carry that; this returns nodes and can.
+ */
+export function interpolateNodes(s: string, vars: Record<string, React.ReactNode>): React.ReactNode[] {
+  return s.split(/(\{\w+\})/).map((part, i) => {
+    const m = /^\{(\w+)\}$/.exec(part)
+    if (m && m[1] in vars) return React.createElement(React.Fragment, { key: i }, vars[m[1]])
+    return part
+  })
+}
+
 export interface I18n {
   locale: Locale
   dir: 'ltr' | 'rtl'
   rtl: boolean
   t: (key: string, vars?: Record<string, string | number>) => string
+  /** Like `t`, but the substituted values may be elements. */
+  tNode: (key: string, vars: Record<string, React.ReactNode>) => React.ReactNode[]
   setLocale: (l: Locale) => void
 }
 
@@ -49,7 +69,15 @@ export function useI18n(): I18n {
     [locale],
   )
 
-  return React.useMemo(() => ({ locale, dir, rtl: dir === 'rtl', t, setLocale }), [locale, dir, t, setLocale])
+  const tNode = React.useCallback(
+    (key: string, vars: Record<string, React.ReactNode>) => interpolateNodes(DICTS[locale][key] ?? key, vars),
+    [locale],
+  )
+
+  return React.useMemo(
+    () => ({ locale, dir, rtl: dir === 'rtl', t, tNode, setLocale }),
+    [locale, dir, t, tNode, setLocale],
+  )
 }
 
 /**

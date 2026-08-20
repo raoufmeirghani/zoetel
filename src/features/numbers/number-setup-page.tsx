@@ -195,7 +195,9 @@ export default function NumberSetupPage() {
         >
           <h1 className="headline mt-8 text-3xl text-ink">This number is live</h1>
           <p className="mx-auto mt-4 max-w-sm text-md leading-relaxed text-ink-muted">
-            {formatE164(number.e164)} is routing calls. Place a test call to hear it for yourself.
+            {t('{number} is routing calls. Place a test call to hear it for yourself.', {
+              number: formatE164(number.e164),
+            })}
           </p>
         </motion.div>
         <motion.div

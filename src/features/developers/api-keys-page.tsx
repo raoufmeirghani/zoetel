@@ -233,7 +233,7 @@ export default function ApiKeysPage() {
                         variant="ghost"
                         size="icon-xs"
                         className="shrink-0 text-ink-faint"
-                        aria-label={`Actions for ${k.name}`}
+                        aria-label={t('Actions for {name}', { name: k.name })}
                       >
                         <EllipsisVertical />
                       </Button>

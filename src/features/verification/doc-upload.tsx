@@ -186,7 +186,7 @@ export function DocUploadCard({
               size="icon-xs"
               className="text-ink-faint hover:text-danger"
               onClick={onRemove}
-              aria-label={`Remove ${t(meta.label)}`}
+              aria-label={t('Remove {name}', { name: t(meta.label) })}
             >
               <Trash2 />
             </Button>

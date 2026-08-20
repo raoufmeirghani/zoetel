@@ -329,7 +329,7 @@ export default function NumbersPage() {
                           className={cn(
                             'shrink-0 text-ink-faint opacity-60 transition-opacity group-hover:opacity-100',
                           )}
-                          aria-label={`Actions for ${n.e164}`}
+                          aria-label={t('Actions for {name}', { name: n.e164 })}
                         >
                           <EllipsisVertical />
                         </Button>

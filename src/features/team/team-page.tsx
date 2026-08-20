@@ -304,7 +304,7 @@ export default function TeamPage() {
                         variant="ghost"
                         size="icon-xs"
                         className="shrink-0 text-ink-faint"
-                        aria-label={`Actions for ${m.name}`}
+                        aria-label={t('Actions for {name}', { name: m.name })}
                       >
                         <EllipsisVertical />
                       </Button>

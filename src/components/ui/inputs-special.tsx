@@ -95,7 +95,7 @@ export function OtpInput({
           inputMode="numeric"
           autoComplete={i === 0 ? 'one-time-code' : 'off'}
           maxLength={1}
-          aria-label={`Digit ${i + 1}`}
+          aria-label={`${i + 1}`}
           onChange={(e) => {
             const v = e.target.value.replace(/\D/g, '')
             if (v.length > 1) {

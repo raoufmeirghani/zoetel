@@ -242,7 +242,7 @@ export default function CheckoutPage() {
         </motion.div>
 
         <p className="mt-8 text-center text-xs text-ink-faint">
-          A receipt for {money(charged, currency)} was added to your billing history.
+          {t('A receipt for {amount} was added to your billing history.', { amount: money(charged, currency) })}
         </p>
       </div>
     )
@@ -308,7 +308,7 @@ export default function CheckoutPage() {
                     size="icon-sm"
                     className="text-ink-faint hover:text-danger"
                     onClick={() => removeFromCart(n.id)}
-                    aria-label={`Remove ${n.e164}`}
+                    aria-label={t('Remove {name}', { name: n.e164 })}
                   >
                     <Trash2 />
                   </Button>

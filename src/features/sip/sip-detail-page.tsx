@@ -201,7 +201,7 @@ export default function SipDetailPage() {
               />
               <Metric
                 label={t('Jitter')}
-                value={`${health.jitterMs} ms`}
+                value={t('{n} ms', { n: health.jitterMs })}
                 target="< 15 ms"
                 good={health.jitterMs < 15}
               />
@@ -277,7 +277,7 @@ export default function SipDetailPage() {
                       )}
                     </div>
                     <span className="hidden shrink-0 text-sm tabular-nums text-ink-muted sm:block">
-                      {num(n.usage.minutes)} min
+                      {t('{n} min', { n: num(n.usage.minutes) })}
                     </span>
                     <StatusDot tone={n.status === 'active' ? 'success' : 'warning'} />
                     <ArrowRight className="size-4 shrink-0 text-ink-faint transition-transform group-hover:translate-x-0.5" />
@@ -390,7 +390,10 @@ export default function SipDetailPage() {
         open={deleting}
         onOpenChange={setDeleting}
         title={t('Delete {name}?', { name: conn.name })}
-        description={`${conn.concurrentCalls} active ${conn.concurrentCalls === 1 ? 'call' : 'calls'} will be dropped and ${assigned.length} ${assigned.length === 1 ? 'number' : 'numbers'} will stop receiving traffic.`}
+        description={t(
+          '{calls} active calls will be dropped and {numbers} numbers will stop receiving traffic.',
+          { calls: conn.concurrentCalls, numbers: assigned.length },
+        )}
         confirmLabel={t('Delete connection')}
         destructive
         icon={<Trash2 />}

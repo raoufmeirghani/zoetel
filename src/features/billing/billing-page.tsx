@@ -174,7 +174,7 @@ export default function BillingPage() {
                       )}
                     >
                       <TrendingUp className="size-3.5" />
-                      {Math.abs(delta).toFixed(1)}% <span className="text-ink-faint">vs last month</span>
+                      {Math.abs(delta).toFixed(1)}% <span className="text-ink-faint">{t('vs last month')}</span>
                     </span>
                   }
                   first
@@ -182,7 +182,7 @@ export default function BillingPage() {
                 <Figure
                   label={t('Recurring')}
                   value={money(numbersMonthly, currency)}
-                  meta={`${numbers.length} numbers · renews on the 1st`}
+                  meta={t('{n} numbers · renews on the 1st', { n: numbers.length })}
                 />
                 <Figure
                   label={t('Effective rate')}

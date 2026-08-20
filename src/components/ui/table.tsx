@@ -194,7 +194,7 @@ export function DataTable<T extends { id: string }>({
                             v ? [...(selected ?? []), row.id] : (selected ?? []).filter((id) => id !== row.id),
                           )
                         }
-                        aria-label={`Select row ${row.id}`}
+                        aria-label={`${row.id}`}
                       />
                     </td>
                   )}

@@ -387,7 +387,7 @@ export function verify(req: Request, body: string) {
             />
           </Field>
 
-          <Field label={t('Events')} hint={`${events.length} selected`} required>
+          <Field label={t('Events')} hint={t('{n} selected', { n: events.length })} required>
             <div className="space-y-3">
               {EVENT_GROUPS.map((g) => (
                 <div key={g.label}>

@@ -502,7 +502,9 @@ export default function MarketplacePage() {
             </ul>
             {results.length > 40 && (
               <p className="pt-6 text-center text-sm text-ink-faint">
-                Showing the first 40 of {num(results.length)}. Narrow the search to see further.
+                {t('Showing the first 40 of {n}. Narrow the search to see further.', {
+                  n: num(results.length),
+                })}
               </p>
             )}
           </>
@@ -548,7 +550,10 @@ export default function MarketplacePage() {
                     className="inline-flex items-center gap-1 rounded-lg bg-white/10 px-1.5 py-0.5 font-mono text-[11px] tabular-nums text-white/80"
                   >
                     {formatE164(n.e164)}
-                    <button onClick={() => removeFromCart(n.id)} aria-label={`Remove ${n.e164}`}>
+                    <button
+                      onClick={() => removeFromCart(n.id)}
+                      aria-label={t('Remove {name}', { name: n.e164 })}
+                    >
                       <X className="size-3 opacity-60 hover:opacity-100" />
                     </button>
                   </span>

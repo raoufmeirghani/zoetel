@@ -2,11 +2,11 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ArrowUpRight, Plus, Zap } from 'lucide-react'
 import { money } from '@/lib/format'
+import { useI18n } from '@/lib/i18n'
 import { useApp } from '@/store/app'
 import { Button } from '@/components/ui/button'
 import { AnimatedNumber } from '@/components/ui/animated-number'
 import { cn } from '@/lib/utils'
-import { useI18n } from '@/lib/i18n'
 
 /** Days of runway we treat as "comfortable" — the meter's full width. */
 const RUNWAY_TARGET = 90
@@ -21,7 +21,7 @@ const RUNWAY_TARGET = 90
  * actions, and turned 14 days of spend into an unreadable scribble.
  */
 export function WalletStrip({ className, onTopUp }: { className?: string; onTopUp?: () => void }) {
-  const { t } = useI18n()
+  const { t, tNode } = useI18n()
   const balance = useApp((s) => s.balance)
   const currency = useApp((s) => s.workspace.currency)
   const autoRecharge = useApp((s) => s.autoRecharge)
@@ -48,11 +48,13 @@ export function WalletStrip({ className, onTopUp }: { className?: string; onTopU
       />
       <div className="relative">
         <div className="flex items-center justify-between gap-3">
-          <span className="text-2xs font-semibold uppercase tracking-[0.09em] text-white/45">Wallet</span>
+          <span className="text-2xs font-semibold uppercase tracking-[0.09em] text-white/45">
+            {t('Wallet')}
+          </span>
           {autoRecharge.enabled && (
             <span className="inline-flex items-center gap-1 text-2xs font-medium text-white/55">
               <Zap className="size-2.5" />
-              Auto-recharge
+              {t('Auto-recharge')}
             </span>
           )}
         </div>
@@ -66,9 +68,13 @@ export function WalletStrip({ className, onTopUp }: { className?: string; onTopU
         <div className="mt-3.5">
           <div className="flex items-baseline justify-between gap-3 text-xs">
             <span className="text-white/55">
-              <span className="tabular-nums text-white/80">{runway}</span> days of runway
+              {tNode('{n} days of runway', {
+                n: <span className="tabular-nums text-white/80">{runway}</span>,
+              })}
             </span>
-            <span className="tabular-nums text-white/40">{money(recurring, currency)}/mo</span>
+            <span className="tabular-nums text-white/40">
+              {t('{amount}/mo', { amount: money(recurring, currency) })}
+            </span>
           </div>
           <span className="mt-1.5 block h-1 w-full overflow-hidden rounded-full bg-white/10">
             <motion.span
@@ -82,7 +88,9 @@ export function WalletStrip({ className, onTopUp }: { className?: string; onTopU
 
         {low && (
           <p className="mt-3 text-xs leading-relaxed text-warning">
-            Below your {money(autoRecharge.threshold, currency)} threshold — calls stop at zero.
+            {t('Below your {amount} threshold — calls stop at zero.', {
+              amount: money(autoRecharge.threshold, currency),
+            })}
           </p>
         )}
 

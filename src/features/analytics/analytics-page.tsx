@@ -501,7 +501,7 @@ export default function AnalyticsPage() {
                             c.health.mos >= 4 ? 'text-success-ink' : 'text-warning-ink',
                           )}
                         >
-                          MOS {c.health.mos.toFixed(2)}
+                          {t('MOS {n}', { n: c.health.mos.toFixed(2) })}
                         </span>
                       </div>
                       <Progress

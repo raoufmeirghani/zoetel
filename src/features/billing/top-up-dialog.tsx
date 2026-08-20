@@ -67,7 +67,7 @@ export function TopUpDialog({ open, onOpenChange }: { open: boolean; onOpenChang
               {t('Cancel')}
             </Button>
             <Button variant="primary" onClick={submit} disabled={amount <= 0}>
-              Pay {money(total, currency)}
+              {t('Pay {amount}', { amount: money(total, currency) })}
             </Button>
           </>
         ) : undefined
@@ -93,7 +93,7 @@ export function TopUpDialog({ open, onOpenChange }: { open: boolean; onOpenChang
         </div>
       ) : (
         <div className="space-y-5">
-          <Field label={t('Amount')} hint={`Balance ${money(balance, currency)}`}>
+          <Field label={t('Amount')} hint={t('Balance {amount}', { amount: money(balance, currency) })}>
             <CurrencyInput
               value={amount}
               onChange={setAmount}

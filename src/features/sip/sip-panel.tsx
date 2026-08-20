@@ -67,7 +67,7 @@ function SipPanelBody({ conn }: { conn: SipConnection }) {
           </Badge>
         )}
         <Badge tone="neutral" size="sm">
-          {num(conn.stats.minutes)} min this month
+          {t('{n} min this month', { n: num(conn.stats.minutes) })}
         </Badge>
         <Button
           variant="ghost"
