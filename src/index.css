@@ -370,19 +370,24 @@
      ramp has a detectable start, which reads as an edge on strongly coloured art.
      These stops approximate an ease-out curve so the image has no discernible
      boundary — it is simply there at the top and gone by the content. */
+  /* Bottom fade for the hero artwork. Eased rather than linear: a straight alpha
+     ramp has a detectable start, which reads as an edge on strongly coloured art.
+     Front-loaded so most of the fall-off happens in the upper half of the band and
+     the last stretch is already faint — the curve has to be finished, not merely
+     fading, by the time the band ends. */
   .hero-fade {
     --fade: linear-gradient(
       to bottom,
       rgb(0 0 0 / 1) 0%,
-      rgb(0 0 0 / 1) 20%,
-      rgb(0 0 0 / 0.97) 32%,
-      rgb(0 0 0 / 0.9) 42%,
-      rgb(0 0 0 / 0.78) 51%,
-      rgb(0 0 0 / 0.63) 60%,
-      rgb(0 0 0 / 0.46) 69%,
-      rgb(0 0 0 / 0.3) 78%,
-      rgb(0 0 0 / 0.17) 86%,
-      rgb(0 0 0 / 0.07) 93%,
+      rgb(0 0 0 / 0.99) 14%,
+      rgb(0 0 0 / 0.94) 26%,
+      rgb(0 0 0 / 0.85) 37%,
+      rgb(0 0 0 / 0.71) 47%,
+      rgb(0 0 0 / 0.55) 57%,
+      rgb(0 0 0 / 0.38) 67%,
+      rgb(0 0 0 / 0.23) 76%,
+      rgb(0 0 0 / 0.11) 85%,
+      rgb(0 0 0 / 0.04) 93%,
       rgb(0 0 0 / 0) 100%
     );
     mask-image: var(--fade);

@@ -222,12 +222,12 @@ function HeroArtwork({
     <div
       className={cn(
         'pointer-events-none absolute -top-16 left-1/2 -z-10 -translate-x-1/2 overflow-hidden',
-        // Tied to the hero's own height, so a taller hero reveals more of the
-        // artwork. The generous tail matters: the eased fade needs vertical room
-        // to be imperceptible — squeezed into 9rem it completed too fast and read
-        // as an edge. What runs past the hero is nearly transparent anyway, and it
-        // gives the first glass card something to sit against.
-        'h-[calc(100%+20rem)] w-[164vw] sm:w-[104vw]',
+        // The artwork is the header's atmosphere and ends with it. A long tail
+        // (this was +20rem) pushed the fade's strong middle out over the first
+        // card — and because the cards are translucent glass, the gradient read
+        // as sitting *on* them. Now the eased curve finishes inside the band, so
+        // there is nothing left to see by the time content starts.
+        'h-[calc(100%+2rem)] w-[164vw] sm:w-[104vw]',
       )}
     >
       <img
