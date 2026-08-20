@@ -39,6 +39,7 @@ import { cn, sleep } from '@/lib/utils'
 import { useThemeEffect } from '@/hooks/use-theme'
 import type { Currency, PlanKind } from '@/lib/types'
 import { useDirSign, useI18n } from '@/lib/i18n'
+import { LocaleSwitch } from '@/components/shared/locale-switch'
 
 const STEPS = [
   { id: 'welcome', label: 'Welcome' },
@@ -146,6 +147,8 @@ export default function OnboardingFlow() {
   }
 
   const current = STEPS[step]
+  /** Zod carries the English message; the dictionary turns it into copy. */
+  const err = (m?: string) => (m ? t(m) : undefined)
   const progress = (step / (STEPS.length - 1)) * 100
   const docs = verification.docs
   const uploadedDocs = docs.filter((d) => d.status !== 'missing').length
@@ -187,8 +190,8 @@ export default function OnboardingFlow() {
             className="relative"
           >
             <div className="rounded-3xl bg-white/[0.07] p-5 backdrop-blur-sm">
-              <p className="text-sm leading-relaxed text-white/75">{RAIL_COPY[current.id].quote}</p>
-              <p className="mt-3 text-xs text-white/40">{RAIL_COPY[current.id].by}</p>
+              <p className="text-sm leading-relaxed text-white/75">{t(RAIL_COPY[current.id].quote)}</p>
+              <p className="mt-3 text-xs text-white/40">{t(RAIL_COPY[current.id].by)}</p>
             </div>
           </motion.div>
         </AnimatePresence>
@@ -196,10 +199,11 @@ export default function OnboardingFlow() {
         <div className="relative mt-6 flex items-center gap-4 text-xs text-white/35">
           <span className="flex items-center gap-1.5">
             <ShieldCheck className="size-3.5" />
-            NTRA licensed
+            {t('NTRA licensed')}
           </span>
           <span className="flex items-center gap-1.5">
-            <Globe className="size-3.5" />6 countries live
+            <Globe className="size-3.5" />
+            {t('{n} countries live', { n: 6 })}
           </span>
         </div>
       </aside>
@@ -216,9 +220,14 @@ export default function OnboardingFlow() {
           <div className="lg:hidden">
             <Wordmark />
           </div>
-          <div className="ms-auto flex items-center gap-3">
+          <div className="ms-auto flex items-center gap-2 sm:gap-3">
+            {/* Language sits in the header for the whole of onboarding. It is
+                the one place in the product where the account menu isn't
+                available yet, and the one place where someone may not be able
+                to read the page they are being asked to fill in. */}
+            <LocaleSwitch size="sm" />
             {step > 0 && step < 7 && (
-              <span className="text-sm tabular-nums text-ink-faint">
+              <span className="hidden text-sm tabular-nums text-ink-faint sm:inline">
                 {t('Step {n} of {total}', { n: step, total: STEPS.length - 2 })}
               </span>
             )}
@@ -259,11 +268,12 @@ export default function OnboardingFlow() {
                       <Logo size={56} className="mx-auto" />
                     </motion.div>
                     <h1 className="display mt-7 text-4xl font-semibold text-ink">
-                      Voice infrastructure, without the telco.
+                      {t('Voice infrastructure, without the telco.')}
                     </h1>
                     <p className="mx-auto mt-4 max-w-md text-md leading-relaxed text-ink-muted">
-                      Buy a phone number, point it at your code, and start taking calls in minutes — with the
-                      compliance paperwork handled for you.
+                      {t(
+                        'Buy a phone number, point it at your code, and start taking calls in minutes — with the compliance paperwork handled for you.',
+                      )}
                     </p>
                     <div className="mt-8 flex flex-col items-center gap-3">
                       <Button
@@ -296,8 +306,8 @@ export default function OnboardingFlow() {
                           className="rounded-3xl bg-surface/70 p-4 shadow-ring backdrop-blur"
                         >
                           <f.icon className="size-4 text-brand" />
-                          <p className="mt-2.5 text-sm font-semibold text-ink">{f.t}</p>
-                          <p className="mt-0.5 text-xs leading-relaxed text-ink-subtle">{f.d}</p>
+                          <p className="mt-2.5 text-sm font-semibold text-ink">{t(f.t)}</p>
+                          <p className="mt-0.5 text-xs leading-relaxed text-ink-subtle">{t(f.d)}</p>
                         </motion.div>
                       ))}
                     </div>
@@ -385,10 +395,10 @@ export default function OnboardingFlow() {
                 {current.id === 'profile' && (
                   <StepShell title={t('Create your account')} description={t("This is how you'll sign in.")}>
                     <div className="space-y-4">
-                      <Field label={t('Full name')} required error={form.formState.errors.name?.message}>
+                      <Field label={t('Full name')} required error={err(form.formState.errors.name?.message)}>
                         <Input
                           {...form.register('name')}
-                          placeholder={'Youssef Hegazy'}
+                          placeholder={t('Youssef Hegazy')}
                           autoFocus
                           inputSize="lg"
                           aria-invalid={!!form.formState.errors.name}
@@ -397,7 +407,7 @@ export default function OnboardingFlow() {
                       <Field
                         label={t('Work email')}
                         required
-                        error={form.formState.errors.email?.message}
+                        error={err(form.formState.errors.email?.message)}
                         description={t("We'll send verification updates and billing receipts here.")}
                       >
                         <Input
@@ -411,7 +421,7 @@ export default function OnboardingFlow() {
                       <Field
                         label={t('Password')}
                         required
-                        error={form.formState.errors.password?.message}
+                        error={err(form.formState.errors.password?.message)}
                         hint={
                           <button
                             type="button"
@@ -470,12 +480,12 @@ export default function OnboardingFlow() {
                       <Field
                         label={t('Workspace name')}
                         required
-                        error={form.formState.errors.workspaceName?.message}
+                        error={err(form.formState.errors.workspaceName?.message)}
                         description={t('Something your team will recognise.')}
                       >
                         <Input
                           {...form.register('workspaceName')}
-                          placeholder={'Acme Retail'}
+                          placeholder={t('Acme Retail')}
                           autoFocus
                           inputSize="lg"
                           aria-invalid={!!form.formState.errors.workspaceName}
@@ -490,7 +500,7 @@ export default function OnboardingFlow() {
                         >
                           <Input
                             {...form.register('businessName')}
-                            placeholder={'Acme Retail LLC'}
+                            placeholder={t('Acme Retail LLC')}
                             inputSize="lg"
                           />
                         </Field>
@@ -581,7 +591,7 @@ export default function OnboardingFlow() {
                             >
                               {t(u.label)}
                             </span>
-                            <span className="text-xs leading-relaxed text-ink-subtle">{u.blurb}</span>
+                            <span className="text-xs leading-relaxed text-ink-subtle">{t(u.blurb)}</span>
                           </motion.button>
                         )
                       })}
@@ -596,13 +606,18 @@ export default function OnboardingFlow() {
                     title={t('Verify your identity')}
                     description={
                       values.accountType === 'business'
-                        ? 'Egypt requires a verified business entity before national, mobile and toll-free numbers can be provisioned. Most reviews finish within a few hours.'
-                        : 'Egypt requires identity verification before certain number ranges can be provisioned. Most reviews finish within a few hours.'
+                        ? t(
+                            'Egypt requires a verified business entity before national, mobile and toll-free numbers can be provisioned. Most reviews finish within a few hours.',
+                          )
+                        : t(
+                            'Egypt requires identity verification before certain number ranges can be provisioned. Most reviews finish within a few hours.',
+                          )
                     }
                   >
                     <Alert tone="brand" compact className="mb-4" icon={<ShieldCheck />}>
-                      You can skip this and start with a local number today — we'll remind you when you reach a
-                      range that needs it.
+                      {t(
+                        "You can skip this and start with a local number today — we'll remind you when you reach a range that needs it.",
+                      )}
                     </Alert>
                     <div className="space-y-2.5">
                       {docs.slice(0, 3).map((doc, i) => (
@@ -658,26 +673,28 @@ export default function OnboardingFlow() {
                           value: 'payg' as const,
                           icon: Rocket,
                           label: t('Pay as you go'),
-                          price: 'No commitment',
+                          price: t('No commitment'),
                           blurb: t('Perfect for startups and first integrations.'),
                           perks: [
-                            'Top up your wallet, pay only for usage',
-                            `Numbers from ${money(1.1, values.currency as Currency)}/month`,
-                            'Every API and SIP feature included',
-                            'Cancel or pause whenever',
+                            t('Top up your wallet, pay only for usage'),
+                            t('Numbers from {price}/month', {
+                              price: money(1.1, values.currency as Currency),
+                            }),
+                            t('Every API and SIP feature included'),
+                            t('Cancel or pause whenever'),
                           ],
                         },
                         {
                           value: 'volume' as const,
                           icon: TrendingDown,
                           label: t('Volume pricing'),
-                          price: 'Up to 24% lower',
+                          price: t('Up to 24% lower'),
                           blurb: t('For predictable monthly traffic.'),
                           perks: [
-                            'Committed monthly minutes at lower rates',
-                            'Dedicated carrier routes and priority capacity',
-                            'Named technical account manager',
-                            'Custom SLA and net-30 invoicing',
+                            t('Committed monthly minutes at lower rates'),
+                            t('Dedicated carrier routes and priority capacity'),
+                            t('Named technical account manager'),
+                            t('Custom SLA and net-30 invoicing'),
                           ],
                         },
                       ].map((p) => {
@@ -701,7 +718,7 @@ export default function OnboardingFlow() {
                             </span>
                             <span className="min-w-0 flex-1">
                               <span className="flex flex-wrap items-center gap-2">
-                                <span className="text-md font-semibold text-ink">{t(p.label)}</span>
+                                <span className="text-md font-semibold text-ink">{p.label}</span>
                                 <Badge tone={active ? 'brand' : 'outline'} size="sm">
                                   {p.price}
                                 </Badge>
@@ -801,8 +818,8 @@ export default function OnboardingFlow() {
                       ].map((f) => (
                         <div key={f.t} className="rounded-3xl bg-surface/70 p-3.5 shadow-ring backdrop-blur">
                           <f.icon className="size-4 text-brand" />
-                          <p className="mt-2 text-sm font-semibold text-ink">{f.t}</p>
-                          <p className="mt-0.5 text-xs text-ink-subtle">{f.d}</p>
+                          <p className="mt-2 text-sm font-semibold text-ink">{t(f.t)}</p>
+                          <p className="mt-0.5 text-xs text-ink-subtle">{t(f.d)}</p>
                         </div>
                       ))}
                     </motion.div>

@@ -1249,4 +1249,102 @@ export const ar: Dictionary = {
   'Call quality is below target': 'جودة المكالمات أقل من المستهدف',
   'We’re seeing {loss}% packet loss and {jitter} ms jitter from your side of the trunk. That usually means an over-subscribed uplink or a firewall rewriting RTP. Switching to TLS with SRTP and pinning media to the Cairo edge normally resolves it.':
     'نرى فقدًا للحزم بنسبة {loss}٪ وتقلقلًا بمقدار {jitter} ملّي ثانية من جهتك في الوصلة. عادةً ما يعني ذلك وصلة صاعدة محمّلة أكثر من طاقتها أو جدارًا ناريًا يعيد كتابة RTP. والتبديل إلى TLS مع SRTP وتثبيت الوسائط على حدود القاهرة يحل ذلك عادةً.',
+
+  // ── Onboarding use cases ────────────────────────────────────────────────
+  'AI Voice Agent': 'مساعد صوتي بالذكاء الاصطناعي',
+  'Low-latency media streams and barge-in.': 'بثّ صوتي منخفض الكمون مع إمكانية المقاطعة.',
+  'Contact Center': 'مركز اتصال',
+  'Queues, routing and agent seats.': 'طوابير وتوجيه ومقاعد للموظفين.',
+  'SIP Trunk': 'وصلة SIP',
+  'Bring your own PBX or softswitch.': 'استخدم سنترالك أو سويتشك الخاص.',
+  'Outbound Calling': 'مكالمات صادرة',
+  'High-volume dialing with CNAM.': 'اتصال بحجم كبير مع CNAM.',
+  'SMS Platform': 'منصة رسائل',
+  'A2P messaging at scale.': 'رسائل A2P على نطاق واسع.',
+  'CRM Integration': 'تكامل مع CRM',
+  'Click-to-call and screen pops.': 'اتصال بضغطة وبطاقة العميل تظهر تلقائيًا.',
+  'Cloud PBX': 'سنترال سحابي',
+  'Extensions, IVR and voicemail.': 'تحويلات ونظام رد آلي وبريد صوتي.',
+  'Building on the API': 'البناء على الـ API',
+  'Programmatic voice from scratch.': 'صوت برمجي من الصفر.',
+  'Something else': 'شيء آخر',
+  "Tell us later — we'll keep it simple.": 'أخبرنا لاحقًا — سنُبقي الأمر بسيطًا.',
+
+  // ── Verification document hints ─────────────────────────────────────────
+  'Photo page showing the machine-readable zone.': 'صفحة الصورة مع المنطقة المقروءة آليًا.',
+  'Both sides, in one file or two uploads.': 'الوجهان، في ملف واحد أو رفعتين.',
+  'Issued within the last 12 months (سجل تجاري).': 'صادر خلال آخر 12 شهرًا (سجل تجاري).',
+  'Tax card showing your registered tax ID (البطاقة الضريبية).':
+    'البطاقة الضريبية موضّحًا بها رقمك الضريبي المسجَّل.',
+  'Trade or operating licence for your activity.': 'رخصة تجارية أو رخصة تشغيل لنشاطك.',
+  'JPG, PNG or PDF · max 10 MB': 'JPG أو PNG أو PDF · 10 ميجابايت كحد أقصى',
+  'PDF preferred · max 10 MB': 'يُفضَّل PDF · 10 ميجابايت كحد أقصى',
+
+  // ── Onboarding welcome and side rail ────────────────────────────────────
+  'Voice infrastructure, without the telco.': 'منظومة صوتية، بلا شركة اتصالات.',
+  'Buy a phone number, point it at your code, and start taking calls in minutes — with the compliance paperwork handled for you.':
+    'اشترِ رقم هاتف، ووجّهه إلى برنامجك، وابدأ استقبال المكالمات في دقائق — وأوراق الامتثال نتولّاها عنك.',
+  'Live in minutes': 'جاهز في دقائق',
+  'Numbers activate instantly': 'تُنشَّط الأرقام فورًا',
+  'Compliance built in': 'الامتثال مُدمَج',
+  'KYC guided step by step': 'التحقق موجَّه خطوة بخطوة',
+  'Support that knows SIP': 'دعم يفهم SIP',
+  '{n} countries live': '{n} دول مفعّلة',
+  '“We replaced a three-week carrier onboarding with an afternoon. The numbers were live before our standup finished.”':
+    '«استبدلنا ثلاثة أسابيع من إجراءات المشغّل بعصر يوم واحد. كانت الأرقام تعمل قبل أن ينتهي اجتماعنا الصباحي.»',
+  'Head of Engineering, retail platform · Cairo': 'مدير الهندسة، منصة تجارة تجزئة · القاهرة',
+  '“Knowing exactly which documents we needed up front meant compliance took one pass instead of four rounds of email.”':
+    '«معرفة المستندات المطلوبة بدقة من البداية جعلت الامتثال يمرّ من أول مرة بدل أربع جولات من البريد.»',
+  'Operations lead, contact centre · Alexandria': 'مسؤول التشغيل، مركز اتصال · الإسكندرية',
+  '“The dashboard is the first telecom tool our developers actually wanted to open.”':
+    '«لوحة التحكم هي أول أداة اتصالات أراد مطوّرونا فتحها فعلًا.»',
+  'CTO, logistics startup · New Cairo': 'المدير التقني، شركة لوجستيات ناشئة · القاهرة الجديدة',
+  '“One workspace per environment. Sandbox traffic never touches our production wallet.”':
+    '«مساحة عمل لكل بيئة. حركة الاختبار لا تلمس محفظة الإنتاج أبدًا.»',
+  'Platform engineer, fintech · Giza': 'مهندس منصات، تقنية مالية · الجيزة',
+  '“Our AI agent answers in under 400 ms end to end. Media streaming was two lines of code.”':
+    '«وكيل الذكاء الاصطناعي لدينا يجيب في أقل من ٤٠٠ مللي ثانية من الطرف إلى الطرف. بثّ الوسائط كان سطرين من الكود.»',
+  'Founder, voice AI company · Cairo': 'مؤسِّس، شركة ذكاء اصطناعي صوتي · القاهرة',
+  '“Verification took four hours, not four weeks. That is the whole reason we switched.”':
+    '«التحقق استغرق أربع ساعات، لا أربعة أسابيع. هذا وحده سبب انتقالنا.»',
+  'Managing director, BPO · Alexandria': 'المدير التنفيذي، شركة خدمات إسناد · الإسكندرية',
+  '“We started pay as you go on a Tuesday and moved to a committed plan the following quarter.”':
+    '«بدأنا بالدفع حسب الاستخدام يوم ثلاثاء، وانتقلنا إلى خطة تعاقدية في الربع التالي.»',
+  'Finance lead, delivery platform · Cairo': 'مسؤول المالية، منصة توصيل · القاهرة',
+  '“From signup to first answered call: eleven minutes.”':
+    '«من التسجيل إلى أول مكالمة مُجابة: إحدى عشرة دقيقة.»',
+  'Solutions architect, insurance · Cairo': 'مهندس حلول، تأمين · القاهرة',
+  // Onboarding — funding, verification, validation and sample values.
+  'No commitment': 'بلا التزام',
+  'Top up your wallet, pay only for usage': 'اشحن محفظتك، وادفع مقابل الاستخدام فقط',
+  'Numbers from {price}/month': 'أرقام تبدأ من {price} شهريًا',
+  'Every API and SIP feature included': 'كل خصائص الـ API و SIP مشمولة',
+  'Cancel or pause whenever': 'أوقف أو ألغِ في أي وقت',
+  'Up to 24% lower': 'أقل بنسبة تصل إلى 24%',
+  'Committed monthly minutes at lower rates': 'دقائق شهرية متعاقد عليها بأسعار أقل',
+  'Dedicated carrier routes and priority capacity': 'مسارات مشغّل مخصّصة وسعة ذات أولوية',
+  'Named technical account manager': 'مدير حساب تقني مخصّص بالاسم',
+  'Custom SLA and net-30 invoicing': 'اتفاقية مستوى خدمة مخصّصة وفواتير بسداد 30 يومًا',
+  'Egypt requires a verified business entity before national, mobile and toll-free numbers can be provisioned. Most reviews finish within a few hours.':
+    'تشترط مصر وجود كيان تجاري موثّق قبل تفعيل الأرقام الوطنية والمحمولة والمجانية. تنتهي معظم المراجعات في غضون ساعات.',
+  'Egypt requires identity verification before certain number ranges can be provisioned. Most reviews finish within a few hours.':
+    'تشترط مصر التحقق من الهوية قبل تفعيل نطاقات أرقام معيّنة. تنتهي معظم المراجعات في غضون ساعات.',
+  "You can skip this and start with a local number today — we'll remind you when you reach a range that needs it.":
+    'يمكنك تخطّي هذه الخطوة والبدء برقم محلي اليوم — وسنذكّرك عندما تصل إلى نطاق يحتاجها.',
+  'Search live inventory': 'ابحث في المخزون المتاح',
+  'Connect your PBX': 'اربط سنترالك',
+  'Finish later': 'أكمِل لاحقًا',
+  'Enter your full name': 'أدخل اسمك الكامل',
+  'Enter a valid email address': 'أدخل بريدًا إلكترونيًا صحيحًا',
+  'Use at least 10 characters': 'استخدم 10 أحرف على الأقل',
+  'Give your workspace a name': 'أعطِ مساحة عملك اسمًا',
+  'Youssef Hegazy': 'يوسف حجازي',
+  'Acme Retail': 'أكمي للتجزئة',
+  'Acme Retail LLC': 'أكمي للتجزئة ذ.م.م',
+  // NTRA is the Egyptian regulator; Arabic names it rather than abbreviating.
+  'NTRA licensed': 'مرخّص من هيئة تنظيم الاتصالات',
+  'Drop a file or {browse}': 'أفلِت ملفًا أو {browse}',
+  browse: 'استعرض',
+  'File is too large': 'الملف كبير جدًا',
+  '{doc} uploaded': 'تم رفع {doc}',
 }

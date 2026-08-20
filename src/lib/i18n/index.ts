@@ -31,15 +31,26 @@ function interpolate(s: string, vars?: Record<string, string | number>): string 
   return s.replace(/\{(\w+)\}/g, (_, k) => (k in vars ? String(vars[k]) : `{${k}}`))
 }
 
+/** True for a string that already reads in the page's own script. */
+const HAS_RTL = /[\u0590-\u08ff]/
+
 export function translate(locale: Locale, key: string, vars?: Record<string, string | number>): string {
   const hit = DICTS[locale][key]
+  if (hit !== undefined) return interpolate(hit, vars)
+
   // A key with no entry falls back to English. In a right-to-left page that
   // English needs isolating, or the bidi algorithm reorders its runs and
   // "…right now. 7 things are waiting." comes out as ".things are waiting 7 …".
   // Isolating in the string rather than with CSS keeps the element itself
   // right-to-left, so the text still aligns with everything around it.
-  if (hit === undefined && LOCALES[locale].dir === 'rtl') return LRI + interpolate(key, vars) + PDI
-  return interpolate(hit ?? key, vars)
+  //
+  // A miss that is *already* in the local script needs none of that: it is a
+  // value that has been through `t()` once and reached it again — a config field
+  // translated where it is declared and then again where it is rendered. Passing
+  // it straight through makes that harmless instead of wrapping Arabic in an
+  // isolate that reads as a stray direction change.
+  if (LOCALES[locale].dir === 'rtl' && !HAS_RTL.test(key)) return LRI + interpolate(key, vars) + PDI
+  return interpolate(key, vars)
 }
 
 /**

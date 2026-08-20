@@ -77,7 +77,7 @@ export function DocUploadCard({
   index?: number
   readOnly?: boolean
 }) {
-  const { t } = useI18n()
+  const { t, tNode } = useI18n()
   const meta = DOC_META[doc.kind]
   const inputRef = React.useRef<HTMLInputElement>(null)
   const [dragging, setDragging] = React.useState(false)
@@ -86,7 +86,7 @@ export function DocUploadCard({
 
   const handleFile = async (file: File) => {
     if (file.size > 10 * 1024 * 1024) {
-      toast.error('File is too large', { description: t('Documents must be under 10 MB.') })
+      toast.error(t('File is too large'), { description: t('Documents must be under 10 MB.') })
       return
     }
     setProgress(0)
@@ -99,7 +99,7 @@ export function DocUploadCard({
     await sleep(900)
     setScanning(false)
     onUpload({ name: file.name, size: file.size })
-    toast.success(`${t(meta.label)} uploaded`, {
+    toast.success(t('{doc} uploaded', { doc: t(meta.label) }), {
       description: t('We extracted the key fields for you to confirm.'),
     })
   }
@@ -177,7 +177,7 @@ export function DocUploadCard({
                 </Badge>
               )}
             </div>
-            <p className="mt-0.5 text-sm leading-relaxed text-ink-subtle">{meta.hint}</p>
+            <p className="mt-0.5 text-sm leading-relaxed text-ink-subtle">{t(meta.hint)}</p>
           </div>
 
           {uploaded && !readOnly && (
@@ -315,9 +315,15 @@ export function DocUploadCard({
             >
               <CloudUpload className={cn('size-5', dragging ? 'text-brand' : 'text-ink-faint')} />
               <span className="text-sm font-medium text-ink">
-                Drop a file or <span className="text-brand-ink">browse</span>
+                {tNode('Drop a file or {browse}', {
+                  browse: (
+                    <span key="browse" className="text-brand-ink">
+                      {t('browse')}
+                    </span>
+                  ),
+                })}
               </span>
-              <span className="text-xs text-ink-faint">{meta.example}</span>
+              <span className="text-xs text-ink-faint">{t(meta.example)}</span>
             </motion.button>
           )}
         </AnimatePresence>
