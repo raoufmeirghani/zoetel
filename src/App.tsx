@@ -12,6 +12,7 @@ import { RouteFallback } from '@/components/shared/route-fallback'
 import { useApp } from '@/store/app'
 
 const Dashboard = lazy(() => import('@/features/dashboard/dashboard-page'))
+const LandingPage = lazy(() => import('@/features/landing/landing-page'))
 const NumbersPage = lazy(() => import('@/features/numbers/numbers-page'))
 const MarketplacePage = lazy(() => import('@/features/numbers/marketplace-page'))
 const CheckoutPage = lazy(() => import('@/features/numbers/checkout-page'))
@@ -59,11 +60,24 @@ function RadixDirection({ children }: { children: React.ReactNode }) {
   return <DirectionProvider dir={dir}>{children}</DirectionProvider>
 }
 
-/** First-run visitors meet the product through onboarding, not the dashboard. */
+/**
+ * Everything inside the shell needs an account. A visitor who deep-links into
+ * the product is sent to onboarding; the root is handled separately, because
+ * that is where the landing page lives.
+ */
 function RequireOnboarding() {
   const hasOnboarded = useApp((s) => s.hasOnboarded)
   if (!hasOnboarded) return <Navigate to="/welcome" replace />
   return <AppShell />
+}
+
+/**
+ * The root is the marketing page for a visitor and the dashboard for a
+ * customer. Same URL, because that is what people type and what they bookmark.
+ */
+function Root() {
+  const hasOnboarded = useApp((s) => s.hasOnboarded)
+  return hasOnboarded ? <AppShell /> : <LandingPage />
 }
 
 export function App() {
@@ -79,8 +93,16 @@ export function App() {
                 <Suspense fallback={<RouteFallback />}>
                   <Routes>
                     <Route path="/welcome/*" element={<OnboardingFlow />} />
+                    {/* Always reachable, so someone who already has an account
+                        can still open the marketing page. */}
+                    <Route path="/landing" element={<LandingPage />} />
+                    {/* The root resolves to the shell or the landing page; the
+                        index child only renders when the shell wins, because the
+                        landing page has no Outlet. */}
+                    <Route path="/" element={<Root />}>
+                      <Route index element={<Dashboard />} />
+                    </Route>
                     <Route element={<RequireOnboarding />}>
-                      <Route path="/" element={<Dashboard />} />
                       <Route path="/numbers" element={<NumbersPage />} />
                       <Route path="/numbers/buy" element={<MarketplacePage />} />
                       <Route path="/numbers/checkout" element={<CheckoutPage />} />

@@ -179,6 +179,9 @@
 
   html {
     -webkit-tap-highlight-color: transparent;
+    /* For the marketing page's in-page anchors. Turned off under
+       prefers-reduced-motion at the end of this file. */
+    scroll-behavior: smooth;
   }
 
   body {
@@ -501,6 +504,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
   *,
   *::before,
   *::after {
