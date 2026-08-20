@@ -179,6 +179,9 @@
 
   html {
     -webkit-tap-highlight-color: transparent;
+    /* Stops iOS inflating type when the device is rotated. */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
     /* For the marketing page's in-page anchors. Turned off under
        prefers-reduced-motion at the end of this file. */
     scroll-behavior: smooth;
@@ -519,6 +522,87 @@
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────
+   Handheld
+   ─────────────────────────────────────────────────────────
+   The product is used on a phone as often as on a desk, so the small screen is
+   a first-class layout rather than a narrowed version of the wide one. What
+   lives here is the part that can't be expressed per-component: safe areas,
+   scroll physics, and the couple of type sizes that need to grow when the
+   screen shrinks.
+*/
+
+/* Room for the floating dock and the home indicator beneath it. Applied to the
+   content column so a page can never end underneath its own navigation. */
+.pb-dock {
+  padding-bottom: calc(6.5rem + env(safe-area-inset-bottom, 0px));
+}
+
+@media (min-width: 1024px) {
+  .pb-dock {
+    padding-bottom: 3rem;
+  }
+}
+
+/* Safe-area helpers for the floating furniture. */
+.inset-safe-bottom {
+  bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+}
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+.px-safe {
+  padding-inline: max(0px, env(safe-area-inset-left, 0px)) max(0px, env(safe-area-inset-right, 0px));
+}
+
+/* A sheet should scroll its own content and stop, never hand the gesture back
+   to the page behind it. */
+.sheet-scroll {
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Horizontal rails — tab strips, chip rows, card tracks. The fade is the only
+   affordance that there is more to the side; a scrollbar is not an option on a
+   touch device and an arrow would be furniture. */
+.rail-fade {
+  mask-image: linear-gradient(to right, black 0, black calc(100% - 2rem), transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, black 0, black calc(100% - 2rem), transparent 100%);
+}
+[dir='rtl'] .rail-fade {
+  mask-image: linear-gradient(to left, black 0, black calc(100% - 2rem), transparent 100%);
+  -webkit-mask-image: linear-gradient(to left, black 0, black calc(100% - 2rem), transparent 100%);
+}
+/* Once the rail is fully scrolled there is nothing left to hint at. */
+.rail-fade[data-at-end='true'] {
+  mask-image: none;
+  -webkit-mask-image: none;
+}
+
+@media (max-width: 639px) {
+  /* 11px small-caps is legible at arm's length on a monitor and not on a phone
+     held at 30cm. One step up, only where the screen is small. */
+  .eyebrow {
+    font-size: 0.75rem;
+    letter-spacing: 0.07em;
+  }
+
+  /* Touch targets. Anything the design sized for a cursor gets a larger hit
+     area on a phone without changing how it looks — the padding grows, the
+     visual box does not. */
+  .tap {
+    position: relative;
+  }
+  .tap::after {
+    content: '';
+    position: absolute;
+    inset: 50% 50%;
+    width: 44px;
+    height: 44px;
+    transform: translate(-50%, -50%);
   }
 }
 

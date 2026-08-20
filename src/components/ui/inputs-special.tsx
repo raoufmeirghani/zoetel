@@ -178,7 +178,7 @@ export function PhoneInput({
         onChange={(e) => onChange(e.target.value.replace(/[^\d\s]/g, ''))}
         placeholder={placeholder}
         inputMode="tel"
-        className="h-9 min-w-0 flex-1 bg-transparent px-3 text-base tabular-nums text-ink placeholder:text-ink-faint focus:outline-none"
+        className="h-11 min-w-0 flex-1 bg-transparent px-3 text-[16px] tabular-nums text-ink placeholder:text-ink-faint focus:outline-none sm:h-9 sm:text-base"
       />
     </div>
   )
@@ -221,7 +221,7 @@ export function CurrencyInput({
         className={cn(
           'flex items-center rounded-xl bg-surface shadow-[0_0_0_1px_hsl(var(--line-strong))] transition-shadow',
           'focus-within:shadow-[0_0_0_1px_hsl(var(--brand)),0_0_0_4px_hsl(var(--brand)/0.14)]',
-          size === 'lg' ? 'h-12' : 'h-9',
+          size === 'lg' ? 'h-12' : 'h-11 sm:h-9',
         )}
       >
         <span className={cn('ps-3.5 font-medium text-ink-subtle', size === 'lg' ? 'text-lg' : 'text-base')}>
@@ -286,7 +286,7 @@ export function NumberInput({
   return (
     <div
       className={cn(
-        'inline-flex h-9 items-center rounded-lg bg-surface shadow-[0_0_0_1px_hsl(var(--line-strong))]',
+        'inline-flex h-11 items-center rounded-lg bg-surface shadow-[0_0_0_1px_hsl(var(--line-strong))] sm:h-9',
         'focus-within:shadow-[0_0_0_1px_hsl(var(--brand)),0_0_0_4px_hsl(var(--brand)/0.14)]',
         className,
       )}
@@ -352,7 +352,8 @@ export function ChipGroup<T extends string>({
             }
             className={cn(
               'relative inline-flex items-center gap-1.5 rounded-lg font-medium transition-all duration-150',
-              size === 'sm' ? 'h-7 px-2 text-xs' : 'h-8 px-2.5 text-sm',
+              // A filter pill is a primary control on a phone, so it grows.
+              size === 'sm' ? 'h-9 px-3 text-xs sm:h-7 sm:px-2' : 'h-10 px-3.5 text-sm sm:h-8 sm:px-2.5',
               active
                 ? 'bg-brand text-brand-fg shadow-[0_1px_2px_rgb(17_18_28/0.14)]'
                 : 'bg-surface text-ink-muted shadow-[inset_0_0_0_1px_hsl(var(--line-strong))] hover:bg-surface-2 hover:text-ink',

@@ -896,22 +896,48 @@ function Nav({
   secondary?: React.ReactNode
 }) {
   const { t } = useI18n()
+
   return (
-    <div className="mt-8">
-      <div className="flex items-center gap-2">
-        <Button variant="ghost" size="lg" onClick={onBack} icon={<ArrowLeft />} className="text-ink-subtle">
-          {t('Back')}
-        </Button>
-        <div className="ms-auto flex items-center gap-2">
-          {secondary}
-          <Button variant="primary" size="lg" onClick={onNext} disabled={nextDisabled} loading={loading}>
-            {nextLabel ?? t('Continue')}
-            <ArrowRight className="size-4" />
+    <>
+      {/* On a phone the step's actions stick to the bottom of the screen. A
+          form long enough to scroll must not put its primary button somewhere
+          the thumb has to hunt for, and a signup is exactly that form. Above
+          `sm` it goes back to sitting in the flow where it belongs. */}
+      <div
+        className={cn(
+          'z-30 mt-8 max-sm:fixed max-sm:inset-x-0 max-sm:bottom-0 max-sm:mt-0',
+          'max-sm:chrome max-sm:border-t max-sm:border-line-soft',
+          'max-sm:px-5 max-sm:pb-[calc(0.875rem+env(safe-area-inset-bottom,0px))] max-sm:pt-3.5',
+        )}
+      >
+        <div className="mx-auto flex w-full max-w-lg items-center gap-2">
+          <Button variant="ghost" size="lg" onClick={onBack} icon={<ArrowLeft />} className="text-ink-subtle">
+            {t('Back')}
           </Button>
+          <div className="ms-auto flex items-center gap-2">
+            {secondary}
+            <Button
+              variant="primary"
+              size="lg"
+              onClick={onNext}
+              disabled={nextDisabled}
+              loading={loading}
+              className="max-sm:h-12 max-sm:px-5"
+            >
+              {nextLabel ?? t('Continue')}
+              <ArrowRight className="size-4" />
+            </Button>
+          </div>
         </div>
+        {hint && (
+          <p className="mx-auto mt-3 w-full max-w-lg text-xs leading-relaxed text-ink-faint max-sm:hidden">
+            {hint}
+          </p>
+        )}
       </div>
-      {hint && <p className="mt-3 text-xs leading-relaxed text-ink-faint">{hint}</p>}
-    </div>
+      {/* Reserves the bar's height so the last field is never trapped behind it. */}
+      <div aria-hidden className="h-24 sm:hidden" />
+    </>
   )
 }
 

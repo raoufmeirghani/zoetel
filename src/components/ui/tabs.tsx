@@ -2,6 +2,7 @@ import * as React from 'react'
 import * as TabsPrimitive from '@radix-ui/react-tabs'
 import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
+import { useRailFade } from '@/hooks/use-media'
 
 export const Tabs = TabsPrimitive.Root
 
@@ -15,7 +16,10 @@ export const TabsList = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <TabsPrimitive.List
     ref={ref}
-    className={cn('no-scrollbar -mx-1 flex items-center gap-0.5 overflow-x-auto px-1 py-1', className)}
+    className={cn(
+      'no-scrollbar rail-fade -mx-1 flex items-center gap-0.5 overflow-x-auto px-1 py-1',
+      className,
+    )}
     {...props}
   />
 ))
@@ -77,9 +81,17 @@ export function ChipTabs<T extends string>({
   className?: string
   layoutId?: string
 }) {
+  // The rail hints that there is more to the side, and stops hinting once
+  // there isn't.
+  const rail = useRailFade<HTMLDivElement>()
+
   return (
     <div
-      className={cn('no-scrollbar -mx-1 flex items-center gap-0.5 overflow-x-auto px-1 py-1', className)}
+      ref={rail}
+      className={cn(
+        'no-scrollbar rail-fade -mx-1 flex items-center gap-0.5 overflow-x-auto px-1 py-1',
+        className,
+      )}
       role="tablist"
     >
       {items.map((item) => {
@@ -91,7 +103,7 @@ export function ChipTabs<T extends string>({
             aria-selected={active}
             onClick={() => onValueChange(item.value)}
             className={cn(
-              'relative inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full px-3 py-1.5 text-base font-medium transition-colors',
+              'relative inline-flex h-10 shrink-0 items-center gap-2 whitespace-nowrap rounded-full px-3.5 text-base font-medium transition-colors sm:h-auto sm:px-3 sm:py-1.5',
               active ? 'text-ink' : 'text-ink-subtle hover:text-ink',
               '[&_svg]:size-4',
             )}

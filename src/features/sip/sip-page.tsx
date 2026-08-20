@@ -204,7 +204,7 @@ export default function SipPage() {
 
         {/* ── Capacity at a glance ─────────────────────── */}
         <Section index={0}>
-          <div className="grid gap-y-7 sm:grid-cols-2 sm:divide-x sm:divide-line lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-x-4 gap-y-7 sm:divide-x sm:divide-line lg:grid-cols-4">
             <Figure
               icon={Gauge}
               label={t('Channels in use')}
@@ -275,66 +275,70 @@ export default function SipPage() {
                     onClick={() => openPanel(c.id)}
                     aria-expanded={c.id === openId}
                     className={cn(
-                      'group -mx-3 flex w-[calc(100%+1.5rem)] flex-col gap-4 rounded-2xl px-3 py-5 text-start transition-colors lg:flex-row lg:items-center lg:gap-6',
+                      'group -mx-3 flex w-[calc(100%+1.5rem)] flex-col gap-3 rounded-2xl px-3 py-4 text-start transition-colors lg:flex-row lg:items-center lg:gap-6 lg:py-5',
                       c.id === openId ? 'bg-veil-strong' : 'hover:bg-veil',
                     )}
                   >
-                    <span
-                      className={cn(
-                        'grid size-10 shrink-0 place-items-center rounded-2xl',
-                        c.status === 'active'
-                          ? 'bg-success-soft text-success'
-                          : c.status === 'degraded'
-                            ? 'bg-warning-soft text-warning'
-                            : c.status === 'provisioning'
-                              ? 'bg-info-soft text-info'
-                              : 'bg-veil-strong text-ink-faint',
-                      )}
-                    >
-                      <Cable className="size-[18px]" />
-                    </span>
-
-                    <div className="min-w-0 flex-1">
-                      <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
-                        <p className="truncate text-md font-medium text-ink">{c.name}</p>
-                        <StatusDot
-                          tone={
-                            c.status === 'active'
-                              ? 'success'
-                              : c.status === 'degraded'
-                                ? 'warning'
-                                : c.status === 'provisioning'
-                                  ? 'info'
-                                  : 'danger'
-                          }
-                          pulse={c.status === 'provisioning'}
-                        />
-                        <span className="text-xs capitalize text-ink-subtle">{t(STATUS_WORD[c.status])}</span>
-                        {c.srtp && (
-                          <Badge tone="outline" size="sm">
-                            <ShieldCheck />
-                            {t('SRTP')}
-                          </Badge>
+                    {/* Icon and name travel together; the health block is what
+                        drops below them on a narrow screen. */}
+                    <span className="flex min-w-0 flex-1 items-center gap-3 lg:contents">
+                      <span
+                        className={cn(
+                          'grid size-10 shrink-0 place-items-center rounded-2xl',
+                          c.status === 'active'
+                            ? 'bg-success-soft text-success'
+                            : c.status === 'degraded'
+                              ? 'bg-warning-soft text-warning'
+                              : c.status === 'provisioning'
+                                ? 'bg-info-soft text-info'
+                                : 'bg-veil-strong text-ink-faint',
                         )}
+                      >
+                        <Cable className="size-[18px]" />
+                      </span>
+
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
+                          <p className="truncate text-md font-medium text-ink">{c.name}</p>
+                          <StatusDot
+                            tone={
+                              c.status === 'active'
+                                ? 'success'
+                                : c.status === 'degraded'
+                                  ? 'warning'
+                                  : c.status === 'provisioning'
+                                    ? 'info'
+                                    : 'danger'
+                            }
+                            pulse={c.status === 'provisioning'}
+                          />
+                          <span className="text-xs capitalize text-ink-subtle">{t(STATUS_WORD[c.status])}</span>
+                          {c.srtp && (
+                            <Badge tone="outline" size="sm">
+                              <ShieldCheck />
+                              {t('SRTP')}
+                            </Badge>
+                          )}
+                        </div>
+                        <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-ink-subtle">
+                          <span className="capitalize">
+                            {t(AUTH_MODES.find((a) => a.value === c.authMode)?.label ?? '')}
+                          </span>
+                          <span className="text-ink-faint/60" aria-hidden>
+                            ·
+                          </span>
+                          <span>{c.region}</span>
+                          <span className="text-ink-faint/60" aria-hidden>
+                            ·
+                          </span>
+                          <span className="uppercase">{c.transport}</span>
+                          <span className="text-ink-faint/60" aria-hidden>
+                            ·
+                          </span>
+                          <span>{t('created {when}', { when: relativeTime(c.createdAt) })}</span>
+                        </p>
                       </div>
-                      <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-ink-subtle">
-                        <span className="capitalize">
-                          {t(AUTH_MODES.find((a) => a.value === c.authMode)?.label ?? '')}
-                        </span>
-                        <span className="text-ink-faint/60" aria-hidden>
-                          ·
-                        </span>
-                        <span>{c.region}</span>
-                        <span className="text-ink-faint/60" aria-hidden>
-                          ·
-                        </span>
-                        <span className="uppercase">{c.transport}</span>
-                        <span className="text-ink-faint/60" aria-hidden>
-                          ·
-                        </span>
-                        <span>{t('created {when}', { when: relativeTime(c.createdAt) })}</span>
-                      </p>
-                    </div>
+                    </span>
 
                     {/* Health, inline instead of a nested metrics grid */}
                     <div className="flex shrink-0 items-center gap-6 text-sm tabular-nums lg:gap-8">
@@ -377,7 +381,7 @@ export default function SipPage() {
                         {c.health.asr > 0 ? `${c.health.asr.toFixed(1)}%` : '—'}
                       </span>
                       <span className={cn('hidden w-16 shrink-0 text-ink lg:block', openConn && 'lg:hidden')}>
-                        {c.health.latencyMs > 0 ? `${c.health.latencyMs} ms` : '—'}
+                        {c.health.latencyMs > 0 ? `${t('{n} ms', { n: c.health.latencyMs })}` : '—'}
                       </span>
                       <ArrowRight className="size-4 shrink-0 text-ink-faint transition-transform group-hover:translate-x-0.5" />
                     </div>

@@ -162,7 +162,7 @@ export default function BillingPage() {
         <div className="space-y-5">
           <div className="grid gap-5 lg:grid-cols-[1fr_20rem]">
             <Section index={0}>
-              <div className="grid gap-y-7 sm:grid-cols-3 sm:divide-x sm:divide-line">
+              <div className="grid grid-cols-2 gap-x-4 gap-y-7 sm:grid-cols-3 sm:divide-x sm:divide-line">
                 <Figure
                   label={t('Spend this month')}
                   value={money(monthSpend, currency)}
@@ -217,14 +217,14 @@ export default function BillingPage() {
 
           <Section eyebrow={t('This month')} title={t('Where it goes')} divided index={2}>
             <div className="grid gap-10 lg:grid-cols-2">
-              <div className="flex items-center gap-7">
+              <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-center sm:gap-7">
                 <DonutChart
                   segments={breakdown}
                   size={124}
                   thickness={13}
                   center={
                     <>
-                      <span className="text-[10px] uppercase tracking-wider text-ink-faint">Total</span>
+                      <span className="text-2xs uppercase tracking-wider text-ink-faint">{t('Total')}</span>
                       <span className="text-sm font-semibold tabular-nums text-ink">
                         {money(monthSpend, currency, { compact: true })}
                       </span>

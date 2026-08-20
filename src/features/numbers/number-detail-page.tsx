@@ -176,7 +176,7 @@ export default function NumberDetailPage() {
           divided
           index={2}
         >
-          <div className="grid gap-y-7 sm:grid-cols-2 sm:divide-x sm:divide-line lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-x-4 gap-y-7 sm:divide-x sm:divide-line lg:grid-cols-4">
             {[
               { label: t('Minutes'), value: num(number.usage.minutes), meta: 'this month' },
               { label: t('Calls'), value: num(number.usage.calls), meta: 'this month' },

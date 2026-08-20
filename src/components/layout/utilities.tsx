@@ -55,7 +55,7 @@ export function TopUtilities({ className, onOpenSearch }: { className?: string; 
       <Menu>
         <MenuTrigger asChild>
           <button
-            className="chrome inline-flex h-9 items-center gap-1.5 rounded-full pe-3 ps-2.5 text-sm font-medium text-ink transition-colors hover:bg-veil-strong"
+            className="chrome inline-flex h-11 items-center gap-1.5 rounded-full pe-3.5 ps-3 text-sm font-medium text-ink transition-colors hover:bg-veil-strong sm:h-9 sm:pe-3 sm:ps-2.5"
             aria-label={t('Create')}
           >
             <Plus className="size-4 text-brand" />
@@ -88,7 +88,7 @@ export function TopUtilities({ className, onOpenSearch }: { className?: string; 
       <Tooltip content={t('Search or jump to…')}>
         <button
           onClick={onOpenSearch}
-          className="chrome inline-flex h-9 items-center gap-2 rounded-full px-3 text-ink-subtle transition-colors hover:bg-veil-strong hover:text-ink"
+          className="chrome inline-flex h-11 items-center gap-2 rounded-full px-3.5 text-ink-subtle transition-colors hover:bg-veil-strong hover:text-ink sm:h-9 sm:px-3"
           aria-label={t('Search')}
         >
           <Search className="size-4" />
@@ -133,7 +133,7 @@ export function TopUtilities({ className, onOpenSearch }: { className?: string; 
         ))}
       </div>
 
-      <div className="chrome grid h-9 place-items-center rounded-full px-0.5">
+      <div className="chrome grid h-11 place-items-center rounded-full px-1 sm:h-9 sm:px-0.5">
         <NotificationBell />
       </div>
 
@@ -141,7 +141,7 @@ export function TopUtilities({ className, onOpenSearch }: { className?: string; 
       <Menu>
         <MenuTrigger asChild>
           <button
-            className="chrome grid size-9 place-items-center rounded-full transition-opacity hover:opacity-85"
+            className="chrome grid size-11 place-items-center rounded-full transition-opacity hover:opacity-85 sm:size-9"
             aria-label={t('Account')}
           >
             <Avatar name={profile.name} hue={profile.avatarHue} size="md" className="!size-7" />

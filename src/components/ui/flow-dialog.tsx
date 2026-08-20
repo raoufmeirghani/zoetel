@@ -66,17 +66,23 @@ export function FlowDialog({
               aria-describedby={undefined}
               className="fixed inset-0 z-50 grid place-items-center focus:outline-none"
             >
+              {/* A 90% window is right on a desktop and wrong on a phone, where
+                  the eight pixels of visible page behind it read as a rendering
+                  mistake. Below `sm` it takes the whole screen and keeps only
+                  its top corners, which is what a phone means by a flow. */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.975, y: 14 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.985, y: 8, transition: { duration: 0.14 } }}
                 transition={{ type: 'spring', stiffness: 380, damping: 34, mass: 0.75 }}
                 className={cn(
-                  'glass-panel flex h-[90dvh] w-[90vw] max-w-5xl flex-col overflow-hidden rounded-[28px]',
+                  'glass-panel chrome-solid-sm flex flex-col overflow-hidden',
+                  'h-dvh w-screen rounded-none',
+                  'sm:h-[90dvh] sm:w-[90vw] sm:max-w-5xl sm:rounded-[28px]',
                   className,
                 )}
               >
-                <header className="shrink-0 border-b border-line-soft px-6 py-5 sm:px-8">
+                <header className="shrink-0 border-b border-line-soft px-5 pb-4 pt-[calc(1rem+env(safe-area-inset-top,0px))] sm:px-8 sm:py-5">
                   <div className="flex items-center justify-between gap-6">
                     <DialogPrimitive.Title className="headline truncate text-lg text-ink">
                       {title}
@@ -90,7 +96,7 @@ export function FlowDialog({
                   <Stepper steps={steps} current={step} onStepClick={onStepClick} className="mt-5" />
                 </header>
 
-                <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+                <div className="sheet-scroll min-h-0 flex-1 overflow-y-auto">
                   <AnimatePresence mode="wait" initial={false} custom={direction}>
                     <motion.div
                       key={step}
@@ -99,7 +105,7 @@ export function FlowDialog({
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: direction * -26 * dirSign, transition: { duration: 0.14 } }}
                       transition={{ duration: 0.32, ease: EASE }}
-                      className="mx-auto max-w-2xl px-6 py-8 sm:px-8 sm:py-10"
+                      className="mx-auto max-w-2xl px-5 py-7 sm:px-8 sm:py-10"
                     >
                       {children}
                     </motion.div>
@@ -107,7 +113,7 @@ export function FlowDialog({
                 </div>
 
                 {footer && (
-                  <footer className="shrink-0 border-t border-line-soft px-6 py-4 sm:px-8">
+                  <footer className="shrink-0 border-t border-line-soft px-5 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom,0px))] sm:px-8 sm:py-4">
                     <div className="mx-auto flex max-w-2xl items-center justify-between gap-3">{footer}</div>
                   </footer>
                 )}

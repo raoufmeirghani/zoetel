@@ -154,6 +154,7 @@ export default function PricingPage() {
       id: 'destination',
       header: t('Destination'),
       headerClassName: 'w-full sm:w-[38%]',
+      mobile: 'primary',
       cell: (r) => (
         <div className="flex items-center gap-2.5">
           <CountryFlag code={r.country} />
@@ -171,6 +172,7 @@ export default function PricingPage() {
       ),
       align: 'right',
       sortable: true,
+      mobile: 'trailing',
       sortValue: (r) => r.outbound,
       cell: (r) =>
         r.outbound > 0 ? (
@@ -191,10 +193,12 @@ export default function PricingPage() {
       header: t('Inbound / min'),
       align: 'right',
       hideBelow: 'md',
+      mobile: 'meta',
       sortable: true,
       sortValue: (r) => r.inbound,
       cell: (r) => (
         <span className="tabular-nums text-ink">
+          <span className="text-ink-faint md:hidden">{t('in')} </span>
           {money(r.inbound * multiplier, currency, { precise: true })}
         </span>
       ),
@@ -204,13 +208,15 @@ export default function PricingPage() {
       header: t('SMS'),
       align: 'right',
       hideBelow: 'md',
+      mobile: 'meta',
       cell: (r) =>
         r.sms ? (
           <span className="tabular-nums text-ink">
+            <span className="text-ink-faint md:hidden">{t('SMS')} </span>
             {money(r.sms * multiplier, currency, { precise: true })}
           </span>
         ) : (
-          <span className="text-ink-faint">—</span>
+          <span className="text-ink-faint">{t('no SMS')}</span>
         ),
     },
   ]
@@ -488,7 +494,9 @@ export default function PricingPage() {
               </div>
               <div className="flex justify-between">
                 <span className="text-ink-muted">Saved vs list</span>
-                <span className="font-medium tabular-nums text-success-ink">{money(savings, currency)}/mo</span>
+                <span className="font-medium tabular-nums text-success-ink">
+                  {t('{amount}/mo', { amount: money(savings, currency) })}
+                </span>
               </div>
             </div>
             <Progress value={(discount / 24) * 100} className="mt-4" size="xs" />

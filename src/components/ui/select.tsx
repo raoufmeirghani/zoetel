@@ -21,9 +21,11 @@ export const SelectTrigger = React.forwardRef<
       'data-[state=open]:shadow-[0_0_0_1px_hsl(var(--brand)),0_0_0_4px_hsl(var(--brand)/0.14)]',
       'disabled:cursor-not-allowed disabled:bg-surface-3 disabled:text-ink-subtle',
       'data-[placeholder]:text-ink-faint [&_svg]:shrink-0',
-      size === 'sm' && 'h-8 rounded-lg px-2.5 text-sm',
-      size === 'md' && 'h-9 rounded-lg px-3 text-base',
-      size === 'lg' && 'h-11 rounded-xl px-3.5 text-md',
+      // Taller on a phone, and never under 16px there — a sub-16px control
+      // makes iOS Safari zoom the page when it takes focus.
+      size === 'sm' && 'h-10 rounded-lg px-3 text-[16px] sm:h-8 sm:px-2.5 sm:text-sm',
+      size === 'md' && 'h-11 rounded-lg px-3.5 text-[16px] sm:h-9 sm:px-3 sm:text-base',
+      size === 'lg' && 'h-12 rounded-xl px-4 text-[16px] sm:h-11 sm:px-3.5 sm:text-md',
       className,
     )}
     {...props}

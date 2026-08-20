@@ -99,6 +99,7 @@ export default function LogsPage() {
       id: 'method',
       header: t('Method'),
       width: '10%',
+      mobile: 'meta',
       cell: (r) => (
         <Badge tone={METHOD_TONE[r.method]} size="sm" className="font-mono">
           {r.method}
@@ -109,12 +110,14 @@ export default function LogsPage() {
       id: 'path',
       header: t('Path'),
       headerClassName: 'w-full sm:w-[36%]',
+      mobile: 'primary',
       cell: (r) => <span className="truncate font-mono text-[12.5px] text-ink">{r.path}</span>,
     },
     {
       id: 'status',
       header: t('Status'),
       width: '12%',
+      mobile: 'trailing',
       cell: (r) => (
         <Badge tone={statusTone(r.status)} size="sm" className="font-mono tabular-nums">
           {r.status}
@@ -127,11 +130,12 @@ export default function LogsPage() {
       align: 'right',
       width: '12%',
       hideBelow: 'sm',
+      mobile: 'meta',
       sortable: true,
       sortValue: (r) => r.latencyMs,
       cell: (r) => (
         <span className={cn('text-sm tabular-nums', r.latencyMs > 200 ? 'text-warning-ink' : 'text-ink')}>
-          {r.latencyMs} ms
+          {t('{n} ms', { n: r.latencyMs })}
         </span>
       ),
     },
@@ -140,6 +144,7 @@ export default function LogsPage() {
       header: t('API key'),
       width: '16%',
       hideBelow: '2xl',
+      mobile: 'omit',
       cell: (r) => <span className="truncate text-sm text-ink-muted">{r.keyName}</span>,
     },
     {
@@ -148,6 +153,7 @@ export default function LogsPage() {
       align: 'right',
       width: '14%',
       hideBelow: 'sm',
+      mobile: 'meta',
       cell: (r) => <span className="text-xs tabular-nums text-ink-faint">{relativeTime(r.at)}</span>,
     },
   ]
@@ -186,8 +192,8 @@ export default function LogsPage() {
               hint: t('Target < 1%'),
               bad: errorRate > 1,
             },
-            { label: t('p50 latency'), value: `${p50} ms`, hint: t('Median') },
-            { label: t('p99 latency'), value: `${p99} ms`, hint: t('Slowest 1%') },
+            { label: t('p50 latency'), value: t('{n} ms', { n: p50 }), hint: t('Median') },
+            { label: t('p99 latency'), value: t('{n} ms', { n: p99 }), hint: t('Slowest 1%') },
           ].map((s, i) => (
             <motion.div
               key={s.label}

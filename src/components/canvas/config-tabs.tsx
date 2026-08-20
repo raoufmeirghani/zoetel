@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { Check, CircleAlert, Lock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { useRailFade } from '@/hooks/use-media'
 import type { LucideIcon } from 'lucide-react'
 import { useI18n } from '@/lib/i18n'
 
@@ -221,11 +222,14 @@ function TabRail({
   onSelect: (id: string) => void
   layoutId: string
 }) {
+  const rail = useRailFade<HTMLDivElement>()
+
   return (
     <div className="relative">
       <div
+        ref={rail}
         role="tablist"
-        className="no-scrollbar flex items-stretch gap-1 overflow-x-auto border-b border-line"
+        className="no-scrollbar rail-fade flex items-stretch gap-1 overflow-x-auto border-b border-line"
       >
         {sections.map((s) => {
           const active = s.id === activeId
@@ -238,7 +242,7 @@ function TabRail({
               disabled={locked}
               onClick={() => onSelect(s.id)}
               className={cn(
-                'group relative -mb-px inline-flex shrink-0 items-center gap-2 whitespace-nowrap px-3 pb-3 pt-1 text-base transition-colors',
+                'group relative -mb-px inline-flex shrink-0 items-center gap-2 whitespace-nowrap px-3 pb-3 pt-2 text-base transition-colors sm:pt-1',
                 active ? 'font-medium text-ink' : 'text-ink-subtle hover:text-ink',
                 locked && 'cursor-not-allowed opacity-55',
               )}

@@ -205,7 +205,7 @@ export default function MarketplacePage() {
                 inputMode="numeric"
                 placeholder={t('Search for digits you want — 1000, 4444, your street number…')}
                 aria-label={t('Digits the number should contain')}
-                className="h-11 w-full min-w-0 rounded-[18px] bg-transparent pe-10 ps-10 text-md tabular-nums text-ink placeholder:text-ink-faint focus:outline-none"
+                className="h-12 w-full min-w-0 rounded-[18px] bg-transparent pe-10 ps-10 text-[16px] tabular-nums text-ink placeholder:text-ink-faint focus:outline-none sm:h-11 sm:text-md"
               />
               {contains && (
                 <button
@@ -231,7 +231,7 @@ export default function MarketplacePage() {
               onClick={() => setRefineOpen((v) => !v)}
               aria-expanded={refineOpen}
               className={cn(
-                'inline-flex h-7 items-center gap-1.5 rounded-lg px-2 text-xs font-medium transition-colors',
+                'inline-flex h-9 items-center gap-1.5 rounded-lg px-2.5 text-xs font-medium transition-colors sm:h-7 sm:px-2',
                 refineOpen || refineCount
                   ? 'bg-brand-soft text-brand-ink'
                   : 'text-ink-muted hover:bg-veil-strong hover:text-ink',
@@ -244,7 +244,7 @@ export default function MarketplacePage() {
             <button
               onClick={() => setOnlySaved((v) => !v)}
               className={cn(
-                'inline-flex h-7 items-center gap-1.5 rounded-lg px-2 text-xs font-medium transition-colors',
+                'inline-flex h-9 items-center gap-1.5 rounded-lg px-2.5 text-xs font-medium transition-colors sm:h-7 sm:px-2',
                 onlySaved
                   ? 'bg-brand-soft text-brand-ink'
                   : 'text-ink-muted hover:bg-veil-strong hover:text-ink',
@@ -318,7 +318,7 @@ export default function MarketplacePage() {
             {t('National, mobile and toll-free ranges need a verified entity.')}
             <button
               onClick={() => navigate('/verification')}
-              className="font-medium text-brand-ink underline decoration-brand/30 underline-offset-4 hover:decoration-brand"
+              className="tap font-medium text-brand-ink underline decoration-brand/30 underline-offset-4 hover:decoration-brand"
             >
               {t('Verify now')}
             </button>
@@ -422,7 +422,7 @@ export default function MarketplacePage() {
                     >
                       <button
                         onClick={() => toggleFavorite(r.id)}
-                        className="shrink-0 text-ink-faint/60 transition-colors hover:text-warning"
+                        className="grid size-9 shrink-0 place-items-center rounded-lg text-ink-faint/60 transition-colors hover:bg-veil-strong hover:text-warning sm:size-5"
                         aria-label={saved ? t('Remove from saved') : t('Save this number')}
                       >
                         <Star className={cn('size-4', saved && 'fill-warning text-warning')} />

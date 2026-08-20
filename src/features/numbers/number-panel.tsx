@@ -71,7 +71,9 @@ function NumberPanelBody({ number }: { number: OwnedNumber }) {
           ·
         </span>
         <CapabilityPills capabilities={number.capabilities} size="sm" />
-        <span className="text-xs text-ink-faint">{money(number.monthly, currency)}/mo</span>
+        <span className="text-xs text-ink-faint">
+          {t('{amount}/mo', { amount: money(number.monthly, currency) })}
+        </span>
         <CopyButton value={number.e164} size="icon-xs" className="ms-auto" />
         <Button variant="ghost" size="xs" icon={<Tag />} onClick={() => setRenaming(true)}>
           {number.label ? t('Rename') : t('Label')}

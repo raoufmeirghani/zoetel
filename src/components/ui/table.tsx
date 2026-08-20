@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils'
 import { Checkbox } from './toggle'
 import { SkeletonTable } from './skeleton'
 import { useI18n } from '@/lib/i18n'
+import { useIsHandheld } from '@/hooks/use-media'
 
 export interface Column<T> {
   id: string
@@ -18,6 +19,22 @@ export interface Column<T> {
   headerClassName?: string
   /** Hidden below the given breakpoint to keep small screens legible. */
   hideBelow?: 'sm' | 'md' | 'lg' | 'xl' | '2xl'
+  /**
+   * What this column becomes when the table turns into a list on a phone.
+   *
+   * A table is a two-dimensional idea and a phone is one column wide, so below
+   * `sm` the rows are rebuilt as list items instead of being scrolled sideways
+   * or silently clipped. Each row gets a title, a value on the same line, and a
+   * quiet meta line under it:
+   *
+   * - `primary`   the title
+   * - `trailing`  right-aligned on the title line — a figure, a status
+   * - `meta`      joined into the second line
+   * - `omit`      dropped; some columns only make sense in a grid
+   *
+   * A table that annotates nothing keeps the old behaviour, so this is additive.
+   */
+  mobile?: 'primary' | 'trailing' | 'meta' | 'omit'
 }
 
 const hideMap = {
@@ -62,6 +79,7 @@ export function DataTable<T extends { id: string }>({
   animateRows?: boolean
 }) {
   const { t } = useI18n()
+  const handheld = useIsHandheld()
   const [sort, setSort] = React.useState<{ id: string; dir: 'asc' | 'desc' } | null>(initialSort ?? null)
 
   const sorted = React.useMemo(() => {
@@ -96,6 +114,61 @@ export function DataTable<T extends { id: string }>({
   }
 
   if (!rows.length && empty) return <>{empty}</>
+
+  // On a phone, a table whose columns declare their mobile role becomes a list.
+  const annotated = columns.some((c) => c.mobile)
+  if (handheld && annotated) {
+    const primary = columns.find((c) => c.mobile === 'primary') ?? columns[0]
+    const trailing = columns.filter((c) => c.mobile === 'trailing')
+    const meta = columns.filter((c) => c.mobile === 'meta')
+
+    return (
+      <div className={cn('w-full', className)}>
+        <ul className="divide-y divide-line-soft">
+          {sorted.map((row, i) => (
+            <li key={row.id}>
+              <button
+                type="button"
+                onClick={onRowClick ? () => onRowClick(row) : undefined}
+                disabled={!onRowClick}
+                className={cn(
+                  '-mx-2 flex w-[calc(100%+1rem)] items-start gap-3 rounded-xl px-2 py-3.5 text-start',
+                  onRowClick && 'transition-colors active:bg-veil',
+                  rowClassName?.(row),
+                )}
+              >
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-base text-ink">{primary.cell(row, i)}</span>
+                  {meta.length > 0 && (
+                    <span className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-ink-subtle">
+                      {meta.map((c, k) => (
+                        <React.Fragment key={c.id}>
+                          {k > 0 && (
+                            <span className="text-ink-faint/60" aria-hidden>
+                              ·
+                            </span>
+                          )}
+                          <span className="min-w-0 truncate">{c.cell(row, i)}</span>
+                        </React.Fragment>
+                      ))}
+                    </span>
+                  )}
+                </span>
+                {trailing.length > 0 && (
+                  <span className="flex shrink-0 flex-col items-end gap-1 text-sm text-ink-muted">
+                    {trailing.map((c) => (
+                      <span key={c.id}>{c.cell(row, i)}</span>
+                    ))}
+                  </span>
+                )}
+              </button>
+            </li>
+          ))}
+        </ul>
+        {footer && <div className="border-t border-line-soft pt-3">{footer}</div>}
+      </div>
+    )
+  }
 
   return (
     <div className={cn('w-full overflow-x-auto', className)}>

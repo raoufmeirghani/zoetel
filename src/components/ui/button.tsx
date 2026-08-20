@@ -30,15 +30,21 @@ const buttonVariants = cva(
         link: 'text-brand-ink underline-offset-4 hover:underline',
         brandSoft: 'bg-brand-soft text-brand-ink hover:bg-brand/15',
       },
+      /**
+       * Every size is taller on a phone and returns to its desk proportions at
+       * `sm`. A control sized for a cursor is a control you miss with a thumb,
+       * and doing it here rather than at ~200 call sites is the only way it
+       * stays true as the product grows.
+       */
       size: {
-        xs: 'h-7 rounded-md px-2 text-xs [&_svg]:size-3.5',
-        sm: 'h-8 rounded-lg px-2.5 text-sm [&_svg]:size-4',
-        md: 'h-9 rounded-lg px-3.5 text-base [&_svg]:size-4',
-        lg: 'h-10 rounded-xl px-4 text-base [&_svg]:size-4',
-        xl: 'h-12 rounded-xl px-5 text-md [&_svg]:size-[18px]',
-        icon: 'size-9 rounded-lg [&_svg]:size-4',
-        'icon-sm': 'size-8 rounded-lg [&_svg]:size-4',
-        'icon-xs': 'size-7 rounded-md [&_svg]:size-3.5',
+        xs: 'h-9 rounded-md px-3 text-xs sm:h-7 sm:px-2 [&_svg]:size-3.5',
+        sm: 'h-10 rounded-lg px-3 text-sm sm:h-8 sm:px-2.5 [&_svg]:size-4',
+        md: 'h-11 rounded-lg px-4 text-base sm:h-9 sm:px-3.5 [&_svg]:size-4',
+        lg: 'h-12 rounded-xl px-4.5 text-base sm:h-10 sm:px-4 [&_svg]:size-4',
+        xl: 'h-13 rounded-xl px-5 text-md sm:h-12 [&_svg]:size-[18px]',
+        icon: 'size-11 rounded-lg sm:size-9 [&_svg]:size-4',
+        'icon-sm': 'size-10 rounded-lg sm:size-8 [&_svg]:size-4',
+        'icon-xs': 'size-10 rounded-md sm:size-7 [&_svg]:size-3.5',
       },
       block: { true: 'w-full' },
     },

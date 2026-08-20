@@ -124,11 +124,12 @@ export default function SipDetailPage() {
 
       {conn.status === 'degraded' && (
         <div className="mb-10 rounded-3xl bg-warning-soft p-5">
-          <p className="text-base font-medium text-warning-ink">Call quality is below target</p>
+          <p className="text-base font-medium text-warning-ink">{t('Call quality is below target')}</p>
           <p className="mt-1.5 max-w-3xl text-sm leading-relaxed text-warning-ink/85">
-            We're seeing {health.packetLoss}% packet loss and {health.jitterMs} ms jitter from your side of the
-            trunk. That usually means an over-subscribed uplink or a firewall rewriting RTP. Switching to TLS
-            with SRTP and pinning media to the Cairo edge normally resolves it.
+            {t(
+              'We’re seeing {loss}% packet loss and {jitter} ms jitter from your side of the trunk. That usually means an over-subscribed uplink or a firewall rewriting RTP. Switching to TLS with SRTP and pinning media to the Cairo edge normally resolves it.',
+              { loss: health.packetLoss, jitter: health.jitterMs },
+            )}
           </p>
         </div>
       )}

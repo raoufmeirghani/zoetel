@@ -241,8 +241,8 @@ export default function NumbersPage() {
                       aria-expanded={n.id === openId}
                       className="min-w-0 flex-1 text-start"
                     >
-                      <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
-                        <p className="truncate text-base font-medium text-ink">
+                      <div className="flex items-center gap-x-2.5 gap-y-1 sm:flex-wrap">
+                        <p className="min-w-0 truncate text-base font-medium text-ink">
                           {n.label ?? formatE164(n.e164)}
                         </p>
                         {n.status === 'active' ? (
@@ -315,11 +315,18 @@ export default function NumbersPage() {
                     {/* Beside an open panel the list is an index, not a report —
                       the secondary columns only return once there's real room. */}
                     <div className={cn('hidden w-24 shrink-0 text-end sm:block', openNumber && 'sm:hidden')}>
-                      <p className="text-sm tabular-nums text-ink">{num(n.usage.minutes)} min</p>
+                      <p className="text-sm tabular-nums text-ink">
+                        {t('{n} min', { n: num(n.usage.minutes) })}
+                      </p>
                       <p className="mt-0.5 text-xs tabular-nums text-ink-faint">
-                        {money(n.monthly, currency)}/mo
+                        {t('{amount}/mo', { amount: money(n.monthly, currency) })}
                       </p>
                     </div>
+
+                    {/* The phone's version of that column: one figure, not two. */}
+                    <p className="shrink-0 text-end text-xs tabular-nums text-ink-faint sm:hidden">
+                      {t('{amount}/mo', { amount: money(n.monthly, currency) })}
+                    </p>
 
                     <Menu>
                       <MenuTrigger asChild>
@@ -328,6 +335,11 @@ export default function NumbersPage() {
                           size="icon-xs"
                           className={cn(
                             'shrink-0 text-ink-faint opacity-60 transition-opacity group-hover:opacity-100',
+                            // Hidden on a phone: tapping the row opens the sheet,
+                            // which carries every one of these actions already.
+                            // Two ways into the same menu is one too many at this
+                            // width, and it costs 40px the label needs.
+                            'hidden sm:inline-flex',
                           )}
                           aria-label={t('Actions for {name}', { name: n.e164 })}
                         >

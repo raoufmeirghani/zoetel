@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from './button'
+import { useIsHandheld } from '@/hooks/use-media'
 import { useDirSign, useI18n } from '@/lib/i18n'
 
 export const Dialog = DialogPrimitive.Root
@@ -33,6 +34,7 @@ export function Modal({
   icon?: React.ReactNode
   tone?: 'brand' | 'danger' | 'success' | 'warning'
 }) {
+  const handheld = useIsHandheld()
   const { t } = useI18n()
   const widths = { sm: 'max-w-sm', md: 'max-w-md', lg: 'max-w-xl', xl: 'max-w-3xl' }
   const tones = {
@@ -59,7 +61,7 @@ export function Modal({
                 Framer Motion's inline transform can't fight the centring. */}
             <DialogPrimitive.Content
               forceMount
-              className="fixed inset-0 z-50 grid place-items-center overflow-y-auto p-4 focus:outline-none"
+              className="fixed inset-0 z-50 grid place-items-end overflow-y-auto p-0 focus:outline-none sm:place-items-center sm:p-4"
               // Radix forces pointer-events:auto on Content, so dismiss-on-backdrop
               // is handled here rather than by the overlay underneath.
               onClick={(e) => {
@@ -67,17 +69,25 @@ export function Modal({
               }}
             >
               <motion.div
-                initial={{ opacity: 0, scale: 0.96, y: 12 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.97, y: 6, transition: { duration: 0.13 } }}
+                initial={handheld ? { y: '100%' } : { opacity: 0, scale: 0.96, y: 12 }}
+                animate={handheld ? { y: 0 } : { opacity: 1, scale: 1, y: 0 }}
+                exit={
+                  handheld
+                    ? { y: '100%', transition: { duration: 0.18 } }
+                    : { opacity: 0, scale: 0.97, y: 6, transition: { duration: 0.13 } }
+                }
                 transition={spring}
                 className={cn(
                   'relative flex w-full flex-col',
-                  'glass-panel max-h-[calc(100dvh-2rem)] rounded-3xl',
+                  'glass-panel chrome-solid-sm max-h-[92dvh] rounded-t-[26px]',
+                  'sm:max-h-[calc(100dvh-2rem)] sm:rounded-3xl',
                   widths[size],
                 )}
               >
-                <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-6">
+                {handheld && (
+                  <span aria-hidden className="mx-auto mt-3 h-1 w-10 shrink-0 rounded-full bg-line-strong" />
+                )}
+                <div className="sheet-scroll min-h-0 flex-1 overflow-y-auto p-5 sm:p-6">
                   {(title || icon) && (
                     <div className="mb-4">
                       {icon && (

@@ -42,7 +42,7 @@ export const Checkbox = React.forwardRef<
   <CheckboxPrimitive.Root
     ref={ref}
     className={cn(
-      'peer flex size-4 shrink-0 items-center justify-center rounded-[5px] transition-all duration-150',
+      'peer flex size-5 shrink-0 items-center justify-center rounded-[5px] transition-all duration-150',
       'shadow-[inset_0_0_0_1px_hsl(var(--line-strong))] hover:shadow-[inset_0_0_0_1px_hsl(var(--ink)/0.3)]',
       'data-[state=checked]:bg-brand data-[state=checked]:shadow-none',
       'data-[state=indeterminate]:bg-brand data-[state=indeterminate]:shadow-none',
@@ -103,7 +103,8 @@ export function Segmented<T extends string>({
     <div
       className={cn(
         'inline-flex items-center gap-0.5 rounded-xl bg-surface-3 p-0.5',
-        size === 'sm' ? 'h-8' : 'h-9',
+        // Taller on a phone; a segmented control is a primary control there.
+        size === 'sm' ? 'h-10 sm:h-8' : 'h-11 sm:h-9',
         className,
       )}
       role="tablist"
@@ -117,7 +118,7 @@ export function Segmented<T extends string>({
             aria-selected={active}
             onClick={() => onChange(o.value)}
             className={cn(
-              'relative inline-flex h-full items-center gap-1.5 rounded-[10px] px-2.5 font-medium transition-colors duration-150',
+              'relative inline-flex h-full items-center gap-1.5 rounded-[10px] px-3 font-medium transition-colors duration-150 sm:px-2.5',
               size === 'sm' ? 'text-xs' : 'text-sm',
               active ? 'text-ink' : 'text-ink-subtle hover:text-ink-muted',
               '[&_svg]:size-3.5',

@@ -49,7 +49,9 @@ export function AppShell() {
             </div>
           </div>
 
-          <main className="pb-28 lg:pb-16">
+          {/* `pb-dock` reserves the floating dock's height plus the safe-area
+              inset, so a page can never end underneath its own navigation. */}
+          <main className="pb-dock">
             {/* Keyed on pathname so each route plays its entrance on mount. No
                 AnimatePresence: `mode="wait"` gates the incoming page on the
                 outgoing one's exit, and a navigation that interrupts that

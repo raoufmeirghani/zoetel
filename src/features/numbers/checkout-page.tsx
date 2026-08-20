@@ -297,7 +297,7 @@ export default function CheckoutPage() {
                   <CapabilityPills capabilities={n.capabilities} size="sm" className="hidden sm:flex" />
                   <div className="text-end">
                     <p className="text-base font-medium tabular-nums text-ink">
-                      {money(n.monthly, currency)}/mo
+                      {t('{amount}/mo', { amount: money(n.monthly, currency) })}
                     </p>
                     {n.setup > 0 && (
                       <p className="text-xs tabular-nums text-ink-faint">+{money(n.setup, currency)} setup</p>

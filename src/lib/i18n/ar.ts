@@ -1243,4 +1243,10 @@ export const ar: Dictionary = {
   '{n} / sec': '{n} / ثانية',
   '{n} over 1 hour': '{n} خلال ساعة',
   '{n} min unlocks the next tier': '{n} دقيقة تفتح الشريحة التالية',
+  Total: 'الإجمالي',
+  in: 'واردة',
+  'no SMS': 'بلا رسائل',
+  'Call quality is below target': 'جودة المكالمات أقل من المستهدف',
+  'We’re seeing {loss}% packet loss and {jitter} ms jitter from your side of the trunk. That usually means an over-subscribed uplink or a firewall rewriting RTP. Switching to TLS with SRTP and pinning media to the Cairo edge normally resolves it.':
+    'نرى فقدًا للحزم بنسبة {loss}٪ وتقلقلًا بمقدار {jitter} ملّي ثانية من جهتك في الوصلة. عادةً ما يعني ذلك وصلة صاعدة محمّلة أكثر من طاقتها أو جدارًا ناريًا يعيد كتابة RTP. والتبديل إلى TLS مع SRTP وتثبيت الوسائط على حدود القاهرة يحل ذلك عادةً.',
 }

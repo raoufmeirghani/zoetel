@@ -194,10 +194,14 @@ export default function ApiKeysPage() {
                         onClick={() =>
                           setRevealed((v) => (v.includes(k.id) ? v.filter((x) => x !== k.id) : [...v, k.id]))
                         }
-                        className="shrink-0 text-ink-faint transition-colors hover:text-ink"
+                        className="grid size-9 shrink-0 place-items-center rounded-md text-ink-faint transition-colors hover:bg-veil-strong hover:text-ink sm:size-5"
                         aria-label={revealed.includes(k.id) ? t('Hide key') : t('Reveal key')}
                       >
-                        {revealed.includes(k.id) ? <EyeOff className="size-3" /> : <Eye className="size-3" />}
+                        {revealed.includes(k.id) ? (
+                          <EyeOff className="size-3.5" />
+                        ) : (
+                          <Eye className="size-3.5" />
+                        )}
                       </button>
                       <CopyButton value={k.token} />
                     </div>

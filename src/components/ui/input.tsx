@@ -17,10 +17,15 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
   inputSize?: 'sm' | 'md' | 'lg'
 }
 
+/**
+ * Heights grow on a phone and the font never drops below 16px there: iOS Safari
+ * zooms the viewport when a focused field is smaller than that, and once it has
+ * zoomed nothing on the page lines up again.
+ */
 const sizes = {
-  sm: 'h-8 rounded-lg text-sm',
-  md: 'h-9 rounded-lg text-base',
-  lg: 'h-11 rounded-xl text-md',
+  sm: 'h-9 text-[16px] sm:h-8 sm:text-sm rounded-lg',
+  md: 'h-11 text-[16px] sm:h-9 sm:text-base rounded-lg',
+  lg: 'h-12 text-[16px] sm:h-11 sm:text-md rounded-xl',
 }
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(

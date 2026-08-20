@@ -31,7 +31,7 @@ export function MobileDock({ onOpenSearch }: { onOpenSearch: () => void }) {
 
   return (
     <>
-      <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center pb-3 lg:hidden">
+      <div className="px-safe pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center pb-[calc(0.75rem+env(safe-area-inset-bottom,0px))] lg:hidden">
         <nav
           aria-label={t('Primary')}
           className="chrome pointer-events-auto flex items-center gap-0.5 rounded-full p-1.5"
@@ -43,7 +43,7 @@ export function MobileDock({ onOpenSearch }: { onOpenSearch: () => void }) {
               end={item.end}
               className={({ isActive }) =>
                 cn(
-                  'relative grid size-11 place-items-center rounded-full transition-colors',
+                  'relative grid size-12 place-items-center rounded-full transition-colors',
                   isActive ? 'text-brand' : 'text-ink-faint',
                 )
               }
@@ -65,14 +65,14 @@ export function MobileDock({ onOpenSearch }: { onOpenSearch: () => void }) {
           ))}
           <button
             onClick={onOpenSearch}
-            className="grid size-11 place-items-center rounded-full text-ink-faint"
+            className="grid size-12 place-items-center rounded-full text-ink-faint"
             aria-label={t('Search')}
           >
             <Search className="size-[19px]" />
           </button>
           <button
             onClick={() => setSheet(true)}
-            className="relative grid size-11 place-items-center rounded-full text-ink-faint"
+            className="relative grid size-12 place-items-center rounded-full text-ink-faint"
             aria-label={t('More')}
           >
             <Ellipsis className="size-[19px]" />
@@ -101,7 +101,7 @@ export function MobileDock({ onOpenSearch }: { onOpenSearch: () => void }) {
                   animate={{ y: 0 }}
                   exit={{ y: '100%' }}
                   transition={{ type: 'spring', stiffness: 400, damping: 36 }}
-                  className="fixed inset-x-0 bottom-0 z-50 rounded-t-[28px] bg-surface p-5 pb-8 shadow-pop lg:hidden"
+                  className="fixed inset-x-0 bottom-0 z-50 rounded-t-[28px] bg-surface p-5 pb-[calc(2rem+env(safe-area-inset-bottom,0px))] shadow-pop lg:hidden"
                 >
                   <DialogPrimitive.Title className="sr-only">{t('More destinations')}</DialogPrimitive.Title>
                   <div className="mx-auto mb-5 h-1 w-10 rounded-full bg-line-strong" />
