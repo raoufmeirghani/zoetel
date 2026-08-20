@@ -266,8 +266,8 @@
      the hero band, not on a bare canvas. */
   .glass {
     background: hsl(var(--surface) / 0.42);
-    backdrop-filter: blur(30px) saturate(190%);
     -webkit-backdrop-filter: blur(30px) saturate(190%);
+    backdrop-filter: blur(30px) saturate(190%);
     box-shadow:
       inset 0 1px 0 0 hsl(0 0% 100% / 0.7),
       0 0 0 1px hsl(var(--line) / 0.75),
@@ -286,8 +286,8 @@
 
   .glass-panel {
     background: hsl(var(--surface) / 0.74);
-    backdrop-filter: blur(34px) saturate(190%);
     -webkit-backdrop-filter: blur(34px) saturate(190%);
+    backdrop-filter: blur(34px) saturate(190%);
     box-shadow:
       inset 0 1px 0 0 hsl(0 0% 100% / 0.75),
       0 0 0 1px hsl(var(--line) / 0.8),
@@ -302,6 +302,25 @@
       0 0 0 1px hsl(var(--line)),
       0 8px 16px -10px rgb(0 0 0 / 0.5),
       0 32px 64px -24px rgb(0 0 0 / 0.7);
+  }
+
+  /* Translucency on these surfaces assumes the blur is actually painting. If it
+     isn't, a 74%-opaque sheet leaves the page behind it perfectly readable —
+     which is exactly what a popup must never do. When backdrop-filter is
+     unavailable, the sheets go opaque and the cards fall back to the veil.
+     (This bit us in production: the CSS minifier collapsed
+     `backdrop-filter` + `-webkit-backdrop-filter` down to the prefixed form
+     alone, so the standard property never reached the browser.) */
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .glass-panel,
+    .chrome,
+    .chrome-solid-sm {
+      background: hsl(var(--surface));
+    }
+
+    .glass {
+      background: hsl(var(--surface) / 0.96);
+    }
   }
 
   /* Translucent grouping with no border. The default way to group. */
@@ -434,8 +453,8 @@
   /* Floating chrome — the nav rail and any detached panel. */
   .chrome {
     background: hsl(var(--surface) / 0.72);
-    backdrop-filter: saturate(190%) blur(30px);
     -webkit-backdrop-filter: saturate(190%) blur(30px);
+    backdrop-filter: saturate(190%) blur(30px);
     box-shadow:
       0 0 0 1px hsl(var(--line) / 0.9),
       0 1px 2px rgb(17 18 28 / 0.04),
@@ -463,15 +482,15 @@
      after .chrome so it wins at equal specificity. */
   .chrome-solid-sm {
     background: hsl(var(--surface));
-    backdrop-filter: none;
     -webkit-backdrop-filter: none;
+    backdrop-filter: none;
   }
 
   @media (min-width: 640px) {
     .chrome-solid-sm {
       background: hsl(var(--surface) / 0.74);
-      backdrop-filter: saturate(190%) blur(34px);
       -webkit-backdrop-filter: saturate(190%) blur(34px);
+      backdrop-filter: saturate(190%) blur(34px);
     }
   }
 }
