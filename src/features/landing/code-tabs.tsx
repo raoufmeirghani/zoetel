@@ -175,7 +175,7 @@ export function CodeTabs({ className }: { className?: string }) {
           )
         })}
         <span className="ms-auto flex shrink-0 items-center gap-2 ps-3">
-          <span className="hidden font-mono text-2xs text-white/30 sm:block">{snippet.filename}</span>
+          <span className="hidden font-mono text-2xs text-white/50 sm:block">{snippet.filename}</span>
           <CopyButton
             value={snippet.code}
             className="text-white/45 hover:bg-white/10 hover:text-white"

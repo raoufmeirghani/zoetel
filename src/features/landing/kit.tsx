@@ -1,60 +1,246 @@
 import * as React from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { motion, useInView, useScroll, useTransform } from 'framer-motion'
 import { cn } from '@/lib/utils'
 
 /**
- * Layout primitives for the marketing surface.
+ * Scene primitives for the marketing surface.
  *
- * These are compositions, not a second design language: every value here comes
- * from the same tokens the application uses. What differs is scale and density —
- * a marketing page reads at arm's length and needs far more air between ideas
- * than a dashboard does, so the vertical rhythm is roughly three times the
- * app's and content sits in a narrower measure than the app's `--page-max`.
+ * The page is a sequence of scenes, not a stack of sections. A scene owns three
+ * things a section usually doesn't: its own ground, its own vertical measure,
+ * and its own way of ending. That is what stops a long page reading as one white
+ * canvas — the transition between two scenes becomes part of the composition,
+ * so there is never a rule or a gap left doing that work.
+ *
+ * Everything here draws on the application's tokens. What differs from the app
+ * is scale: type steps up, and the vertical rhythm is several times the
+ * dashboard's, because this is read at arm's length.
  */
 
 export const EASE = [0.16, 1, 0.3, 1] as const
 
-/** The reading measure for prose on this page — shorter than the app's column. */
+/** Reading measures. Prose sits far narrower than the app's content column. */
 export const MEASURE = 'max-w-[34rem]'
+export const MEASURE_TIGHT = 'max-w-[26rem]'
 
-/**
- * One idea per band, with generous air above and below. `flush` drops the
- * bottom padding for the rare pair of bands that belong to each other.
- */
-export function Band({
-  children,
-  className,
-  id,
-  tight,
-  flush,
-}: {
-  children: React.ReactNode
-  className?: string
-  id?: string
-  tight?: boolean
-  flush?: boolean
-}) {
+/* ── Grounds ───────────────────────────────────────────────────────────── */
+
+export type Ground =
+  /** The canvas, untouched. For scenes that should feel like a held breath. */
+  | 'bare'
+  /** Two pale washes and a warm centre — an editorial page with a ground. */
+  | 'paper'
+  /** A ruled field. Reads as drafting paper; suits anything mechanical. */
+  | 'grid'
+  /** Dotted texture, without the grid's architecture. */
+  | 'dots'
+  /** Onyx, toothed and vignetted. The page's immersive register. */
+  | 'onyx'
+  /** The application's own hero mesh, for continuity with the product. */
+  | 'mesh'
+
+function GroundLayer({ ground, dim }: { ground: Ground; dim?: number }) {
+  if (ground === 'bare') return null
+
+  if (ground === 'onyx') {
+    return (
+      <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden bg-onyx">
+        <span className="bg-tooth" />
+        <span className="bg-vignette" />
+      </div>
+    )
+  }
+
   return (
-    <section
-      id={id}
-      className={cn(
-        'relative',
-        // Anchored bands clear the fixed navigation when jumped to.
-        id && 'scroll-mt-24',
-        tight ? 'py-16 sm:py-20' : 'py-24 sm:py-32 lg:py-40',
-        flush && 'pb-0 sm:pb-0 lg:pb-0',
-        className,
-      )}
+    <div
+      aria-hidden
+      className="pointer-events-none absolute inset-0 overflow-hidden"
+      style={dim != null ? ({ '--hero-opacity': dim, opacity: dim } as React.CSSProperties) : undefined}
     >
-      <div className="mx-auto w-full max-w-[var(--page-max)] px-6 sm:px-8">{children}</div>
-    </section>
+      {ground === 'paper' && <span className="bg-paper" />}
+      {ground === 'grid' && <span className="bg-grid" />}
+      {ground === 'dots' && <span className="bg-dots" />}
+      {ground === 'mesh' && (
+        <>
+          <span className="hero-mesh" />
+          <span className="hero-grain" />
+        </>
+      )}
+    </div>
   )
 }
 
 /**
- * Enters once, on approach. Deliberately small: 14px and 600ms, which reads as
- * the page settling rather than as an effect. `MotionConfig reducedMotion="user"`
- * in App.tsx already neutralises it for anyone who asks.
+ * One chapter of the page.
+ *
+ * `measure` sets the vertical weight — scenes are deliberately different heights
+ * so the page has a pulse. `edge` decides how a coloured ground meets the scenes
+ * either side of it; a plane that stops dead is the thing that makes a page look
+ * assembled rather than composed.
+ */
+export function Scene({
+  children,
+  id,
+  ground = 'bare',
+  groundOpacity,
+  measure = 'full',
+  edge = 'fade-y',
+  bleed,
+  className,
+}: {
+  children: React.ReactNode
+  id?: string
+  ground?: Ground
+  /**
+   * Dials a ground back. A treatment tuned for a header band is often too much
+   * colour to fill a whole scene with — the page stays mostly neutral, and
+   * colour is spent on guiding the eye rather than on decorating a chapter.
+   */
+  groundOpacity?: number
+  /** short: a single beat. full: a chapter. tall: an immersive stretch. */
+  measure?: 'flush' | 'short' | 'full' | 'tall'
+  edge?: 'none' | 'fade-y' | 'fade-top' | 'fade-bottom' | 'curve'
+  /** Content spans the viewport rather than the reading column. */
+  bleed?: boolean
+  className?: string
+}) {
+  const pad = {
+    flush: '',
+    short: 'py-20 sm:py-24',
+    full: 'py-28 sm:py-36 lg:py-44',
+    tall: 'py-32 sm:py-44 lg:py-56',
+  }
+  const edges = {
+    none: '',
+    'fade-y': 'edge-fade-y',
+    'fade-top': 'edge-fade-top',
+    'fade-bottom': 'edge-fade-bottom',
+    curve: 'edge-curve overflow-hidden',
+  }
+
+  return (
+    <section id={id} className={cn('relative isolate', id && 'scroll-mt-24', pad[measure], className)}>
+      {/* The edge treatment rides on the ground, never on the content — so a
+          fade or a curve can't clip a headline. */}
+      <div aria-hidden className={cn('absolute inset-0 -z-10', ground !== 'bare' && edges[edge])}>
+        <GroundLayer ground={ground} dim={groundOpacity} />
+      </div>
+      {bleed ? children : <div className="mx-auto w-full max-w-[var(--page-max)] px-6 sm:px-8">{children}</div>}
+    </section>
+  )
+}
+
+/** A soft light source placed inside a scene. */
+export function Glow({
+  x = '50%',
+  y = '0%',
+  size = '44rem',
+  tint,
+  opacity,
+  className,
+}: {
+  x?: string
+  y?: string
+  size?: string
+  tint?: string
+  opacity?: number
+  className?: string
+}) {
+  return (
+    <span
+      aria-hidden
+      className={cn('bg-glow -z-10', className)}
+      style={
+        {
+          '--x': x,
+          '--y': y,
+          '--size': size,
+          ...(tint ? { '--tint': tint } : {}),
+          ...(opacity != null ? { opacity } : {}),
+        } as React.CSSProperties
+      }
+    />
+  )
+}
+
+/* ── Type ──────────────────────────────────────────────────────────────── */
+
+/**
+ * The page's display scale. `.headline` is the application's display face; only
+ * the size changes, so a marketing headline is the same voice spoken louder.
+ */
+export function Title({
+  children,
+  as: Tag = 'h2',
+  size = 'md',
+  balance = true,
+  className,
+}: {
+  children: React.ReactNode
+  as?: 'h1' | 'h2' | 'h3' | 'p'
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
+  /** Off when the copy carries its own line breaks — balancing fights them. */
+  balance?: boolean
+  className?: string
+}) {
+  const scale = {
+    xs: 'text-xl sm:text-2xl',
+    sm: 'text-2xl sm:text-3xl',
+    md: 'text-3xl sm:text-4xl lg:text-[2.75rem] lg:leading-[1.06]',
+    lg: 'text-[2rem] leading-[1.1] sm:text-4xl md:text-5xl lg:text-6xl lg:leading-[1.04]',
+    xl: 'text-[2.25rem] leading-[1.06] sm:text-5xl md:text-6xl lg:text-7xl lg:leading-[0.98]',
+  }
+  return (
+    <Tag className={cn('headline text-ink', balance && 'text-balance', scale[size], className)}>{children}</Tag>
+  )
+}
+
+export function Eyebrow({ children, className }: { children: React.ReactNode; className?: string }) {
+  return <p className={cn('eyebrow', className)}>{children}</p>
+}
+
+export function Lede({
+  children,
+  size = 'md',
+  className,
+}: {
+  children: React.ReactNode
+  size?: 'sm' | 'md' | 'lg'
+  className?: string
+}) {
+  const scale = { sm: 'text-base', md: 'text-lg', lg: 'text-lg sm:text-xl' }
+  return <p className={cn('leading-relaxed text-ink-muted', scale[size], className)}>{children}</p>
+}
+
+/**
+ * A figure set at display scale, for scenes that lead with a number rather than
+ * a sentence.
+ */
+export function Stat({
+  value,
+  caption,
+  tone = 'ink',
+  className,
+}: {
+  value: React.ReactNode
+  caption: React.ReactNode
+  tone?: 'ink' | 'inverse'
+  className?: string
+}) {
+  return (
+    <div className={className}>
+      <p className={cn('display text-4xl sm:text-5xl', tone === 'ink' ? 'text-ink' : 'text-white')}>{value}</p>
+      <p className={cn('mt-2 text-sm leading-relaxed', tone === 'ink' ? 'text-ink-subtle' : 'text-white/55')}>
+        {caption}
+      </p>
+    </div>
+  )
+}
+
+/* ── Motion ────────────────────────────────────────────────────────────── */
+
+/**
+ * Enters once, on approach. 14px and 600ms — the page settling, not an effect.
+ * `MotionConfig reducedMotion="user"` in App.tsx neutralises it on request.
  */
 export function Reveal({
   children,
@@ -80,124 +266,7 @@ export function Reveal({
   )
 }
 
-export function Eyebrow({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <p className={cn('eyebrow', className)}>{children}</p>
-}
-
-/**
- * The headline scale for the page. `.headline` is the app's display face; only
- * the size steps up — a marketing headline is the same voice spoken louder.
- */
-export function Title({
-  children,
-  as: Tag = 'h2',
-  size = 'md',
-  balance = true,
-  className,
-}: {
-  children: React.ReactNode
-  as?: 'h1' | 'h2' | 'h3'
-  size?: 'sm' | 'md' | 'lg'
-  /**
-   * Off when the copy carries its own line breaks — balancing then fights the
-   * author, re-wrapping lines that were chosen for rhythm.
-   */
-  balance?: boolean
-  className?: string
-}) {
-  const scale = {
-    sm: 'text-2xl sm:text-3xl',
-    md: 'text-3xl sm:text-4xl lg:text-[2.75rem] lg:leading-[1.06]',
-    // The hero steps through four sizes rather than two: at 375px a 44px
-    // headline with authored line breaks eats the entire first screen.
-    lg: 'text-[2rem] leading-[1.1] sm:text-4xl md:text-5xl lg:text-6xl lg:leading-[1.04]',
-  }
-  return (
-    <Tag className={cn('headline text-ink', balance && 'text-balance', scale[size], className)}>{children}</Tag>
-  )
-}
-
-export function Lede({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <p className={cn('text-lg leading-relaxed text-ink-muted', MEASURE, className)}>{children}</p>
-}
-
-/**
- * A hairline that fades at both ends, so a divider never collides with the
- * page's soft edges. Used instead of borders between editorial blocks.
- */
-export function Hairline({ className }: { className?: string }) {
-  return (
-    <span
-      aria-hidden
-      className={cn(
-        'block h-px w-full bg-gradient-to-r from-transparent via-line-strong to-transparent',
-        className,
-      )}
-    />
-  )
-}
-
-/**
- * The atmospheric band behind a section. Reuses the application's hero
- * machinery wholesale — the same artwork, the same eased 11-stop fade, the same
- * blend modes — so a marketing band and a product header are visibly the same
- * material.
- *
- * `mix-blend-multiply` lets the white-backed art sit on the canvas without a
- * visible plate; dark mode screens it back at a fraction of the opacity the
- * pale art was tuned at.
- */
-export function Backdrop({
-  src,
-  opacity = 0.62,
-  height = 'h-[46rem]',
-  from = '-top-24',
-  mesh = true,
-  className,
-}: {
-  src?: string
-  opacity?: number
-  height?: string
-  from?: string
-  mesh?: boolean
-  className?: string
-}) {
-  const [failed, setFailed] = React.useState(false)
-
-  return (
-    <div
-      aria-hidden
-      className={cn('pointer-events-none absolute inset-x-0 -z-10 overflow-hidden', from, height, className)}
-    >
-      {mesh && (
-        <div className="absolute inset-x-0 -top-24 bottom-0 overflow-hidden">
-          <span className="hero-mesh" />
-          <span className="hero-grain" />
-        </div>
-      )}
-      {src && !failed && (
-        <img
-          src={src}
-          alt=""
-          onError={() => setFailed(true)}
-          style={{ '--hero-img': opacity } as React.CSSProperties}
-          className={cn(
-            'absolute inset-x-0 top-0 h-full w-full select-none object-cover object-[50%_18%]',
-            'hero-fade hero-art',
-            '[opacity:var(--hero-img)] dark:[opacity:calc(var(--hero-img)*0.36)]',
-            'mix-blend-multiply dark:mix-blend-screen',
-          )}
-        />
-      )}
-    </div>
-  )
-}
-
-/**
- * Moves a decorative layer at a fraction of scroll speed. Range is kept under
- * 40px: enough to give the composition depth as the page moves, small enough
- * that nobody notices it happening.
- */
+/** Moves a layer against the scroll. Kept small — depth, not spectacle. */
 export function Parallax({
   children,
   distance = 28,
@@ -219,25 +288,94 @@ export function Parallax({
 }
 
 /**
- * Two columns that swap sides down the page, so the eye is never marched down a
- * single rail. Collapses to one column below `lg`, always with the copy first —
- * on a phone the sentence should arrive before the picture.
+ * Wipes a line of type up from behind its own baseline. Used sparingly, on the
+ * two or three sentences the page rests on.
+ *
+ * The observer watches the *wrapper*, not the element being animated. That is
+ * not a stylistic choice: the inner span starts translated a full line below
+ * the wrapper's `overflow: hidden` box, and an element clipped away by an
+ * ancestor is correctly reported as not intersecting — so a `whileInView` on the
+ * inner element can never fire, and the line stays hidden forever. Watching the
+ * wrapper, which is never clipped, makes the reveal deterministic.
  */
-export function Split({
-  copy,
-  visual,
-  flip,
+export function LineWipe({
+  children,
+  delay = 0,
+  immediate,
   className,
 }: {
-  copy: React.ReactNode
-  visual: React.ReactNode
-  flip?: boolean
+  children: React.ReactNode
+  delay?: number
+  /** Plays on mount — for lines that are already on screen when the page loads. */
+  immediate?: boolean
   className?: string
 }) {
+  const wrapper = React.useRef<HTMLSpanElement>(null)
+  const seen = useInView(wrapper, { once: true, amount: 0.4 })
+  const show = immediate || seen
+
   return (
-    <div className={cn('grid items-center gap-12 lg:grid-cols-2 lg:gap-20', className)}>
-      <div className={cn('min-w-0', flip && 'lg:order-2')}>{copy}</div>
-      <div className={cn('min-w-0', flip && 'lg:order-1')}>{visual}</div>
+    <span ref={wrapper} className={cn('block overflow-hidden pb-[0.08em]', className)}>
+      <motion.span
+        className="block"
+        initial={{ y: '108%' }}
+        animate={show ? { y: '0%' } : { y: '108%' }}
+        transition={{ duration: 0.8, delay, ease: EASE }}
+      >
+        {children}
+      </motion.span>
+    </span>
+  )
+}
+
+/* ── Product framing ───────────────────────────────────────────────────── */
+
+/**
+ * How a product fragment is presented: floating in light, never inside a card.
+ *
+ * The frame is a hairline and a shadow plus a pool of light beneath it — the
+ * treatment a physical object gets in product photography. `crop` lets a
+ * fragment run off the edge of its column, which is what makes it read as a
+ * detail of something larger rather than a screenshot of something small.
+ */
+export function ProductFrame({
+  children,
+  crop = 'none',
+  lift = 'lg',
+  className,
+}: {
+  children: React.ReactNode
+  crop?: 'none' | 'start' | 'end'
+  lift?: 'md' | 'lg' | 'xl'
+  className?: string
+}) {
+  const shadow = { md: 'shadow-md', lg: 'shadow-lg', xl: 'shadow-xl' }
+  return (
+    <div className={cn('relative', className)}>
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-x-6 -bottom-6 h-16 rounded-[50%] bg-ink/[0.07] blur-2xl"
+      />
+      <div
+        className={cn(
+          'glass relative overflow-hidden rounded-[22px] dark:ring-1 dark:ring-white/[0.07]',
+          shadow[lift],
+          crop === 'end' && '-me-6 sm:-me-16 lg:-me-24',
+          crop === 'start' && '-ms-6 sm:-ms-16 lg:-ms-24',
+        )}
+      >
+        {children}
+      </div>
+    </div>
+  )
+}
+
+/** The small-caps label that opens a product fragment. */
+export function FrameHeader({ label, meta }: { label: React.ReactNode; meta?: React.ReactNode }) {
+  return (
+    <div className="flex items-center justify-between gap-3 border-b border-line-soft px-4 py-2.5">
+      <span className="eyebrow">{label}</span>
+      {meta}
     </div>
   )
 }

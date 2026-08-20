@@ -508,6 +508,11 @@
     scroll-behavior: auto;
   }
 
+  /* The travelling signal is decorative; hold it still. */
+  .signal {
+    animation: none;
+  }
+
   *,
   *::before,
   *::after {
@@ -515,6 +520,128 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
   }
+}
+
+/* ─────────────────────────────────────────────────────────
+   Scene backgrounds — the marketing surface
+   ─────────────────────────────────────────────────────────
+   The landing page moves through a sequence of grounds rather than sitting on
+   one white canvas. These are the treatments it alternates between; every one
+   is masked so it dissolves into the next instead of ending on an edge.
+*/
+
+/* A ruled field. Line weight is sub-pixel on purpose — it should read as paper
+   with a grid printed on it, not as a table. */
+.bg-grid {
+  --grid: 68px;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, hsl(var(--ink) / 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, hsl(var(--ink) / 0.045) 1px, transparent 1px);
+  background-size: var(--grid) var(--grid);
+  mask-image: radial-gradient(72% 60% at 50% 45%, black 0%, transparent 100%);
+  -webkit-mask-image: radial-gradient(72% 60% at 50% 45%, black 0%, transparent 100%);
+}
+
+/* Dotted variant, for scenes that need texture without the architecture of a
+   grid. */
+.bg-dots {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(hsl(var(--ink) / 0.14) 0.75px, transparent 0.75px);
+  background-size: 22px 22px;
+  mask-image: radial-gradient(66% 56% at 50% 42%, black 0%, transparent 100%);
+  -webkit-mask-image: radial-gradient(66% 56% at 50% 42%, black 0%, transparent 100%);
+}
+
+/* Fine tooth over a dark plane. Keeps a large onyx field from looking like flat
+   ink by giving light something to catch. */
+.bg-tooth {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image: radial-gradient(hsl(0 0% 100% / 0.055) 0.5px, transparent 0.5px);
+  background-size: 4px 4px;
+}
+
+/* A single soft light source. `--x`/`--y` place it, `--size` scales it; used to
+   lift one corner of a scene rather than wash the whole thing. */
+.bg-glow {
+  position: absolute;
+  pointer-events: none;
+  width: var(--size, 44rem);
+  height: var(--size, 44rem);
+  inset-inline-start: var(--x, 50%);
+  top: var(--y, 0%);
+  transform: translate(-50%, -50%);
+  border-radius: 9999px;
+  filter: blur(64px);
+  background: radial-gradient(circle, hsl(var(--tint, var(--brand)) / 0.3) 0%, transparent 68%);
+}
+
+[dir='rtl'] .bg-glow {
+  transform: translate(50%, -50%);
+}
+
+/* Paper. Two very wide, very pale washes plus a warm centre, so an "empty"
+   editorial scene still has a ground rather than being the absence of one. */
+.bg-paper {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(90% 70% at 12% 0%, hsl(var(--wash-1) / 0.85) 0%, transparent 62%),
+    radial-gradient(80% 60% at 88% 8%, hsl(var(--wash-2) / 0.7) 0%, transparent 58%),
+    radial-gradient(70% 90% at 50% 100%, hsl(var(--wash-3) / 0.6) 0%, transparent 66%);
+}
+
+/* The dividers. A scene transition should be part of the composition, which
+   means the boundary is a shape or a fade — never a rule.
+
+   `.edge-fade-*` dissolves a coloured plane into the canvas; `.edge-curve`
+   lifts the plane's top edge into a shallow arc. Both are masks on the plane
+   itself, so nothing is painted over the content. */
+.edge-fade-top {
+  mask-image: linear-gradient(to bottom, transparent 0%, black 12%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 12%);
+}
+.edge-fade-bottom {
+  mask-image: linear-gradient(to top, transparent 0%, black 12%);
+  -webkit-mask-image: linear-gradient(to top, transparent 0%, black 12%);
+}
+.edge-fade-y {
+  mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
+}
+
+.edge-curve {
+  border-start-start-radius: 50% 4rem;
+  border-start-end-radius: 50% 4rem;
+}
+
+/* A vignette that darkens the outer field of an immersive scene, so the eye is
+   held in the middle without a frame being drawn. */
+.bg-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(70% 60% at 50% 45%, transparent 0%, hsl(var(--onyx) / 0.55) 100%);
+}
+
+/* Signal paths in the network scene. The dash travels along the stroke, which
+   reads as traffic moving rather than as a line being drawn. */
+@keyframes signal-travel {
+  to {
+    stroke-dashoffset: -1000;
+  }
+}
+.signal {
+  stroke-dasharray: 3 13;
+  animation: signal-travel 14s linear infinite;
 }
 
 /* ─────────────────────────────────────────────────────────

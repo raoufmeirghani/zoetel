@@ -1,68 +1,61 @@
 import * as React from 'react'
 import { Link } from 'react-router-dom'
-import { AnimatePresence, motion, useScroll } from 'framer-motion'
-import { ArrowRight, ArrowUpRight, Check, Menu, X } from 'lucide-react'
+import { AnimatePresence, motion, useScroll, useSpring } from 'framer-motion'
+import { ArrowUpRight, Menu, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { StatusDot } from '@/components/ui/status'
 import { Logo } from '@/components/layout/logo'
-import { cn } from '@/lib/utils'
-import { Backdrop, Band, EASE, Reveal, Title } from './kit'
-import { HeroComposition } from './compositions'
 import { useI18n } from '@/lib/i18n'
-import {
-  ComparisonSection,
-  DeveloperSection,
-  FaqSection,
-  JourneySection,
-  MessagingSection,
-  NumbersSection,
-  PricingSection,
-  SipSection,
-  TestimonialsSection,
-  TrustBand,
-  ZoieSection,
-} from './sections'
+import { cn } from '@/lib/utils'
+import { EASE } from './kit'
+import { HeroScene } from './scenes/hero'
+import { PhilosophyScene, ProblemScene } from './scenes/problem'
+import { SearchScene } from './scenes/search'
+import { ProvisionScene } from './scenes/provision'
+import { NetworkScene } from './scenes/network'
+import { CoverageScene } from './scenes/coverage'
+import { DeveloperScene } from './scenes/developers'
+import { ZoieScene } from './scenes/zoie'
+import { ClosingScene, PricingScene, ProofScene } from './scenes/close'
 
 /**
- * The public landing page.
+ * The public landing page, built as a sequence of scenes.
  *
- * It is built entirely from the application's design system — the same tokens,
- * glass, artwork, type scale, motion curve and components — because a visitor
- * who signs up should recognise the product they just read about. The only
- * things that change are scale and density: headlines step up two sizes, bands
- * breathe at roughly three times the app's vertical rhythm, and cards give way
- * to editorial composition.
+ * Organised as a story rather than a feature list: the problem, the decisions
+ * taken because of it, finding a number, getting live, the network it runs on,
+ * its reach, building against it, adding intelligence, what it costs, and an
+ * invitation.
  *
- * Section order is the conversion argument, one objection at a time: why this,
- * can I trust it, what does it do, is it easy to build with, how do I add AI,
- * what does it cost, who uses it, anything else, start now.
+ * Each chapter owns its own ground, vertical measure, composition and motion
+ * signature — a pinned sequence, a sideways pan, a live diagram, a working
+ * search — so no two scrolls feel the same. Everything is drawn from the
+ * application's design system: the compositions differ, the material does not.
  */
 
 const NAV = [
-  { label: 'Products', href: '#products' },
-  { label: 'Solutions', href: '#why' },
-  { label: 'Pricing', href: '#pricing' },
+  { label: 'Numbers', href: '#numbers' },
+  { label: 'Network', href: '#network' },
   { label: 'Developers', href: '#developers' },
+  { label: 'Pricing', href: '#pricing' },
   { label: 'Docs', to: '/developers' },
 ]
 
-/* ── Navigation ────────────────────────────────────────────────────────── */
+/* ── Chrome ────────────────────────────────────────────────────────────── */
 
 /**
- * Transparent over the hero, frosted once the page moves. The switch happens at
- * 24px rather than on any intersection: it needs to feel like the bar reacting
- * to the scroll, not to a particular section boundary.
+ * Transparent over the opening frame, frosted once the page moves, with a
+ * hairline progress bar along its bottom edge. The bar is the page's only
+ * persistent chrome, and it earns its place on a document this long: it says how
+ * much story is left.
  */
 function LandingNav() {
   const { t } = useI18n()
-  const { scrollY } = useScroll()
+  const { scrollY, scrollYProgress } = useScroll()
+  const progress = useSpring(scrollYProgress, { stiffness: 180, damping: 30, mass: 0.4 })
   const [lifted, setLifted] = React.useState(false)
   const [open, setOpen] = React.useState(false)
 
-  React.useEffect(() => {
-    const unsub = scrollY.on('change', (v) => setLifted(v > 24))
-    return unsub
-  }, [scrollY])
+  React.useEffect(() => scrollY.on('change', (v) => setLifted(v > 24)), [scrollY])
 
   React.useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : ''
@@ -75,12 +68,12 @@ function LandingNav() {
     <header className="fixed inset-x-0 top-0 z-50">
       <div
         className={cn(
-          'transition-[background-color,box-shadow,backdrop-filter] duration-300 ease-out',
-          lifted && 'chrome shadow-[0_1px_0_0_hsl(var(--line-soft))]',
+          'relative transition-[background-color,box-shadow,backdrop-filter] duration-300 ease-out',
+          lifted && 'chrome',
         )}
       >
         <nav
-          aria-label={t('Primary')}
+          aria-label="Primary"
           className="mx-auto flex h-16 w-full max-w-[var(--page-max)] items-center gap-3 px-6 sm:px-8"
         >
           <Link to="/" aria-label={t('Zoetel — home')} className="flex shrink-0 items-center gap-2.5">
@@ -88,7 +81,7 @@ function LandingNav() {
             <span className="headline text-lg text-ink">Zoetel</span>
           </Link>
 
-          <div className="mx-auto hidden items-center gap-1 lg:flex">
+          <div className="mx-auto hidden items-center gap-0.5 lg:flex">
             {NAV.map((item) =>
               item.to ? (
                 <Link
@@ -126,10 +119,16 @@ function LandingNav() {
             </button>
           </div>
         </nav>
+
+        {/* Progress. Sub-pixel and only visible once the page has moved —
+            otherwise it reads as a loading bar. */}
+        <motion.span
+          aria-hidden
+          style={{ scaleX: progress, opacity: lifted ? 1 : 0 }}
+          className="absolute inset-x-0 bottom-0 h-px origin-[0%] bg-brand/70 transition-opacity duration-300 rtl:origin-[100%]"
+        />
       </div>
 
-      {/* Mobile sheet. Full-height and opaque rather than a dropdown, because a
-          translucent panel over the hero artwork is unreadable on a phone. */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -197,165 +196,6 @@ function LandingNav() {
   )
 }
 
-/* ── Hero ──────────────────────────────────────────────────────────────── */
-
-const PROMISES = ['No monthly commitment', 'Pay as you go', 'Global ready', 'API first']
-
-function Hero() {
-  const { t } = useI18n()
-  return (
-    <section className="relative isolate overflow-hidden pt-32 sm:pt-40 lg:pt-44">
-      {/* The artwork is anchored above the fold and dissolves into the canvas —
-          the same eased mask the product headers use, given a taller band. */}
-      <Backdrop src="/usage.webp" opacity={0.7} height="h-[52rem]" from="-top-16" />
-
-      <div className="mx-auto w-full max-w-[var(--page-max)] px-6 sm:px-8">
-        <div className="grid items-center gap-16 lg:grid-cols-[1.05fr_1fr] lg:gap-14">
-          <div className="min-w-0">
-            <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: EASE }}
-              className="chrome inline-flex items-center gap-2 rounded-full py-1.5 pe-3.5 ps-2.5"
-            >
-              <StatusDot tone="success" pulse />
-              <span className="text-xs font-medium text-ink-muted">
-                {t('Egypt-first · NTRA licensed ranges')}
-              </span>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.65, delay: 0.06, ease: EASE }}
-            >
-              {/* Three deliberate lines. The product list lives in the lede
-                  rather than the headline: naming three things at display size
-                  costs a line break the column cannot afford, and the headline's
-                  job here is confidence, not inventory. */}
-              <Title as="h1" size="lg" balance={false} className="mt-7">
-                {t('The communication')}
-                <br />
-                {t('infrastructure your')}
-                <br />
-                <span className="text-ink-muted">{t('business deserves.')}</span>
-              </Title>
-            </motion.div>
-
-            <motion.p
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.65, delay: 0.14, ease: EASE }}
-              className="mt-7 max-w-xl text-lg leading-relaxed text-ink-muted"
-            >
-              {t(
-                'Phone numbers, carrier-grade SIP and messaging, behind one API and a wallet you control. Buy a number, point it anywhere, go live the same afternoon.',
-              )}
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.65, delay: 0.22, ease: EASE }}
-              className="mt-9 flex flex-wrap items-center gap-3"
-            >
-              <Button variant="primary" size="xl" asChild>
-                <Link to="/welcome">
-                  {t('Start free')}
-                  <ArrowRight className="size-[18px]" />
-                </Link>
-              </Button>
-              <Button variant="secondary" size="xl" asChild>
-                <Link to="/developers">{t('View documentation')}</Link>
-              </Button>
-            </motion.div>
-
-            <motion.ul
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.34 }}
-              className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-2.5"
-            >
-              {PROMISES.map((p) => (
-                <li key={p} className="flex items-center gap-1.5 text-sm text-ink-subtle">
-                  <Check className="size-3.5 shrink-0 text-brand" />
-                  {t(p)}
-                </li>
-              ))}
-            </motion.ul>
-          </div>
-
-          <div className="min-w-0">
-            <HeroComposition />
-          </div>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-/* ── Final CTA ─────────────────────────────────────────────────────────── */
-
-/**
- * The one dark band on the page. Onyx is the product's surface for permanent
- * structure — the nav rail, the wallet — so closing on it reads as arriving at
- * the thing itself rather than at another marketing panel.
- */
-function FinalCta() {
-  const { t } = useI18n()
-  return (
-    <Band>
-      <Reveal>
-        <div className="relative overflow-hidden rounded-[32px] bg-onyx px-7 py-20 text-center shadow-xl dark:ring-1 dark:ring-white/[0.07] sm:px-12 sm:py-28">
-          {/* Artwork first, glow over it. The other way round the image washes
-              out the brand light and the whole panel turns muddy. `sip.webp` is
-              the coolest of the four, which is what survives being screened
-              back to a tenth of its opacity over onyx. */}
-          <img
-            src="/sip.webp"
-            alt=""
-            aria-hidden
-            className="pointer-events-none absolute inset-0 size-full select-none object-cover opacity-[0.11] mix-blend-screen"
-          />
-          <span
-            aria-hidden
-            className="pointer-events-none absolute -top-48 start-1/2 size-[46rem] -translate-x-1/2 rounded-full opacity-30 blur-3xl rtl:translate-x-1/2"
-            style={{ background: 'radial-gradient(circle, hsl(var(--brand)) 0%, transparent 66%)' }}
-          />
-
-          <div className="relative mx-auto max-w-2xl">
-            <p className="eyebrow text-white/45">{t('Ready to build?')}</p>
-            <h2 className="headline mt-5 text-balance text-4xl text-white sm:text-6xl">
-              {t('Start in minutes.')}
-            </h2>
-            <p className="mx-auto mt-6 max-w-lg text-lg leading-relaxed text-white/65">
-              {t(
-                'No sales call, no procurement cycle. Create an account, fund the wallet, and have a number answering before the end of the day.',
-              )}
-            </p>
-            <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-              <Button size="xl" className="bg-white text-onyx shadow-none hover:bg-white/90" asChild>
-                <Link to="/welcome">
-                  {t('Start free')}
-                  <ArrowRight className="size-[18px]" />
-                </Link>
-              </Button>
-              <Button
-                size="xl"
-                variant="ghost"
-                className="text-white/80 hover:bg-white/10 hover:text-white"
-                asChild
-              >
-                <Link to="/pricing">{t('Contact sales')}</Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </Reveal>
-    </Band>
-  )
-}
-
 /* ── Footer ────────────────────────────────────────────────────────────── */
 
 const FOOTER: { heading: string; links: { label: string; to?: string; href?: string }[] }[] = [
@@ -366,15 +206,6 @@ const FOOTER: { heading: string; links: { label: string; to?: string; href?: str
       { label: 'SIP connections', to: '/sip' },
       { label: 'Messaging', to: '/analytics' },
       { label: 'Usage & quality', to: '/analytics' },
-    ],
-  },
-  {
-    heading: 'Solutions',
-    links: [
-      { label: 'Contact centres', href: '#products' },
-      { label: 'Notifications', href: '#products' },
-      { label: 'Verification codes', href: '#products' },
-      { label: 'AI agents', href: '#products' },
     ],
   },
   {
@@ -391,15 +222,15 @@ const FOOTER: { heading: string; links: { label: string; to?: string; href?: str
     links: [
       { label: 'Documentation', to: '/developers' },
       { label: 'Pricing', to: '/pricing' },
-      { label: 'Support', href: '#faq' },
-      { label: 'Status', href: '#faq' },
+      { label: 'Support', href: '#pricing' },
+      { label: 'Status', href: '#network' },
     ],
   },
   {
     heading: 'Company',
     links: [
-      { label: 'About', href: '#why' },
-      { label: 'Careers', href: '#why' },
+      { label: 'About', href: '#numbers' },
+      { label: 'Careers', href: '#numbers' },
       { label: 'Contact sales', to: '/pricing' },
       { label: 'Zoie', href: 'https://us.zoie.ai/?from=zoetel-landing' },
     ],
@@ -407,10 +238,10 @@ const FOOTER: { heading: string; links: { label: string; to?: string; href?: str
   {
     heading: 'Legal',
     links: [
-      { label: 'Terms', href: '#faq' },
-      { label: 'Privacy', href: '#faq' },
-      { label: 'Acceptable use', href: '#faq' },
-      { label: 'NTRA compliance', href: '#faq' },
+      { label: 'Terms', href: '#pricing' },
+      { label: 'Privacy', href: '#pricing' },
+      { label: 'Acceptable use', href: '#pricing' },
+      { label: 'NTRA compliance', href: '#pricing' },
     ],
   },
 ]
@@ -420,9 +251,9 @@ function Footer() {
   const external = (href?: string) => !!href && href.startsWith('http')
 
   return (
-    <footer className="relative border-t border-line-soft">
-      <div className="mx-auto w-full max-w-[var(--page-max)] px-6 py-16 sm:px-8 sm:py-20">
-        <div className="grid gap-12 lg:grid-cols-[18rem_1fr] lg:gap-20">
+    <footer className="relative">
+      <div className="mx-auto w-full max-w-[var(--page-max)] px-6 py-20 sm:px-8">
+        <div className="grid gap-14 lg:grid-cols-[18rem_1fr] lg:gap-20">
           <div>
             <span className="flex items-center gap-2.5">
               <Logo size={28} />
@@ -439,7 +270,7 @@ function Footer() {
             </span>
           </div>
 
-          <div className="grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-3 lg:grid-cols-6">
+          <div className="grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-3 lg:grid-cols-5">
             {FOOTER.map((col) => (
               <div key={col.heading}>
                 <p className="eyebrow">{t(col.heading)}</p>
@@ -490,21 +321,34 @@ export default function LandingPage() {
     <div className="landing relative min-h-screen overflow-x-clip">
       <LandingNav />
       <main>
-        <Hero />
-        <TrustBand />
-        <div id="products" className="scroll-mt-24">
-          <NumbersSection />
+        {/* 01 — the opening frame: artwork, one sentence, one glimpse */}
+        <HeroScene />
+        {/* 02 — the problem, almost empty, receipts in the margin */}
+        <ProblemScene />
+        {/* 03 — the four decisions, on drafting paper */}
+        <PhilosophyScene />
+        {/* 04 — the live inventory search */}
+        <div id="numbers" className="scroll-mt-24">
+          <SearchScene />
         </div>
-        <SipSection />
-        <MessagingSection />
-        <DeveloperSection />
-        <ZoieSection />
-        <ComparisonSection />
-        <JourneySection />
-        <PricingSection />
-        <TestimonialsSection />
-        <FaqSection />
-        <FinalCta />
+        {/* 05 — provisioning, pinned, one object advancing */}
+        <ProvisionScene />
+        {/* 06 — the network, immersive and dark */}
+        <div id="network" className="scroll-mt-24">
+          <NetworkScene />
+        </div>
+        {/* 07 — reach, panned sideways */}
+        <CoverageScene />
+        {/* 08 — the API, layered and overlapping */}
+        <DeveloperScene />
+        {/* 09 — infrastructure lifting into intelligence */}
+        <ZoieScene />
+        {/* 10 — one voice at a time */}
+        <ProofScene />
+        {/* 11 — the calculator, and the questions that stop a signup */}
+        <PricingScene />
+        {/* 12 — the invitation */}
+        <ClosingScene />
       </main>
       <Footer />
     </div>
