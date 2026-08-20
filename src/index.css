@@ -589,9 +589,22 @@
    reads left-to-right with its punctuation intact while an Arabic one beside it
    stays right-to-left. Scoped to text-bearing blocks — applying it to every
    inline span would break genuinely mixed runs like "٥ من 10 SIP trunks". */
-[dir='rtl'] :is(p, h1, h2, h3, h4, h5, h6, li, dt, dd, figcaption, blockquote, th, td, label) {
+[dir='rtl']
+  :is(p, h1, h2, h3, h4, h5, h6, li, dt, dd, figcaption, blockquote, th, td, label):not(
+    .tabular-nums,
+    .tnum,
+    .display
+  ) {
   unicode-bidi: plaintext;
 }
+
+/* A figure is not prose, and must not opt into the rule above.
+   `plaintext` resolves a line's direction from its first strong character —
+   for a number-only line that is the isolate the formatters added, so the line
+   resolves left-to-right and `text-align: start` then pulls the figure to the
+   left edge, away from the label sitting right-aligned above it. Figures are
+   excluded instead: the isolate inside the string already fixes their glyph
+   order, so alignment is free to follow the page. */
 
 /* For free-text blocks that aren't one of those elements — an alert body, a
    toast description — opted into explicitly. */
