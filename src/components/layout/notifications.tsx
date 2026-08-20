@@ -20,6 +20,7 @@ import { EmptyState } from '@/components/ui/feedback'
 import { relativeTime } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import type { NotificationItem } from '@/lib/types'
+import { useI18n } from '@/lib/i18n'
 
 const KIND_ICON = {
   verification: ShieldCheck,
@@ -63,7 +64,7 @@ function Row({ n, onRead }: { n: NotificationItem; onRead: (id: string) => void 
   )
 
   const cls = cn(
-    'flex w-full gap-3 rounded-xl p-2.5 text-left transition-colors hover:bg-surface-2',
+    'flex w-full gap-3 rounded-xl p-2.5 text-start transition-colors hover:bg-surface-2',
     !n.read && 'bg-brand-softer/60',
   )
 
@@ -89,6 +90,7 @@ function Row({ n, onRead }: { n: NotificationItem; onRead: (id: string) => void 
 }
 
 export function NotificationBell() {
+  const { t } = useI18n()
   const notifications = useApp((s) => s.notifications)
   const unread = useApp(selUnreadCount)
   const markRead = useApp((s) => s.markNotificationRead)
@@ -101,7 +103,12 @@ export function NotificationBell() {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="icon-sm" className="relative text-ink-muted" aria-label="Notifications">
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          className="relative text-ink-muted"
+          aria-label={t('Notifications')}
+        >
           <Bell />
           <AnimatePresence>
             {unread > 0 && (
@@ -109,7 +116,7 @@ export function NotificationBell() {
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 exit={{ scale: 0 }}
-                className="absolute -right-0.5 -top-0.5 grid min-w-[15px] place-items-center rounded-full bg-danger px-1 text-[9px] font-bold leading-[15px] text-white ring-2 ring-surface"
+                className="absolute -end-0.5 -top-0.5 grid min-w-[15px] place-items-center rounded-full bg-danger px-1 text-[9px] font-bold leading-[15px] text-white ring-2 ring-surface"
               >
                 {unread}
               </motion.span>
@@ -130,7 +137,7 @@ export function NotificationBell() {
                 )}
               >
                 {t}
-                {t === 'unread' && unread > 0 && <span className="ml-1 tabular-nums text-brand">{unread}</span>}
+                {t === 'unread' && unread > 0 && <span className="ms-1 tabular-nums text-brand">{unread}</span>}
               </button>
             ))}
           </div>
@@ -142,7 +149,7 @@ export function NotificationBell() {
               onClick={markAll}
               className="text-ink-subtle"
             >
-              Mark all read
+              {t('Mark all read')}
             </Button>
           )}
         </div>
@@ -151,8 +158,8 @@ export function NotificationBell() {
             <EmptyState
               compact
               icon={<CircleCheck />}
-              title="You're all caught up"
-              description="Verification updates, purchases and billing events land here."
+              title={t("You're all caught up")}
+              description={t('Verification updates, purchases and billing events land here.')}
             />
           ) : (
             <ul className="space-y-0.5">
@@ -167,7 +174,7 @@ export function NotificationBell() {
         <div className="border-t border-line px-3 py-2">
           <Button variant="ghost" size="xs" block className="justify-center text-ink-subtle" asChild>
             <Link to="/settings?tab=notifications" onClick={() => setOpen(false)}>
-              Notification preferences
+              {t('Notification preferences')}
             </Link>
           </Button>
         </div>

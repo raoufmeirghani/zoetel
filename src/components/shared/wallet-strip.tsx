@@ -6,6 +6,7 @@ import { useApp } from '@/store/app'
 import { Button } from '@/components/ui/button'
 import { AnimatedNumber } from '@/components/ui/animated-number'
 import { cn } from '@/lib/utils'
+import { useI18n } from '@/lib/i18n'
 
 /** Days of runway we treat as "comfortable" — the meter's full width. */
 const RUNWAY_TARGET = 90
@@ -20,6 +21,7 @@ const RUNWAY_TARGET = 90
  * actions, and turned 14 days of spend into an unreadable scribble.
  */
 export function WalletStrip({ className, onTopUp }: { className?: string; onTopUp?: () => void }) {
+  const { t } = useI18n()
   const balance = useApp((s) => s.balance)
   const currency = useApp((s) => s.workspace.currency)
   const autoRecharge = useApp((s) => s.autoRecharge)
@@ -40,7 +42,7 @@ export function WalletStrip({ className, onTopUp }: { className?: string; onTopU
       )}
     >
       <span
-        className="pointer-events-none absolute -right-10 -top-16 size-40 rounded-full opacity-25 blur-3xl"
+        className="pointer-events-none absolute -end-10 -top-16 size-40 rounded-full opacity-25 blur-3xl"
         style={{ background: 'radial-gradient(circle, hsl(var(--brand)) 0%, transparent 70%)' }}
         aria-hidden
       />
@@ -91,7 +93,7 @@ export function WalletStrip({ className, onTopUp }: { className?: string; onTopU
             icon={<Plus />}
             onClick={onTopUp}
           >
-            Add funds
+            {t('Add funds')}
           </Button>
           <Button
             size="sm"
@@ -100,7 +102,7 @@ export function WalletStrip({ className, onTopUp }: { className?: string; onTopU
             asChild
           >
             <Link to="/billing">
-              Billing
+              {t('Billing')}
               <ArrowUpRight className="size-3.5" />
             </Link>
           </Button>

@@ -30,6 +30,7 @@ import { useApp } from '@/store/app'
 import { toast } from '@/components/ui/toast'
 import { cn, sleep } from '@/lib/utils'
 import type { LucideIcon } from 'lucide-react'
+import { useDirSign, useI18n } from '@/lib/i18n'
 
 const EASE = [0.16, 1, 0.3, 1] as const
 
@@ -72,6 +73,8 @@ const STEPS: Step[] = [
  * matters, rather than dropping the customer into a settings page.
  */
 export default function NumberSetupPage() {
+  const { t } = useI18n()
+  const dirSign = useDirSign()
   const { id } = useParams<{ id: string }>()
   const number = useApp((s) => s.numbers.find((n) => n.id === id))
   const connections = useApp((s) => s.connections)
@@ -98,11 +101,11 @@ export default function NumberSetupPage() {
   if (!number) {
     return (
       <>
-        <Hero mood="quiet" size="sm" title="Number not found" />
+        <Hero mood="quiet" size="sm" title={t('Number not found')} />
         <Section className="pt-4">
           <EmptyState
             icon={<Phone />}
-            title="That number isn't in this workspace"
+            title={t("That number isn't in this workspace")}
             action={
               <Button variant="primary" asChild>
                 <Link to="/numbers">Back to phone numbers</Link>
@@ -203,7 +206,7 @@ export default function NumberSetupPage() {
         >
           <Button variant="primary" size="xl" asChild>
             <Link to={`/numbers/${number.id}`}>
-              Open the number
+              {t('Open the number')}
               <ArrowRight className="size-[18px]" />
             </Link>
           </Button>
@@ -220,9 +223,9 @@ export default function NumberSetupPage() {
       <Hero
         size="sm"
         breadcrumbs={[
-          { label: 'Phone numbers', href: '/numbers' },
+          { label: t('Phone numbers'), href: '/numbers' },
           { label: formatE164(number.e164), href: `/numbers/${number.id}` },
-          { label: 'Setup' },
+          { label: t('Setup') },
         ]}
         eyebrow={
           <>
@@ -234,13 +237,15 @@ export default function NumberSetupPage() {
                 <span className="text-ink-faint" aria-hidden>
                   ·
                 </span>
-                <span className="eyebrow">Optional</span>
+                <span className="eyebrow">{t('Optional')}</span>
               </>
             )}
           </>
         }
-        title="Let's get this number working"
-        lede={`Three short questions for ${formatE164(number.e164)}. You can change any of it later.`}
+        title={t("Let's get this number working")}
+        lede={t('Three short questions for {number}. You can change any of it later.', {
+          number: formatE164(number.e164),
+        })}
       >
         {/* Trail */}
         <ol className="flex items-center gap-2 pb-2">
@@ -250,7 +255,7 @@ export default function NumberSetupPage() {
                 onClick={() => i <= step && go(i)}
                 disabled={i > step}
                 className={cn(
-                  'flex items-center gap-2 rounded-full py-1 pl-1 pr-3 text-xs font-medium transition-colors',
+                  'flex items-center gap-2 rounded-full py-1 pe-3 ps-1 text-xs font-medium transition-colors',
                   i === step
                     ? 'bg-veil-strong text-ink'
                     : i < step
@@ -274,7 +279,7 @@ export default function NumberSetupPage() {
                     <span className="text-[10px]">{i + 1}</span>
                   )}
                 </span>
-                {s.label}
+                {t(s.label)}
               </button>
               {i < STEPS.length - 1 && <span className="h-px flex-1 bg-line-soft" />}
             </li>
@@ -287,9 +292,9 @@ export default function NumberSetupPage() {
           <motion.div
             key={current.id}
             custom={dir}
-            initial={{ opacity: 0, x: dir * 24 }}
+            initial={{ opacity: 0, x: dir * 24 * dirSign }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: dir * -24 }}
+            exit={{ opacity: 0, x: dir * -24 * dirSign }}
             transition={{ duration: 0.3, ease: EASE }}
           >
             <span className="bg-brand/12 grid size-11 place-items-center rounded-2xl text-brand">
@@ -307,10 +312,10 @@ export default function NumberSetupPage() {
 
                   {dest === 'sip' && (
                     <>
-                      <Field label="SIP connection" description="The trunk that receives the call.">
+                      <Field label={t('SIP connection')} description={t('The trunk that receives the call.')}>
                         <Select value={connectionId} onValueChange={setConnectionId}>
                           <SelectTrigger size="lg">
-                            <SelectValue placeholder="Choose a connection" />
+                            <SelectValue placeholder={t('Choose a connection')} />
                           </SelectTrigger>
                           <SelectContent>
                             {connections.map((c) => (
@@ -338,8 +343,8 @@ export default function NumberSetupPage() {
 
                   {dest === 'webhook' && (
                     <Field
-                      label="Voice webhook"
-                      description="We POST call events here so your code can decide what happens."
+                      label={t('Voice webhook')}
+                      description={t('We POST call events here so your code can decide what happens.')}
                     >
                       <Input
                         value={webhookUrl}
@@ -354,8 +359,10 @@ export default function NumberSetupPage() {
                   {dest === 'forward' && (
                     <>
                       <Field
-                        label="Forward to"
-                        description="Calls are bridged to this number. Your Zoetel number stays the caller ID."
+                        label={t('Forward to')}
+                        description={t(
+                          'Calls are bridged to this number. Your Zoetel number stays the caller ID.',
+                        )}
                       >
                         <Input
                           value={forwardTo}
@@ -367,7 +374,7 @@ export default function NumberSetupPage() {
                         />
                       </Field>
                       <div className="grid gap-5 sm:grid-cols-2">
-                        <Field label="Ring for" description="How long to try before falling back.">
+                        <Field label={t('Ring for')} description={t('How long to try before falling back.')}>
                           <NumberInput
                             value={forwardTimeout}
                             onChange={setForwardTimeout}
@@ -377,7 +384,7 @@ export default function NumberSetupPage() {
                             suffix="sec"
                           />
                         </Field>
-                        <Field label="If nobody answers" description="What the caller hears instead.">
+                        <Field label={t('If nobody answers')} description={t('What the caller hears instead.')}>
                           <Select
                             value={forwardFallback}
                             onValueChange={(v) => setForwardFallback(v as typeof forwardFallback)}
@@ -386,14 +393,14 @@ export default function NumberSetupPage() {
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="voicemail" hint="Recorded and emailed">
-                                Send to voicemail
+                              <SelectItem value="voicemail" hint={t('Recorded and emailed')}>
+                                {t('Send to voicemail')}
                               </SelectItem>
-                              <SelectItem value="busy" hint="Caller hears engaged tone">
-                                Return busy
+                              <SelectItem value="busy" hint={t('Caller hears engaged tone')}>
+                                {t('Return busy')}
                               </SelectItem>
-                              <SelectItem value="hangup" hint="Call simply ends">
-                                Hang up
+                              <SelectItem value="hangup" hint={t('Call simply ends')}>
+                                {t('Hang up')}
                               </SelectItem>
                             </SelectContent>
                           </Select>
@@ -406,11 +413,11 @@ export default function NumberSetupPage() {
 
               {current.id === 'callerId' && (
                 <>
-                  <Field label="Caller ID name" hint={`${callerIdName.length}/15`}>
+                  <Field label={t('Caller ID name')} hint={`${callerIdName.length}/15`}>
                     <Input
                       value={callerIdName}
                       onChange={(e) => setCallerIdName(e.target.value.slice(0, 15))}
-                      placeholder="Acme Retail"
+                      placeholder={'Acme Retail'}
                       inputSize="lg"
                       autoFocus
                     />
@@ -432,11 +439,11 @@ export default function NumberSetupPage() {
 
               {current.id === 'emergency' && (
                 <>
-                  <Field label="Registered service address">
+                  <Field label={t('Registered service address')}>
                     <Input
                       value={address}
                       onChange={(e) => setAddress(e.target.value)}
-                      placeholder="12 Road 90, New Cairo, Cairo"
+                      placeholder={'12 Road 90, New Cairo, Cairo'}
                       leading={<MapPin />}
                       inputSize="lg"
                       autoFocus
@@ -453,25 +460,25 @@ export default function NumberSetupPage() {
             <div className="mt-10 flex items-center gap-2">
               {step > 0 ? (
                 <Button variant="ghost" size="lg" icon={<ArrowLeft />} onClick={() => go(step - 1)}>
-                  Back
+                  {t('Back')}
                 </Button>
               ) : (
                 <Button variant="ghost" size="lg" asChild className="text-ink-subtle">
                   <Link to={`/numbers/${number.id}`}>Skip setup</Link>
                 </Button>
               )}
-              <div className="ml-auto flex items-center gap-2">
+              <div className="ms-auto flex items-center gap-2">
                 {current.optional && (
                   <Button
                     variant="ghost"
                     size="lg"
                     onClick={() => (step < STEPS.length - 1 ? go(step + 1) : next())}
                   >
-                    Not now
+                    {t('Not now')}
                   </Button>
                 )}
                 <Button variant="primary" size="lg" onClick={next} disabled={!canAdvance} loading={saving}>
-                  {step === STEPS.length - 1 ? 'Finish' : 'Continue'}
+                  {step === STEPS.length - 1 ? t('Finish') : t('Continue')}
                   <ArrowRight className="size-4" />
                 </Button>
               </div>

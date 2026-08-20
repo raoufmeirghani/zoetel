@@ -23,10 +23,12 @@ import { relativeTime } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { toast } from '@/components/ui/toast'
 import type { LucideIcon } from 'lucide-react'
+import { useI18n } from '@/lib/i18n'
 
 type Tone = 'brand' | 'warning' | 'success' | 'danger'
 
 export default function VerificationPage() {
+  const { t } = useI18n()
   const verification = useApp((s) => s.verification)
   const workspace = useApp((s) => s.workspace)
   const approveVerification = useApp((s) => s.approveVerification)
@@ -55,31 +57,39 @@ export default function VerificationPage() {
       ? {
           icon: ShieldCheck,
           tone: 'success',
-          title: 'You’re verified',
-          subtitle: `${workspace.businessName} is cleared for every number range. We’ll only ask again if a registration document expires.`,
+          title: t('You’re verified'),
+          subtitle: t(
+            '{business} is cleared for every number range. We’ll only ask again if a registration document expires.',
+            { business: workspace.businessName },
+          ),
           action: (
             <div className="flex flex-col items-center gap-3 sm:flex-row">
               <Button variant="primary" size="lg" asChild>
                 <Link to="/numbers/buy">
-                  Buy a regulated number
+                  {t('Buy a regulated number')}
                   <ArrowRight className="size-4" />
                 </Link>
               </Button>
               {/* Approval isn't the end of the story: registrations expire and
                   details change, so the documents stay reachable and replaceable. */}
               <Button variant="secondary" size="lg" icon={<FileText />} onClick={() => setFlowOpen(true)}>
-                View or update documents
+                {t('View or update documents')}
               </Button>
             </div>
           ),
-          note: verification.reviewedAt ? `Approved ${relativeTime(verification.reviewedAt)}` : undefined,
+          note: verification.reviewedAt
+            ? t('Approved {when}', { when: relativeTime(verification.reviewedAt) })
+            : undefined,
         }
       : stage === 'in_review'
         ? {
             icon: Clock,
             tone: 'warning',
-            title: 'We’re reviewing your documents',
-            subtitle: `Nothing more is needed from you. Most reviews finish well inside ${verification.estimatedHours} hours, and your local numbers keep working while you wait.`,
+            title: t('We’re reviewing your documents'),
+            subtitle: t(
+              'Nothing more is needed from you. Most reviews finish well inside {hours} hours, and your local numbers keep working while you wait.',
+              { hours: verification.estimatedHours },
+            ),
             action: (
               <Button
                 variant="secondary"
@@ -88,41 +98,48 @@ export default function VerificationPage() {
                 onClick={() => {
                   approveVerification()
                   toast.success('Verification approved', {
-                    description: 'All number ranges are now available.',
+                    description: t('All number ranges are now available.'),
                   })
                 }}
               >
-                Simulate approval
+                {t('Simulate approval')}
               </Button>
             ),
-            note: verification.submittedAt ? `Submitted ${relativeTime(verification.submittedAt)}` : undefined,
+            note: verification.submittedAt
+              ? t('Submitted {when}', { when: relativeTime(verification.submittedAt) })
+              : undefined,
           }
         : stage === 'rejected'
           ? {
               icon: TriangleAlert,
               tone: 'danger',
-              title: 'One document needs replacing',
-              subtitle:
+              title: t('One document needs replacing'),
+              subtitle: t(
                 'A file couldn’t be read — usually an expired registration, a cropped edge, or glare on an ID photo. Replace it and you keep your place in the queue.',
+              ),
               action: (
                 <Button variant="primary" size="lg" icon={<RotateCcw />} onClick={() => setFlowOpen(true)}>
-                  Fix and resubmit
+                  {t('Fix and resubmit')}
                 </Button>
               ),
             }
           : {
               icon: ShieldCheck,
               tone: 'brand',
-              title: uploaded > 0 ? 'Pick up where you left off' : 'Verify your account',
-              subtitle:
+              title: uploaded > 0 ? t('Pick up where you left off') : t('Verify your account'),
+              subtitle: t(
                 'Telecom regulators hold the licensed carrier responsible for who uses a number. One check here unlocks every range, permanently — it takes about three minutes.',
+              ),
               action: (
                 <Button variant="primary" size="lg" onClick={() => setFlowOpen(true)}>
-                  {uploaded > 0 ? 'Continue verification' : 'Start verification'}
+                  {uploaded > 0 ? t('Continue verification') : t('Start verification')}
                   <ArrowRight className="size-4" />
                 </Button>
               ),
-              note: uploaded > 0 ? `${uploaded} of ${docs.length} documents uploaded` : undefined,
+              note:
+                uploaded > 0
+                  ? t('{n} of {total} documents uploaded', { n: uploaded, total: docs.length })
+                  : undefined,
             }
 
   const TONES: Record<Tone, { ring: string; chip: string; glow: string }> = {
@@ -135,7 +152,7 @@ export default function VerificationPage() {
 
   return (
     <>
-      <Hero backdropImage={HERO_ART_OVERVIEW} mood="trust" size="sm" title="Verification" />
+      <Hero backdropImage={HERO_ART_OVERVIEW} mood="trust" size="sm" title={t('Verification')} />
 
       {/* ── The status board — icon, headline, subtitle, one action ── */}
       <Section className="pt-0">
@@ -191,7 +208,7 @@ export default function VerificationPage() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.45, delay: 0.26 }}
-              className="mt-10 rounded-3xl bg-warning-soft p-5 text-left"
+              className="mt-10 rounded-3xl bg-warning-soft p-5 text-start"
             >
               <p className="flex items-center gap-2 text-base font-medium text-warning-ink">
                 <TriangleAlert className="size-4 shrink-0" />
@@ -209,26 +226,26 @@ export default function VerificationPage() {
       <div className="space-y-5">
         {/* ── Where it stands, as a quiet four-beat summary ── */}
         {stage !== 'approved' && (
-          <Section eyebrow="The process" title="What happens after you submit" divided index={0}>
+          <Section eyebrow={t('The process')} title={t('What happens after you submit')} divided index={0}>
             <div className="max-w-xl">
               <StepList
                 steps={[
                   {
-                    label: 'Upload your documents',
-                    description: `${uploaded} of ${docs.length} complete`,
+                    label: t('Upload your documents'),
+                    description: t('{n} of {total} complete', { n: uploaded, total: docs.length }),
                     state: uploaded === docs.length && docs.length > 0 ? 'done' : 'active',
                   },
                   {
-                    label: 'Automated checks',
-                    description: 'OCR and sanctions screening',
+                    label: t('Automated checks'),
+                    description: t('OCR and sanctions screening'),
                     state: stage === 'in_review' ? 'done' : 'pending',
                   },
                   {
-                    label: 'Compliance review',
-                    description: 'Typically within 6 hours',
+                    label: t('Compliance review'),
+                    description: t('Typically within 6 hours'),
                     state: stage === 'in_review' ? 'active' : 'pending',
                   },
-                  { label: 'All ranges unlocked', state: 'pending' },
+                  { label: t('All ranges unlocked'), state: 'pending' },
                 ]}
               />
             </div>
@@ -236,7 +253,7 @@ export default function VerificationPage() {
         )}
 
         {/* ── Questions ────────────────────────────────── */}
-        <Section eyebrow="Before you ask" title="Common questions" divided index={1}>
+        <Section eyebrow={t('Before you ask')} title={t('Common questions')} divided index={1}>
           <Accordion type="single" collapsible>
             <AccordionItem value="why" title="Why does telecom need this at all?" icon={<ShieldCheck />}>
               Phone numbers are a regulated national resource. In Egypt the NTRA — like Ofcom in the UK or the

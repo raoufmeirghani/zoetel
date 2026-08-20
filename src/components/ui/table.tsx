@@ -4,6 +4,7 @@ import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Checkbox } from './toggle'
 import { SkeletonTable } from './skeleton'
+import { useI18n } from '@/lib/i18n'
 
 export interface Column<T> {
   id: string
@@ -60,6 +61,7 @@ export function DataTable<T extends { id: string }>({
   footer?: React.ReactNode
   animateRows?: boolean
 }) {
+  const { t } = useI18n()
   const [sort, setSort] = React.useState<{ id: string; dir: 'asc' | 'desc' } | null>(initialSort ?? null)
 
   const sorted = React.useMemo(() => {
@@ -97,7 +99,7 @@ export function DataTable<T extends { id: string }>({
 
   return (
     <div className={cn('w-full overflow-x-auto', className)}>
-      <table className="w-full border-separate border-spacing-0 text-left">
+      <table className="w-full border-separate border-spacing-0 text-start">
         <thead className={cn(stickyHeader && 'sticky top-14 z-10 bg-canvas')}>
           <tr>
             {selectable && (
@@ -106,7 +108,7 @@ export function DataTable<T extends { id: string }>({
                   checked={allSelected}
                   indeterminate={someSelected || undefined}
                   onCheckedChange={(v) => onSelectedChange?.(v ? rows.map((r) => r.id) : [])}
-                  aria-label="Select all rows"
+                  aria-label={t('Select all rows')}
                 />
               </th>
             )}
@@ -116,7 +118,7 @@ export function DataTable<T extends { id: string }>({
                 style={{ width: col.width }}
                 className={cn(
                   'whitespace-nowrap border-b border-line px-3 pb-2.5 text-2xs font-semibold uppercase tracking-[0.09em] text-ink-faint sm:px-4',
-                  col.align === 'right' && 'text-right',
+                  col.align === 'right' && 'text-end',
                   col.align === 'center' && 'text-center',
                   col.hideBelow && hideMap[col.hideBelow],
                   col.headerClassName,
@@ -127,6 +129,8 @@ export function DataTable<T extends { id: string }>({
                     onClick={() => toggleSort(col)}
                     className={cn(
                       'group inline-flex items-center gap-1 transition-colors hover:text-ink',
+                      // A 'right'-aligned column is the trailing, numeric one; its sort
+                      // caret belongs on the side the numbers run away from.
                       col.align === 'right' && 'flex-row-reverse',
                     )}
                   >
@@ -200,7 +204,7 @@ export function DataTable<T extends { id: string }>({
                       className={cn(
                         'border-b border-line-soft px-3 align-middle text-base text-ink sm:px-4',
                         compact ? 'py-2.5' : 'py-3.5',
-                        col.align === 'right' && 'text-right',
+                        col.align === 'right' && 'text-end',
                         col.align === 'center' && 'text-center',
                         col.hideBelow && hideMap[col.hideBelow],
                         col.className,

@@ -32,6 +32,7 @@ import { toast } from '@/components/ui/toast'
 import { Progress } from '@/components/ui/progress'
 import { TopUpDialog } from '@/features/billing/top-up-dialog'
 import type { OwnedNumber } from '@/lib/types'
+import { useI18n } from '@/lib/i18n'
 
 type Phase = 'review' | 'provisioning' | 'done'
 
@@ -43,6 +44,7 @@ const PROVISION_STEPS = [
 ]
 
 export default function CheckoutPage() {
+  const { t } = useI18n()
   const navigate = useNavigate()
   const zoie = useZoieContext()
   const cart = useApp((s) => s.cart)
@@ -78,7 +80,7 @@ export default function CheckoutPage() {
     setPurchased(owned)
     setPhase('done')
     toast.success(owned.length === 1 ? 'Number activated' : `${owned.length} numbers activated`, {
-      description: 'Assign a SIP connection to start taking calls.',
+      description: t('Assign a SIP connection to start taking calls.'),
     })
   }
 
@@ -88,22 +90,24 @@ export default function CheckoutPage() {
         <Hero
           size="sm"
           breadcrumbs={[
-            { label: 'Phone numbers', href: '/numbers' },
-            { label: 'Buy', href: '/numbers/buy' },
-            { label: 'Checkout' },
+            { label: t('Phone numbers'), href: '/numbers' },
+            { label: t('Buy'), href: '/numbers/buy' },
+            { label: t('Checkout') },
           ]}
-          title="Nothing selected yet"
+          title={t('Nothing selected yet')}
         />
         <Section className="pt-2">
           <EmptyState
             icon={<Phone />}
-            title="Nothing selected yet"
-            description="Pick one or more numbers from the marketplace and they'll show up here with a full cost breakdown before anything is charged."
+            title={t('Nothing selected yet')}
+            description={t(
+              "Pick one or more numbers from the marketplace and they'll show up here with a full cost breakdown before anything is charged.",
+            )}
             action={
               <Button variant="primary" asChild icon={<Plus />}>
                 <Link to="/numbers/buy">
                   <Plus className="size-4" />
-                  Browse numbers
+                  {t('Browse numbers')}
                 </Link>
               </Button>
             }
@@ -126,7 +130,7 @@ export default function CheckoutPage() {
         <h1 className="headline text-3xl text-ink">Provisioning your numbers</h1>
         <p className="mt-2 text-base text-ink-subtle">This usually takes about five seconds.</p>
         <Progress value={((stepIndex + 1) / PROVISION_STEPS.length) * 100} className="mt-8 w-full" />
-        <ul className="mt-6 w-full space-y-2 text-left">
+        <ul className="mt-6 w-full space-y-2 text-start">
           {PROVISION_STEPS.map((s, i) => (
             <li
               key={s}
@@ -220,7 +224,7 @@ export default function CheckoutPage() {
           className="mt-10"
         >
           <DestinationPicker
-            question={purchased.length === 1 ? 'What should answer it?' : 'What should answer them?'}
+            question={purchased.length === 1 ? t('What should answer it?') : t('What should answer them?')}
             lede="You can change this at any time, and nothing rings until you pick."
             onSelect={(id) => {
               const first = purchased[0]
@@ -249,17 +253,21 @@ export default function CheckoutPage() {
       <Hero
         size="sm"
         breadcrumbs={[
-          { label: 'Phone numbers', href: '/numbers' },
-          { label: 'Buy', href: '/numbers/buy' },
-          { label: 'Checkout' },
+          { label: t('Phone numbers'), href: '/numbers' },
+          { label: t('Buy'), href: '/numbers/buy' },
+          { label: t('Checkout') },
         ]}
-        title={cart.length === 1 ? 'One number, then you’re live' : `${cart.length} numbers, then you’re live`}
-        lede="Nothing is charged until you confirm. Numbers activate immediately after."
+        title={
+          cart.length === 1
+            ? t('One number, then you’re live')
+            : t('{n} numbers, then you’re live', { n: cart.length })
+        }
+        lede={t('Nothing is charged until you confirm. Numbers activate immediately after.')}
         actions={
           <Button variant="ghost" asChild icon={<ArrowLeft />}>
             <Link to="/numbers/buy">
               <ArrowLeft className="size-4" />
-              Keep browsing
+              {t('Keep browsing')}
             </Link>
           </Button>
         }
@@ -267,7 +275,10 @@ export default function CheckoutPage() {
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_22rem]">
         <div className="space-y-4">
-          <Section eyebrow="In your order" title={`${cart.length} ${cart.length === 1 ? 'number' : 'numbers'}`}>
+          <Section
+            eyebrow={t('In your order')}
+            title={cart.length === 1 ? t('One number') : t('{n} numbers', { n: cart.length })}
+          >
             <ul className="divide-y divide-line-soft">
               {cart.map((n) => (
                 <motion.li
@@ -284,7 +295,7 @@ export default function CheckoutPage() {
                     </p>
                   </div>
                   <CapabilityPills capabilities={n.capabilities} size="sm" className="hidden sm:flex" />
-                  <div className="text-right">
+                  <div className="text-end">
                     <p className="text-base font-medium tabular-nums text-ink">
                       {money(n.monthly, currency)}/mo
                     </p>
@@ -314,7 +325,7 @@ export default function CheckoutPage() {
                 <Button size="sm" variant="secondary" asChild>
                   <Link to="/verification">
                     <ShieldCheck className="size-3.5" />
-                    Upload documents
+                    {t('Upload documents')}
                   </Link>
                 </Button>
               }
@@ -325,10 +336,13 @@ export default function CheckoutPage() {
             </Alert>
           )}
 
-          <Section eyebrow="After you confirm" title="What happens next" divided>
+          <Section eyebrow={t('After you confirm')} title={t('What happens next')} divided>
             <ol className="space-y-4">
               {[
-                { t: 'Numbers are reserved instantly', d: 'The carrier hold is exclusive to your workspace.' },
+                {
+                  t: 'Numbers are reserved instantly',
+                  d: 'The carrier hold is exclusive to your workspace.',
+                },
                 {
                   t: 'Routing defaults are applied',
                   d: 'Inbound calls land on your default SIP connection until you change it.',
@@ -343,8 +357,8 @@ export default function CheckoutPage() {
                     {i + 1}
                   </span>
                   <div>
-                    <p className="text-base font-medium text-ink">{s.t}</p>
-                    <p className="mt-0.5 text-sm leading-relaxed text-ink-subtle">{s.d}</p>
+                    <p className="text-base font-medium text-ink">{t(s.t)}</p>
+                    <p className="mt-0.5 text-sm leading-relaxed text-ink-subtle">{t(s.d)}</p>
                   </div>
                 </li>
               ))}
@@ -355,29 +369,31 @@ export default function CheckoutPage() {
         {/* ── Summary ─────────────────────────────────── */}
         <div className="lg:sticky lg:top-[calc(var(--topbar-h)+1.5rem)] lg:self-start">
           <div className="rounded-3xl bg-surface p-6 shadow-ring">
-            <p className="eyebrow">Order summary</p>
+            <p className="eyebrow">{t('Order summary')}</p>
             <dl className="mt-5 space-y-2.5 text-base">
               <div className="flex justify-between">
-                <dt className="text-ink-muted">Monthly recurring</dt>
+                <dt className="text-ink-muted">{t('Monthly recurring')}</dt>
                 <dd className="tabular-nums text-ink">{money(monthly, currency)}</dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-ink-muted">One-time setup</dt>
+                <dt className="text-ink-muted">{t('One-time setup')}</dt>
                 <dd className="tabular-nums text-ink">{setup > 0 ? money(setup, currency) : '—'}</dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-ink-muted">VAT (14%)</dt>
+                <dt className="text-ink-muted">{t('VAT (14%)')}</dt>
                 <dd className="tabular-nums text-ink">{money(vat, currency)}</dd>
               </div>
               <Separator className="!my-3" />
               <div className="flex items-baseline justify-between">
-                <dt className="text-base font-semibold text-ink">Due today</dt>
+                <dt className="text-base font-semibold text-ink">{t('Due today')}</dt>
                 <dd className="display text-xl font-semibold tabular-nums text-ink">
                   {money(total, currency)}
                 </dd>
               </div>
               <p className="text-xs text-ink-faint">
-                Then {money(monthly + monthly * 0.14, currency)} per month, cancel any time.
+                {t('Then {amount} per month, cancel any time.', {
+                  amount: money(monthly + monthly * 0.14, currency),
+                })}
               </p>
             </dl>
 
@@ -385,14 +401,14 @@ export default function CheckoutPage() {
               <div className="flex items-center justify-between text-sm">
                 <span className="flex items-center gap-1.5 text-ink-muted">
                   <Wallet className="size-3.5" />
-                  Wallet balance
+                  {t('Wallet balance')}
                 </span>
                 <span className={cn('font-medium tabular-nums', insufficient ? 'text-danger-ink' : 'text-ink')}>
                   {money(balance, currency)}
                 </span>
               </div>
               <div className="mt-1.5 flex items-center justify-between text-sm">
-                <span className="text-ink-muted">After purchase</span>
+                <span className="text-ink-muted">{t('After purchase')}</span>
                 <span className="font-medium tabular-nums text-ink">{money(balance - total, currency)}</span>
               </div>
             </div>
@@ -402,7 +418,7 @@ export default function CheckoutPage() {
                 <div className="space-y-2">
                   <p>Your wallet is {money(total - balance, currency)} short of this order.</p>
                   <Button size="xs" variant="destructive" onClick={() => setTopUpOpen(true)}>
-                    Add funds
+                    {t('Add funds')}
                   </Button>
                 </div>
               </Alert>
@@ -411,11 +427,11 @@ export default function CheckoutPage() {
             <label className="mt-4 flex cursor-pointer items-start gap-2.5">
               <Checkbox checked={agree} onCheckedChange={(v) => setAgree(!!v)} className="mt-0.5" />
               <span className="text-xs leading-relaxed text-ink-subtle">
-                I confirm the numbers will be used lawfully and accept the{' '}
+                {t('I confirm the numbers will be used lawfully and accept the')}{' '}
                 <a href="#terms" className="text-brand-ink underline underline-offset-2">
-                  acceptable use policy
+                  {t('acceptable use policy')}
                 </a>{' '}
-                and local telecom regulations.
+                {t('and local telecom regulations.')}
               </span>
             </label>
 
@@ -428,11 +444,11 @@ export default function CheckoutPage() {
               onClick={confirm}
               icon={<Lock />}
             >
-              Confirm purchase
+              {t('Confirm purchase')}
             </Button>
             <p className="mt-2.5 flex items-center justify-center gap-1.5 text-2xs text-ink-faint">
               <Lock className="size-3" />
-              Charged against your wallet · no card entry needed
+              {t('Charged against your wallet · no card entry needed')}
             </p>
           </div>
         </div>

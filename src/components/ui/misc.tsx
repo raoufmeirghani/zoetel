@@ -41,6 +41,7 @@ export function Kbd({ children, className }: { children: React.ReactNode; classN
       className={cn(
         'inline-flex h-5 min-w-5 items-center justify-center rounded-[5px] bg-surface-3 px-1.5',
         'font-sans text-[11px] font-medium text-ink-subtle shadow-[inset_0_-1px_0_hsl(var(--line-strong))]',
+        'ltr-island',
         className,
       )}
     >
@@ -111,6 +112,9 @@ export function Mono({
       <code
         className={cn(
           'rounded-md bg-surface-3 px-1.5 py-0.5 font-mono text-[11.5px] text-ink-muted',
+          // An ID, a token or a SIP URI is a left-to-right string whatever the
+          // paragraph around it is doing.
+          'ltr-island',
           truncate && 'truncate',
         )}
       >
@@ -142,7 +146,7 @@ export function CodeBlock({
         <span className="font-mono text-[11px] text-white/45">{filename ?? language ?? 'shell'}</span>
         <CopyButton value={code} className="text-white/50 hover:bg-white/10 hover:text-white" />
       </div>
-      <pre className="overflow-x-auto px-3.5 py-3 text-[12.5px] leading-relaxed">
+      <pre className="ltr-island overflow-x-auto px-3.5 py-3 text-[12.5px] leading-relaxed">
         <code className="font-mono text-[hsl(220_20%_86%)]">{code}</code>
       </pre>
     </div>
@@ -169,7 +173,7 @@ export function AccordionItem({
   return (
     <AccordionPrimitive.Item value={value} className={cn('border-b border-line last:border-b-0', className)}>
       <AccordionPrimitive.Header>
-        <AccordionPrimitive.Trigger className="group flex w-full items-center gap-3 py-3.5 text-left transition-colors hover:text-brand-ink [&[data-state=open]>svg:last-child]:rotate-180">
+        <AccordionPrimitive.Trigger className="group flex w-full items-center gap-3 py-3.5 text-start transition-colors hover:text-brand-ink [&[data-state=open]>svg:last-child]:rotate-180">
           {icon && <span className="text-ink-faint [&_svg]:size-4">{icon}</span>}
           <span className="flex-1 text-base font-medium text-ink">{title}</span>
           {meta}
@@ -201,7 +205,7 @@ export function DetailRow({
         {label}
         {hint}
       </dt>
-      <dd className="min-w-0 text-right text-base font-medium text-ink">{children}</dd>
+      <dd className="min-w-0 text-end text-base font-medium text-ink">{children}</dd>
     </div>
   )
 }

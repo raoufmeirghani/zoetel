@@ -9,6 +9,7 @@ import { DocUploadCard, DOC_META } from './doc-upload'
 import { useApp } from '@/store/app'
 import { cn, sleep } from '@/lib/utils'
 import { toast } from '@/components/ui/toast'
+import { useI18n } from '@/lib/i18n'
 
 const STEPS = [
   { id: 'entity', label: 'Who you are' },
@@ -39,6 +40,7 @@ const ENTITY_OPTIONS = [
  * page itself a status board rather than a wall of forms.
  */
 export function VerificationFlow({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const { t } = useI18n()
   const verification = useApp((s) => s.verification)
   const profile = useApp((s) => s.profile)
   const workspace = useApp((s) => s.workspace)
@@ -83,7 +85,7 @@ export function VerificationFlow({ open, onClose }: { open: boolean; onClose: ()
     <FlowDialog
       open={open}
       onOpenChange={(v) => !v && onClose()}
-      title={approved ? 'Update verification' : 'Account verification'}
+      title={approved ? t('Update verification') : t('Account verification')}
       steps={STEPS}
       step={step}
       direction={direction}
@@ -95,30 +97,30 @@ export function VerificationFlow({ open, onClose }: { open: boolean; onClose: ()
               This decides which documents the regulator needs.
             </span>
             <Button variant="primary" onClick={() => go(1, 1)}>
-              Continue
+              {t('Continue')}
             </Button>
           </>
         ) : step === 1 ? (
           <>
             <Button variant="ghost" onClick={() => go(0, -1)}>
-              Back
+              {t('Back')}
             </Button>
             <div className="flex items-center gap-3">
               <span className="text-sm tabular-nums text-ink-faint">
                 {uploaded} of {docs.length} uploaded
               </span>
               <Button variant="primary" disabled={!allUploaded} onClick={() => go(2, 1)}>
-                Continue
+                {t('Continue')}
               </Button>
             </div>
           </>
         ) : (
           <>
             <Button variant="ghost" onClick={() => go(1, -1)}>
-              Back
+              {t('Back')}
             </Button>
             <Button variant="primary" icon={<Send />} loading={submitting} onClick={submit}>
-              {approved ? 'Resubmit for review' : 'Submit for review'}
+              {approved ? t('Resubmit for review') : t('Submit for review')}
             </Button>
           </>
         )
@@ -138,7 +140,7 @@ export function VerificationFlow({ open, onClose }: { open: boolean; onClose: ()
                   disabled={readOnly}
                   onClick={() => setAccountType(opt.value)}
                   className={cn(
-                    'flex flex-col items-start gap-2.5 rounded-3xl p-5 text-left transition-colors',
+                    'flex flex-col items-start gap-2.5 rounded-3xl p-5 text-start transition-colors',
                     active ? 'bg-brand-softer ring-1 ring-brand/40' : 'bg-veil hover:bg-veil-strong',
                     readOnly && 'cursor-not-allowed opacity-60',
                   )}
@@ -152,7 +154,7 @@ export function VerificationFlow({ open, onClose }: { open: boolean; onClose: ()
                     <opt.icon className="size-[18px]" />
                   </span>
                   <span className="flex items-center gap-2 text-md font-medium text-ink">
-                    {opt.label}
+                    {t(opt.label)}
                     {active && <Check className="size-4 text-brand" />}
                   </span>
                   <span className="text-sm leading-relaxed text-ink-subtle">{opt.blurb}</span>
@@ -197,7 +199,7 @@ export function VerificationFlow({ open, onClose }: { open: boolean; onClose: ()
 
       {step === 2 && (
         <FlowStep
-          title={approved ? 'Ready to resubmit' : 'Ready to submit'}
+          title={approved ? t('Ready to resubmit') : t('Ready to submit')}
           lede={
             approved
               ? `Your current approval stays active until this review completes, so nothing stops working. Median turnaround is 6 hours; the ceiling is ${verification.estimatedHours}.`
@@ -207,20 +209,20 @@ export function VerificationFlow({ open, onClose }: { open: boolean; onClose: ()
           <dl className="divide-y divide-line-soft">
             {[
               {
-                label: 'Entity',
+                label: t('Entity'),
                 value: verification.accountType === 'business' ? workspace.businessName : profile.name,
               },
               {
-                label: 'Type',
+                label: t('Type'),
                 value: verification.accountType === 'business' ? 'Business' : 'Individual',
               },
-              { label: 'Country', value: workspace.country === 'EG' ? 'Egypt' : workspace.country },
-              { label: 'Regulator', value: workspace.country === 'EG' ? 'NTRA' : 'Local authority' },
-              { label: 'Documents', value: docs.map((d) => DOC_META[d.kind].label).join(' · ') },
+              { label: t('Country'), value: workspace.country === 'EG' ? 'Egypt' : workspace.country },
+              { label: t('Regulator'), value: workspace.country === 'EG' ? 'NTRA' : 'Local authority' },
+              { label: t('Documents'), value: docs.map((d) => DOC_META[d.kind].label).join(' · ') },
             ].map((f) => (
               <div key={f.label} className="flex items-baseline justify-between gap-6 py-3">
-                <dt className="shrink-0 text-sm text-ink-subtle">{f.label}</dt>
-                <dd className="text-right text-base text-ink">{f.value}</dd>
+                <dt className="shrink-0 text-sm text-ink-subtle">{t(f.label)}</dt>
+                <dd className="text-end text-base text-ink">{f.value}</dd>
               </div>
             ))}
           </dl>
@@ -233,7 +235,7 @@ export function VerificationFlow({ open, onClose }: { open: boolean; onClose: ()
           >
             <p className="eyebrow mb-3 flex items-center gap-1.5">
               <Lock className="size-3" />
-              Your data
+              {t('Your data')}
             </p>
             <ul className="space-y-2">
               {[

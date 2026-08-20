@@ -13,6 +13,7 @@ import { formatE164, money } from '@/lib/format'
 import { useApp } from '@/store/app'
 import { useNumberConfigSections, RenameNumberDrawer } from './config-drawers'
 import type { OwnedNumber } from '@/lib/types'
+import { useI18n } from '@/lib/i18n'
 
 /**
  * Settings for one number, in place. Wrapped so the inner body can be keyed on
@@ -20,6 +21,7 @@ import type { OwnedNumber } from '@/lib/types'
  * remounts rather than reconciles.
  */
 export function NumberPanel({ number, onClose }: { number?: OwnedNumber; onClose: () => void }) {
+  const { t } = useI18n()
   return (
     <SidePanel
       open={!!number}
@@ -48,7 +50,7 @@ export function NumberPanel({ number, onClose }: { number?: OwnedNumber; onClose
       title={number ? (number.label ?? formatE164(number.e164)) : ''}
       subtitle={number?.label ? formatE164(number.e164) : undefined}
       fullHref={number ? `/numbers/${number.id}` : undefined}
-      fullLabel="Open full details"
+      fullLabel={t('Open full details')}
     >
       {number && <NumberPanelBody key={number.id} number={number} />}
     </SidePanel>
@@ -56,6 +58,7 @@ export function NumberPanel({ number, onClose }: { number?: OwnedNumber; onClose
 }
 
 function NumberPanelBody({ number }: { number: OwnedNumber }) {
+  const { t } = useI18n()
   const sections = useNumberConfigSections(number)
   const currency = useApp((s) => s.workspace.currency)
   const [renaming, setRenaming] = React.useState(false)
@@ -69,9 +72,9 @@ function NumberPanelBody({ number }: { number: OwnedNumber }) {
         </span>
         <CapabilityPills capabilities={number.capabilities} size="sm" />
         <span className="text-xs text-ink-faint">{money(number.monthly, currency)}/mo</span>
-        <CopyButton value={number.e164} size="icon-xs" className="ml-auto" />
+        <CopyButton value={number.e164} size="icon-xs" className="ms-auto" />
         <Button variant="ghost" size="xs" icon={<Tag />} onClick={() => setRenaming(true)}>
-          {number.label ? 'Rename' : 'Label'}
+          {number.label ? t('Rename') : t('Label')}
         </Button>
       </div>
 
@@ -94,7 +97,7 @@ function NumberPanelBody({ number }: { number: OwnedNumber }) {
 
       <div className="mt-10 border-t border-line-soft pt-5">
         <Button variant="destructive-quiet" size="xs" icon={<Trash2 />} asChild>
-          <Link to={`/numbers/${number.id}`}>Release this number</Link>
+          <Link to={`/numbers/${number.id}`}>{t('Release this number')}</Link>
         </Button>
       </div>
 

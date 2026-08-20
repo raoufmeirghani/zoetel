@@ -23,9 +23,12 @@ export const Switch = React.forwardRef<
     <SwitchPrimitive.Thumb
       className={cn(
         'pointer-events-none block rounded-full bg-white shadow-[0_1px_2px_rgb(17_18_28/0.2)] transition-transform duration-200 ease-swift',
+        // The thumb travels toward the track's trailing end, which is the left
+        // in a mirrored layout — without the rtl: variants it would slide out
+        // of the track entirely.
         size === 'md'
-          ? 'size-[18px] data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0'
-          : 'size-[14px] data-[state=checked]:translate-x-[13px] data-[state=unchecked]:translate-x-0',
+          ? 'size-[18px] data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0 rtl:data-[state=checked]:-translate-x-4'
+          : 'size-[14px] data-[state=checked]:translate-x-[13px] data-[state=unchecked]:translate-x-0 rtl:data-[state=checked]:-translate-x-[13px]',
       )}
     />
   </SwitchPrimitive.Root>

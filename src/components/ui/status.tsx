@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils'
+import { useI18n } from '@/lib/i18n'
 import { Badge } from './badge'
 
 type Tone = 'success' | 'warning' | 'danger' | 'info' | 'neutral' | 'brand'
@@ -85,15 +86,18 @@ export function StatusBadge({
   size?: 'sm' | 'md' | 'lg'
   dot?: boolean
 }) {
+  const { t } = useI18n()
   const meta = STATUS_MAP[status] ?? { label: label ?? status.replace(/_/g, ' '), tone: 'neutral' as Tone }
   return (
     <Badge
       tone={meta.tone === 'brand' ? 'brand' : meta.tone}
       size={size}
+      // `capitalize` is a no-op in Arabic (the script has no case) but would
+      // otherwise fight a translated label that starts with a Latin acronym.
       className={cn('capitalize', className)}
     >
       {dot && <StatusDot tone={meta.tone} pulse={meta.pulse} />}
-      {label ?? meta.label}
+      {t(label ?? meta.label)}
     </Badge>
   )
 }

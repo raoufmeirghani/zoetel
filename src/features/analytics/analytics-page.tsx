@@ -20,11 +20,13 @@ import { seedConcurrency, usageSeries } from '@/lib/data/seed'
 import { compactNum, duration, formatE164, money, num, relativeTime, timeOnly } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { toast } from '@/components/ui/toast'
+import { useI18n } from '@/lib/i18n'
 
 type Range = '7' | '30' | '90'
 type Tab = 'overview' | 'calls' | 'messages' | 'quality'
 
 export default function AnalyticsPage() {
+  const { t } = useI18n()
   const [params, setParams] = useSearchParams()
   const currency = useApp((s) => s.workspace.currency)
   const calls = useApp((s) => s.calls)
@@ -84,17 +86,21 @@ export default function AnalyticsPage() {
 
   const dispositions = [
     {
-      label: 'Completed',
+      label: t('Completed'),
       value: calls.filter((c) => c.status === 'completed').length,
       color: 'hsl(var(--success))',
     },
     {
-      label: 'No answer',
+      label: t('No answer'),
       value: calls.filter((c) => c.status === 'no_answer').length,
       color: 'hsl(var(--warning))',
     },
-    { label: 'Busy', value: calls.filter((c) => c.status === 'busy').length, color: 'hsl(var(--info))' },
-    { label: 'Failed', value: calls.filter((c) => c.status === 'failed').length, color: 'hsl(var(--danger))' },
+    { label: t('Busy'), value: calls.filter((c) => c.status === 'busy').length, color: 'hsl(var(--info))' },
+    {
+      label: t('Failed'),
+      value: calls.filter((c) => c.status === 'failed').length,
+      color: 'hsl(var(--danger))',
+    },
   ].filter((d) => d.value > 0)
 
   return (
@@ -103,21 +109,21 @@ export default function AnalyticsPage() {
         mood="code"
         size="md"
         backdropImage={HERO_ART_USAGE}
-        title="Usage"
-        lede="Minutes, spend and call quality across every number and connection."
+        title={t('Usage')}
+        lede={t('Minutes, spend and call quality across every number and connection.')}
         actions={
           <>
             <Segmented
               value={range}
               onChange={setRange}
               options={[
-                { value: '7', label: '7 days' },
-                { value: '30', label: '30 days' },
-                { value: '90', label: '90 days' },
+                { value: '7', label: t('7 days') },
+                { value: '30', label: t('30 days') },
+                { value: '90', label: t('90 days') },
               ]}
             />
             <Button variant="ghost" icon={<Download />} onClick={() => toast.success('Report queued')}>
-              Export
+              {t('Export')}
             </Button>
           </>
         }
@@ -128,10 +134,10 @@ export default function AnalyticsPage() {
           layoutId="usage-tabs"
           className="pb-1"
           items={[
-            { value: 'overview', label: 'Overview' },
-            { value: 'calls', label: 'Calls', count: calls.length },
-            { value: 'messages', label: 'Messages', count: messages.length },
-            { value: 'quality', label: 'Quality' },
+            { value: 'overview', label: t('Overview') },
+            { value: 'calls', label: t('Calls'), count: calls.length },
+            { value: 'messages', label: t('Messages'), count: messages.length },
+            { value: 'quality', label: t('Quality') },
           ]}
         />
       </Hero>
@@ -141,12 +147,12 @@ export default function AnalyticsPage() {
           <Section index={0}>
             <div className="grid grid-cols-2 gap-y-7 sm:divide-x sm:divide-line lg:grid-cols-4">
               {[
-                { label: 'Minutes', value: num(sum('minutes')), d: delta('minutes') },
-                { label: 'Calls', value: num(sum('calls')), d: delta('calls') },
-                { label: 'Messages', value: num(sum('messages')), d: delta('messages') },
-                { label: 'Spend', value: money(sum('spend'), currency), d: delta('spend'), invert: true },
+                { label: t('Minutes'), value: num(sum('minutes')), d: delta('minutes') },
+                { label: t('Calls'), value: num(sum('calls')), d: delta('calls') },
+                { label: t('Messages'), value: num(sum('messages')), d: delta('messages') },
+                { label: t('Spend'), value: money(sum('spend'), currency), d: delta('spend'), invert: true },
               ].map((f, i) => (
-                <div key={f.label} className={cn('min-w-0 sm:px-6', i === 0 && 'sm:pl-0', 'lg:first:pl-0')}>
+                <div key={f.label} className={cn('min-w-0 sm:px-6', i === 0 && 'sm:ps-0', 'lg:first:ps-0')}>
                   <p className="eyebrow">{f.label}</p>
                   <p className="display mt-2.5 truncate text-2xl font-semibold tabular-nums text-ink sm:text-3xl">
                     {f.value}
@@ -158,14 +164,15 @@ export default function AnalyticsPage() {
                     )}
                   >
                     <TrendingUp className={cn('size-3.5', f.d < 0 && 'rotate-180')} />
-                    {Math.abs(f.d).toFixed(1)}%<span className="text-ink-faint">vs previous {range}d</span>
+                    {Math.abs(f.d).toFixed(1)}%
+                    <span className="text-ink-faint">{t('vs previous {n}d', { n: range })}</span>
                   </p>
                 </div>
               ))}
             </div>
           </Section>
 
-          <Section eyebrow={`Last ${range} days`} title="Minutes and spend" divided index={1}>
+          <Section eyebrow={t('Last {n} days', { n: range })} title={t('Minutes and spend')} divided index={1}>
             <div className="-mx-2">
               <AreaChart
                 key={range}
@@ -174,22 +181,22 @@ export default function AnalyticsPage() {
                 tone="brand"
                 formatValue={(n) => `${num(n)} min`}
                 formatSecondary={(n) => money(n / 20, currency)}
-                ariaLabel={`Minutes and spend over the last ${range} days`}
+                ariaLabel={t('Minutes and spend over the last {n} days', { n: range })}
               />
             </div>
             <div className="mt-4 flex items-center gap-5 text-xs text-ink-subtle">
               <span className="flex items-center gap-1.5">
                 <span className="h-0.5 w-5 rounded-full bg-brand" />
-                Minutes
+                {t('Minutes')}
               </span>
               <span className="flex items-center gap-1.5">
                 <span className="h-0 w-5 border-t border-dashed border-ink/40" />
-                Spend
+                {t('Spend')}
               </span>
             </div>
           </Section>
 
-          <Section eyebrow="Recent sample" title="How calls end" divided index={2}>
+          <Section eyebrow={t('Recent sample')} title={t('How calls end')} divided index={2}>
             <div className="grid gap-10 lg:grid-cols-2">
               <div className="flex items-center gap-7">
                 <DonutChart
@@ -227,7 +234,7 @@ export default function AnalyticsPage() {
             </div>
           </Section>
 
-          <Section eyebrow="Leaders" title="Where the traffic is" divided index={3}>
+          <Section eyebrow={t('Leaders')} title={t('Where the traffic is')} divided index={3}>
             <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
               <Ranked
                 title="Numbers"
@@ -256,11 +263,11 @@ export default function AnalyticsPage() {
                 title="Destinations"
                 tone="success"
                 items={[
-                  { label: 'Egypt — mobile', value: 18420, sub: '62% of traffic' },
-                  { label: 'Egypt — landline', value: 9120, sub: '24% of traffic' },
-                  { label: 'UAE — mobile', value: 1240, sub: '8% of traffic' },
-                  { label: 'Saudi Arabia — mobile', value: 880, sub: '4% of traffic' },
-                  { label: 'United Kingdom', value: 420, sub: '2% of traffic' },
+                  { label: t('Egypt — mobile'), value: 18420, sub: '62% of traffic' },
+                  { label: t('Egypt — landline'), value: 9120, sub: '24% of traffic' },
+                  { label: t('UAE — mobile'), value: 1240, sub: '8% of traffic' },
+                  { label: t('Saudi Arabia — mobile'), value: 880, sub: '4% of traffic' },
+                  { label: t('United Kingdom'), value: 420, sub: '2% of traffic' },
                 ]}
               />
             </div>
@@ -270,8 +277,8 @@ export default function AnalyticsPage() {
 
       {tab === 'calls' && (
         <Section
-          eyebrow={`${num(filteredCalls.length)} of ${num(calls.length)}`}
-          title="Call log"
+          eyebrow={t('{shown} of {total}', { shown: num(filteredCalls.length), total: num(calls.length) })}
+          title={t('Call log')}
           action={
             <div className="flex flex-wrap items-center gap-2">
               <Segmented
@@ -279,15 +286,15 @@ export default function AnalyticsPage() {
                 value={direction}
                 onChange={setDirection}
                 options={[
-                  { value: 'all', label: 'All' },
-                  { value: 'inbound', label: 'In' },
-                  { value: 'outbound', label: 'Out' },
+                  { value: 'all', label: t('All') },
+                  { value: 'inbound', label: t('In') },
+                  { value: 'outbound', label: t('Out') },
                 ]}
               />
               <SearchInput
                 value={callSearch}
                 onChange={setCallSearch}
-                placeholder="Number or connection…"
+                placeholder={t('Number or connection…')}
                 size="sm"
                 className="w-48"
               />
@@ -298,8 +305,8 @@ export default function AnalyticsPage() {
             <EmptyState
               compact
               icon={<Search />}
-              title="No calls match that"
-              description="Try a different number, or switch the direction filter."
+              title={t('No calls match that')}
+              description={t('Try a different number, or switch the direction filter.')}
               action={
                 <Button
                   variant="secondary"
@@ -308,7 +315,7 @@ export default function AnalyticsPage() {
                     setDirection('all')
                   }}
                 >
-                  Clear filters
+                  {t('Clear filters')}
                 </Button>
               }
             />
@@ -335,23 +342,25 @@ export default function AnalyticsPage() {
                     </p>
                   </div>
                   {c.status !== 'completed' && <StatusBadge status={c.status} size="sm" />}
-                  <span className="w-14 shrink-0 text-right text-sm tabular-nums text-ink">
+                  <span className="w-14 shrink-0 text-end text-sm tabular-nums text-ink">
                     {duration(c.seconds)}
                   </span>
-                  <Tooltip content={c.mos >= 4 ? 'Indistinguishable from a landline' : 'Audible degradation'}>
+                  <Tooltip
+                    content={c.mos >= 4 ? t('Indistinguishable from a landline') : t('Audible degradation')}
+                  >
                     <span
                       className={cn(
-                        'hidden w-12 shrink-0 cursor-help text-right text-sm tabular-nums sm:block',
+                        'hidden w-12 shrink-0 cursor-help text-end text-sm tabular-nums sm:block',
                         c.mos >= 4 ? 'text-success-ink' : 'text-warning-ink',
                       )}
                     >
                       {c.mos.toFixed(2)}
                     </span>
                   </Tooltip>
-                  <span className="hidden w-16 shrink-0 text-right text-sm tabular-nums text-ink-muted md:block">
+                  <span className="hidden w-16 shrink-0 text-end text-sm tabular-nums text-ink-muted md:block">
                     {money(c.cost, currency, { precise: true })}
                   </span>
-                  <span className="hidden w-24 shrink-0 text-right text-xs tabular-nums text-ink-faint lg:block">
+                  <span className="hidden w-24 shrink-0 text-end text-xs tabular-nums text-ink-faint lg:block">
                     {relativeTime(c.startedAt)}
                   </span>
                 </li>
@@ -363,8 +372,8 @@ export default function AnalyticsPage() {
 
       {tab === 'messages' && (
         <Section
-          eyebrow="SMS and MMS"
-          title="Message log"
+          eyebrow={t('SMS and MMS')}
+          title={t('Message log')}
           action={
             <Badge tone="outline">{numbers.filter((n) => n.smsEnabled).length} SMS-enabled numbers</Badge>
           }
@@ -373,8 +382,10 @@ export default function AnalyticsPage() {
             <EmptyState
               compact
               icon={<MessageSquare />}
-              title="No messages yet"
-              description="Enable SMS on a mobile or local number, then send your first message with one API call."
+              title={t('No messages yet')}
+              description={t(
+                'Enable SMS on a mobile or local number, then send your first message with one API call.',
+              )}
             />
           ) : (
             <ul className="divide-y divide-line-soft">
@@ -400,13 +411,13 @@ export default function AnalyticsPage() {
                     {m.direction}
                   </Badge>
                   {m.status !== 'delivered' && <StatusBadge status={m.status} size="sm" />}
-                  <span className="hidden w-10 shrink-0 text-right text-sm tabular-nums text-ink md:block">
+                  <span className="hidden w-10 shrink-0 text-end text-sm tabular-nums text-ink md:block">
                     {m.segments}
                   </span>
-                  <span className="w-16 shrink-0 text-right text-sm tabular-nums text-ink-muted">
+                  <span className="w-16 shrink-0 text-end text-sm tabular-nums text-ink-muted">
                     {money(m.cost, currency, { precise: true })}
                   </span>
-                  <span className="hidden w-24 shrink-0 text-right text-xs tabular-nums text-ink-faint lg:block">
+                  <span className="hidden w-24 shrink-0 text-end text-xs tabular-nums text-ink-faint lg:block">
                     {relativeTime(m.at)}
                   </span>
                 </li>
@@ -422,29 +433,29 @@ export default function AnalyticsPage() {
             <div className="grid grid-cols-2 gap-y-7 sm:divide-x sm:divide-line lg:grid-cols-4">
               {[
                 {
-                  label: 'ASR',
+                  label: t('ASR'),
                   value: `${asr.toFixed(1)}%`,
                   target: 'Target ≥ 65%',
                   good: asr >= 65,
                   pct: asr,
                 },
                 {
-                  label: 'Average MOS',
+                  label: t('Average MOS'),
                   value: avgMos.toFixed(2),
                   target: 'Target ≥ 4.0',
                   good: avgMos >= 4,
                   pct: (avgMos / 5) * 100,
                 },
                 {
-                  label: 'ACD',
+                  label: t('ACD'),
                   value: duration(acd),
                   target: 'Average call duration',
                   good: true,
                   pct: Math.min((acd / 300) * 100, 100),
                 },
-                { label: 'PDD', value: '1.8 s', target: 'Post-dial delay', good: true, pct: 72 },
+                { label: t('PDD'), value: '1.8 s', target: 'Post-dial delay', good: true, pct: 72 },
               ].map((m, i) => (
-                <div key={m.label} className={cn('min-w-0 sm:px-6', i === 0 && 'sm:pl-0', 'lg:first:pl-0')}>
+                <div key={m.label} className={cn('min-w-0 sm:px-6', i === 0 && 'sm:ps-0', 'lg:first:ps-0')}>
                   <div className="flex items-center gap-1.5">
                     <p className="eyebrow">{m.label}</p>
                     <StatusDot tone={m.good ? 'success' : 'warning'} />
@@ -464,19 +475,19 @@ export default function AnalyticsPage() {
             </div>
           </Section>
 
-          <Section eyebrow="Last 24 hours" title="Concurrent calls" divided index={1}>
+          <Section eyebrow={t('Last 24 hours')} title={t('Concurrent calls')} divided index={1}>
             <div className="-mx-2">
               <AreaChart
                 data={concurrency.map((c) => ({ label: timeOnly(c.at), value: c.value }))}
                 height={240}
                 tone="success"
                 formatValue={(n) => `${n} concurrent`}
-                ariaLabel="Concurrent calls over the last 24 hours"
+                ariaLabel={t('Concurrent calls over the last 24 hours')}
               />
             </div>
           </Section>
 
-          <Section eyebrow="By connection" title="Where quality varies" divided index={2}>
+          <Section eyebrow={t('By connection')} title={t('Where quality varies')} divided index={2}>
             <div className="grid gap-10 lg:grid-cols-2">
               <ul className="space-y-5">
                 {connections
@@ -505,7 +516,7 @@ export default function AnalyticsPage() {
               <div>
                 <p className="eyebrow mb-3 flex items-center gap-1.5">
                   <Activity className="size-3" />
-                  Reading these numbers
+                  {t('Reading these numbers')}
                 </p>
                 <dl className="divide-y divide-line-soft">
                   {[
@@ -516,7 +527,7 @@ export default function AnalyticsPage() {
                   ].map((x) => (
                     <div key={x.t} className="flex items-baseline justify-between gap-4 py-2.5">
                       <dt className="text-sm font-medium text-ink">{x.t}</dt>
-                      <dd className="text-right text-sm text-ink-subtle">{x.d}</dd>
+                      <dd className="text-end text-sm text-ink-subtle">{x.d}</dd>
                     </div>
                   ))}
                 </dl>

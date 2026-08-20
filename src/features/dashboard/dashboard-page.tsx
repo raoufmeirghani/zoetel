@@ -12,6 +12,7 @@ import { openZoie, useZoieContext } from '@/lib/zoie'
 import { seedConcurrency, usageSeries } from '@/lib/data/seed'
 import { money, num, relativeTime } from '@/lib/format'
 import { cn } from '@/lib/utils'
+import { useI18n } from '@/lib/i18n'
 
 /**
  * The overview is a hub, not a report and not a wall of cards: it welcomes you,
@@ -20,6 +21,7 @@ import { cn } from '@/lib/utils'
  * through on the way somewhere rather than a set of separate objects.
  */
 export default function DashboardPage() {
+  const { t } = useI18n()
   const profile = useApp((s) => s.profile)
   const workspace = useApp((s) => s.workspace)
   const numbers = useApp((s) => s.numbers)
@@ -44,7 +46,7 @@ export default function DashboardPage() {
   const peak = Math.max(...concurrency.map((c) => c.value))
 
   const hour = new Date().getHours()
-  const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening'
+  const greeting = hour < 12 ? t('Good morning') : hour < 18 ? t('Good afternoon') : t('Good evening')
   const firstName = profile.name.split(' ')[0]
 
   const pending = journey.stages.filter((s) => !s.done)
@@ -67,7 +69,11 @@ export default function DashboardPage() {
               ·
             </span>
             <span className="eyebrow">
-              {journey.allClear ? 'All systems normal' : unhealthy ? `${unhealthy} degraded` : 'Setting up'}
+              {journey.allClear
+                ? t('All systems normal')
+                : unhealthy
+                  ? t('{n} degraded', { n: unhealthy })
+                  : t('Setting up')}
             </span>
           </>
         }
@@ -78,8 +84,11 @@ export default function DashboardPage() {
         }
         lede={
           todo
-            ? `${todo} ${todo === 1 ? 'thing is' : 'things are'} waiting on you. ${num(concurrent)} calls are connected right now.`
-            : `Everything is running. ${num(concurrent)} calls are connected right now.`
+            ? t('{n} waiting on you. {calls} calls are connected right now.', {
+                n: t(todo === 1 ? 'One thing is' : '{n} things are', { n: todo }),
+                calls: num(concurrent),
+              })
+            : t('Everything is running. {calls} calls are connected right now.', { calls: num(concurrent) })
         }
       />
 
@@ -91,10 +100,10 @@ export default function DashboardPage() {
         {todo > 0 && (
           <section className="glass rounded-[28px] px-6 py-6 sm:px-7">
             <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
-              <h2 className="headline text-xl text-ink">What's left</h2>
+              <h2 className="headline text-xl text-ink">{t("What's left")}</h2>
               {doneCount > 0 && (
                 <p className="text-sm tabular-nums text-ink-faint">
-                  {doneCount} of {journey.stages.length} steps done
+                  {t('{done} of {total} steps done', { done: doneCount, total: journey.stages.length })}
                 </p>
               )}
             </div>
@@ -124,12 +133,12 @@ export default function DashboardPage() {
         {/* ── Metrics: inline figures on one sheet of glass. ──────────────── */}
         <section className="glass rounded-[28px] px-6 py-6 sm:px-7">
           <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
-            <h2 className="headline text-xl text-ink">Where things stand</h2>
+            <h2 className="headline text-xl text-ink">{t('Where things stand')}</h2>
             <Link
               to="/analytics"
               className="group inline-flex items-center gap-1.5 text-sm font-medium text-ink-muted transition-colors hover:text-ink"
             >
-              Usage & quality
+              {t('Usage & quality')}
               <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-0.5" />
             </Link>
           </div>
@@ -137,41 +146,45 @@ export default function DashboardPage() {
           <div className="mt-7 grid grid-cols-2 gap-y-9 sm:grid-cols-3 lg:grid-cols-5 lg:divide-x lg:divide-line-soft">
             <Figure
               first
-              label="Live calls"
+              label={t('Live calls')}
               value={num(concurrent)}
-              meta={`peak ${num(peak)} in 24h`}
+              meta={t('peak {n} in 24h', { n: num(peak) })}
               tone="success"
               href="/analytics"
             />
             <Figure
-              label="Numbers"
+              label={t('Numbers')}
               value={`${activeNumbers}${numbers.length > activeNumbers ? `/${numbers.length}` : ''}`}
-              meta={numbers.length > activeNumbers ? `${numbers.length - activeNumbers} held` : 'all routable'}
+              meta={
+                numbers.length > activeNumbers
+                  ? t('{n} held', { n: numbers.length - activeNumbers })
+                  : t('all routable')
+              }
               tone={numbers.length > activeNumbers ? 'warning' : 'success'}
               href="/numbers"
             />
             <Figure
-              label="Trunks"
+              label={t('Trunks')}
               value={`${healthyTrunks}/${connections.length}`}
-              meta={unhealthy ? `${unhealthy} unhealthy` : 'all registered'}
+              meta={unhealthy ? t('{n} unhealthy', { n: unhealthy }) : t('all registered')}
               tone={unhealthy ? 'warning' : 'success'}
               href="/sip"
             />
             <Figure
-              label="Wallet"
+              label={t('Wallet')}
               value={money(balance, currency, { compact: true })}
-              meta={`${runway} days of runway`}
+              meta={t('{n} days of runway', { n: runway })}
               href="/billing"
               action={
                 <Button size="xs" variant="secondary" icon={<Plus />} onClick={() => setTopUpOpen(true)}>
-                  Add funds
+                  {t('Add funds')}
                 </Button>
               }
             />
             <Figure
-              label="Spend, 14d"
+              label={t('Spend, 14d')}
               value={money(spend14, currency, { compact: true })}
-              meta="drawn from your wallet"
+              meta={t('drawn from your wallet')}
               href="/billing"
             />
           </div>
@@ -181,7 +194,7 @@ export default function DashboardPage() {
         <section className="glass rounded-[28px] px-6 py-6 sm:px-7">
           <div className="grid gap-x-12 gap-y-10 lg:grid-cols-[1fr_16rem]">
             <div>
-              <h2 className="headline text-xl text-ink">What changed</h2>
+              <h2 className="headline text-xl text-ink">{t('What changed')}</h2>
               <ul className="mt-6 space-y-4">
                 {activity.slice(0, 5).map((a) => (
                   <li key={a.id} className="flex items-baseline gap-3">
@@ -210,13 +223,13 @@ export default function DashboardPage() {
             </div>
 
             <div>
-              <p className="eyebrow">Go deeper</p>
+              <p className="eyebrow">{t('Go deeper')}</p>
               <ul className="mt-4 space-y-2.5">
                 {[
-                  { to: '/analytics', label: 'Usage & quality' },
-                  { to: '/analytics?tab=calls', label: 'Call log' },
-                  { to: '/developers', label: 'API keys & webhooks' },
-                  { to: '/team', label: 'Team & audit log' },
+                  { to: '/analytics', label: t('Usage & quality') },
+                  { to: '/analytics?tab=calls', label: t('Call log') },
+                  { to: '/developers', label: t('API keys & webhooks') },
+                  { to: '/team', label: t('Team & audit log') },
                 ].map((l) => (
                   <li key={l.to}>
                     <Link
@@ -245,6 +258,7 @@ export default function DashboardPage() {
  * a banner.
  */
 function StepRow({ n, stage, first, onZoie }: { n: number; stage: Stage; first: boolean; onZoie: () => void }) {
+  const { t } = useI18n()
   return (
     <motion.li
       initial={{ opacity: 0, y: 8 }}
@@ -263,21 +277,21 @@ function StepRow({ n, stage, first, onZoie }: { n: number; stage: Stage; first: 
       </span>
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
-          <p className={cn('text-md text-ink', first && 'font-medium')}>{stage.action}</p>
-          {stage.waiting && <span className="eyebrow text-info-ink">with us</span>}
+          <p className={cn('text-md text-ink', first && 'font-medium')}>{t(stage.action)}</p>
+          {stage.waiting && <span className="eyebrow text-info-ink">{t('with us')}</span>}
         </div>
-        <p className="mt-1 text-sm leading-relaxed text-ink-subtle">{stage.why}</p>
+        <p className="mt-1 text-sm leading-relaxed text-ink-subtle">{t(stage.why)}</p>
       </div>
       <div className="shrink-0">
         {stage.zoie ? (
           <Button size="sm" variant={first ? 'primary' : 'ghost'} onClick={onZoie}>
-            {stage.cta}
+            {t(stage.cta)}
             <ArrowUpRight className="size-3.5" />
           </Button>
         ) : (
           <Button size="sm" variant={first ? 'primary' : 'ghost'} asChild>
             <Link to={stage.to}>
-              {stage.cta}
+              {t(stage.cta)}
               <ArrowRight className="size-3.5" />
             </Link>
           </Button>
@@ -295,6 +309,7 @@ const PROBLEM_TONE = {
 
 /** A problem shares the run with the steps — it is also just something to do. */
 function ProblemRow({ item, delay }: { item: AttentionItem; delay: number }) {
+  const { t } = useI18n()
   const tone = PROBLEM_TONE[item.severity]
   return (
     <motion.li
@@ -310,11 +325,11 @@ function ProblemRow({ item, delay }: { item: AttentionItem; delay: number }) {
           <item.icon className="size-4" />
         </span>
         <div className="min-w-0 flex-1">
-          <p className={cn('text-md', tone.text)}>{item.title}</p>
-          <p className="mt-1 text-sm leading-relaxed text-ink-subtle">{item.detail}</p>
+          <p className={cn('text-md', tone.text)}>{t(item.title)}</p>
+          <p className="mt-1 text-sm leading-relaxed text-ink-subtle">{t(item.detail)}</p>
         </div>
         <span className="inline-flex shrink-0 items-center gap-1.5 text-sm font-medium text-ink-muted transition-colors group-hover:text-brand-ink">
-          {item.cta}
+          {t(item.cta)}
           <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-0.5" />
         </span>
       </Link>
@@ -340,7 +355,7 @@ function Figure({
   first?: boolean
 }) {
   return (
-    <div className={cn('min-w-0 lg:px-6', first && 'lg:pl-0')}>
+    <div className={cn('min-w-0 lg:px-6', first && 'lg:ps-0')}>
       <Link to={href} className="group block min-w-0">
         <div className="flex items-center gap-1.5">
           <p className="eyebrow truncate">{label}</p>

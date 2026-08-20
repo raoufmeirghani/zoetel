@@ -17,6 +17,7 @@ import { useApp } from '@/store/app'
 import { toast } from '@/components/ui/toast'
 import type { OwnedNumber } from '@/lib/types'
 import { cn } from '@/lib/utils'
+import { useI18n } from '@/lib/i18n'
 
 const WHEN_LABEL: Record<'always' | 'unanswered' | 'unreachable', string> = {
   always: 'always',
@@ -32,6 +33,7 @@ const WHEN_LABEL: Record<'always' | 'unanswered' | 'unreachable', string> = {
  * simpler than reconciling drafts against incoming props.
  */
 export function useNumberConfigSections(number: OwnedNumber): ConfigSection[] {
+  const { t } = useI18n()
   const connections = useApp((s) => s.connections)
   const updateNumber = useApp((s) => s.updateNumber)
 
@@ -58,7 +60,7 @@ export function useNumberConfigSections(number: OwnedNumber): ConfigSection[] {
 
   const save = (patch: Partial<OwnedNumber>, message: string) => {
     updateNumber(number.id, patch)
-    toast.success(message, { description: 'New calls use this immediately.' })
+    toast.success(message, { description: t('New calls use this immediately.') })
   }
 
   const connection = connections.find((c) => c.id === number.connectionId)
@@ -67,10 +69,10 @@ export function useNumberConfigSections(number: OwnedNumber): ConfigSection[] {
     {
       id: 'routing',
       icon: Network,
-      label: 'Routing',
-      title: 'Where should calls go?',
-      description: 'Inbound calls are delivered to a SIP trunk, a webhook, or both.',
-      hint: 'Nothing rings until this is set.',
+      label: t('Routing'),
+      title: t('Where should calls go?'),
+      description: t('Inbound calls are delivered to a SIP trunk, a webhook, or both.'),
+      hint: t('Nothing rings until this is set.'),
       summary: connection
         ? `${connection.name}${number.webhookUrl ? ` · webhook to ${new URL(number.webhookUrl).host}` : ''}`
         : number.webhookUrl
@@ -87,12 +89,14 @@ export function useNumberConfigSections(number: OwnedNumber): ConfigSection[] {
             <div className="space-y-6">
               <div className="rule" />
               <Field
-                label="SIP connection"
-                description="The trunk that receives the call. This is the fastest path for a PBX or softswitch."
+                label={t('SIP connection')}
+                description={t(
+                  'The trunk that receives the call. This is the fastest path for a PBX or softswitch.',
+                )}
               >
                 <Select value={connectionId} onValueChange={setConnectionId}>
                   <SelectTrigger size="lg">
-                    <SelectValue placeholder="Not routed" />
+                    <SelectValue placeholder={t('Not routed')} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="none">Don't route — reject inbound calls</SelectItem>
@@ -124,8 +128,10 @@ export function useNumberConfigSections(number: OwnedNumber): ConfigSection[] {
             <div className="space-y-6">
               <div className="rule" />
               <Field
-                label="Forward to"
-                description="Calls are bridged to this number. Your Zoetel number stays the caller ID the recipient sees."
+                label={t('Forward to')}
+                description={t(
+                  'Calls are bridged to this number. Your Zoetel number stays the caller ID the recipient sees.',
+                )}
               >
                 <Input
                   value={forwardTo}
@@ -137,7 +143,7 @@ export function useNumberConfigSections(number: OwnedNumber): ConfigSection[] {
                 />
               </Field>
               <div className="grid gap-5 sm:grid-cols-2">
-                <Field label="Ring for" description="How long to try before falling back.">
+                <Field label={t('Ring for')} description={t('How long to try before falling back.')}>
                   <NumberInput
                     value={forwardTimeout}
                     onChange={setForwardTimeout}
@@ -147,7 +153,7 @@ export function useNumberConfigSections(number: OwnedNumber): ConfigSection[] {
                     suffix="sec"
                   />
                 </Field>
-                <Field label="If nobody answers" description="What the caller hears instead.">
+                <Field label={t('If nobody answers')} description={t('What the caller hears instead.')}>
                   <Select
                     value={forwardFallback}
                     onValueChange={(v) => setForwardFallback(v as typeof forwardFallback)}
@@ -156,14 +162,14 @@ export function useNumberConfigSections(number: OwnedNumber): ConfigSection[] {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="voicemail" hint="Recorded and emailed">
-                        Send to voicemail
+                      <SelectItem value="voicemail" hint={t('Recorded and emailed')}>
+                        {t('Send to voicemail')}
                       </SelectItem>
-                      <SelectItem value="busy" hint="Caller hears engaged tone">
-                        Return busy
+                      <SelectItem value="busy" hint={t('Caller hears engaged tone')}>
+                        {t('Return busy')}
                       </SelectItem>
-                      <SelectItem value="hangup" hint="Call simply ends">
-                        Hang up
+                      <SelectItem value="hangup" hint={t('Call simply ends')}>
+                        {t('Hang up')}
                       </SelectItem>
                     </SelectContent>
                   </Select>
@@ -180,8 +186,10 @@ export function useNumberConfigSections(number: OwnedNumber): ConfigSection[] {
             <div className="space-y-6">
               <div className="rule" />
               <Field
-                label="Voice webhook"
-                description="We POST call events here so your app can answer, play audio or bridge. Must reply within 3 seconds."
+                label={t('Voice webhook')}
+                description={t(
+                  'We POST call events here so your app can answer, play audio or bridge. Must reply within 3 seconds.',
+                )}
               >
                 <Input
                   value={webhookUrl}
@@ -192,9 +200,9 @@ export function useNumberConfigSections(number: OwnedNumber): ConfigSection[] {
                 />
               </Field>
               <Field
-                label="Failover webhook"
-                hint="Optional"
-                description="Used only after the primary fails twice."
+                label={t('Failover webhook')}
+                hint={t('Optional')}
+                description={t('Used only after the primary fails twice.')}
               >
                 <Input
                   value={failover}
@@ -231,11 +239,11 @@ export function useNumberConfigSections(number: OwnedNumber): ConfigSection[] {
     {
       id: 'forwarding',
       icon: PhoneForwarded,
-      label: 'Forwarding',
-      title: 'Forward calls to another number',
+      label: t('Forwarding'),
+      title: t('Forward calls to another number'),
       description:
         'Send calls on to a mobile or landline — either instead of your routing, or as a safety net behind it.',
-      hint: 'Off. Calls follow your routing only.',
+      hint: t('Off. Calls follow your routing only.'),
       summary: number.forwardTo
         ? `${formatE164(number.forwardTo)} · ${WHEN_LABEL[number.forwardWhen ?? 'always']}`
         : undefined,
@@ -249,14 +257,18 @@ export function useNumberConfigSections(number: OwnedNumber): ConfigSection[] {
                 Your Zoetel number stays the caller ID the recipient sees.
               </p>
             </div>
-            <Switch checked={forwardOn} onCheckedChange={setForwardOn} aria-label="Forward inbound calls" />
+            <Switch
+              checked={forwardOn}
+              onCheckedChange={setForwardOn}
+              aria-label={t('Forward inbound calls')}
+            />
           </div>
 
           {forwardOn && (
             <>
               <div className="rule" />
 
-              <Field label="Forward to">
+              <Field label={t('Forward to')}>
                 <Input
                   value={forwardTo}
                   onChange={(e) => setForwardTo(e.target.value)}
@@ -268,29 +280,31 @@ export function useNumberConfigSections(number: OwnedNumber): ConfigSection[] {
               </Field>
 
               <Field
-                label="When"
-                description="'Always' replaces your routing. The other two only fire when your primary destination doesn't take the call."
+                label={t('When')}
+                description={t(
+                  "'Always' replaces your routing. The other two only fire when your primary destination doesn't take the call.",
+                )}
               >
                 <Select value={forwardWhen} onValueChange={(v) => setForwardWhen(v as typeof forwardWhen)}>
                   <SelectTrigger size="lg">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="always" hint="Instead of routing">
-                      Always forward
+                    <SelectItem value="always" hint={t('Instead of routing')}>
+                      {t('Always forward')}
                     </SelectItem>
-                    <SelectItem value="unanswered" hint="Safety net behind routing">
-                      Only when nobody answers
+                    <SelectItem value="unanswered" hint={t('Safety net behind routing')}>
+                      {t('Only when nobody answers')}
                     </SelectItem>
-                    <SelectItem value="unreachable" hint="Trunk down or unregistered">
-                      Only when the destination is unreachable
+                    <SelectItem value="unreachable" hint={t('Trunk down or unregistered')}>
+                      {t('Only when the destination is unreachable')}
                     </SelectItem>
                   </SelectContent>
                 </Select>
               </Field>
 
               <div className="grid gap-5 sm:grid-cols-2">
-                <Field label="Ring for" description="How long to try before falling back.">
+                <Field label={t('Ring for')} description={t('How long to try before falling back.')}>
                   <NumberInput
                     value={forwardTimeout}
                     onChange={setForwardTimeout}
@@ -300,7 +314,7 @@ export function useNumberConfigSections(number: OwnedNumber): ConfigSection[] {
                     suffix="sec"
                   />
                 </Field>
-                <Field label="If nobody answers" description="What the caller hears instead.">
+                <Field label={t('If nobody answers')} description={t('What the caller hears instead.')}>
                   <Select
                     value={forwardFallback}
                     onValueChange={(v) => setForwardFallback(v as typeof forwardFallback)}
@@ -309,14 +323,14 @@ export function useNumberConfigSections(number: OwnedNumber): ConfigSection[] {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="voicemail" hint="Recorded and emailed">
-                        Send to voicemail
+                      <SelectItem value="voicemail" hint={t('Recorded and emailed')}>
+                        {t('Send to voicemail')}
                       </SelectItem>
-                      <SelectItem value="busy" hint="Caller hears engaged tone">
-                        Return busy
+                      <SelectItem value="busy" hint={t('Caller hears engaged tone')}>
+                        {t('Return busy')}
                       </SelectItem>
-                      <SelectItem value="hangup" hint="Call simply ends">
-                        Hang up
+                      <SelectItem value="hangup" hint={t('Call simply ends')}>
+                        {t('Hang up')}
                       </SelectItem>
                     </SelectContent>
                   </Select>
@@ -347,23 +361,23 @@ export function useNumberConfigSections(number: OwnedNumber): ConfigSection[] {
     {
       id: 'callerId',
       icon: UserRound,
-      label: 'Caller ID',
-      title: 'How should you appear?',
-      description: 'Caller ID is what the person you are calling sees before they answer.',
-      hint: 'The name people see when you call them.',
+      label: t('Caller ID'),
+      title: t('How should you appear?'),
+      description: t('Caller ID is what the person you are calling sees before they answer.'),
+      hint: t('The name people see when you call them.'),
       summary: number.callerIdName,
       state: number.callerIdName ? 'set' : 'unset',
       body: (
         <div className="space-y-6">
           <Field
-            label="Caller ID name (CNAM)"
+            label={t('Caller ID name (CNAM)')}
             hint={`${callerIdName.length}/15`}
-            description="Up to 15 characters. Shown wherever the receiving carrier supports CNAM lookup."
+            description={t('Up to 15 characters. Shown wherever the receiving carrier supports CNAM lookup.')}
           >
             <Input
               value={callerIdName}
               onChange={(e) => setCallerIdName(e.target.value.slice(0, 15))}
-              placeholder="Acme Retail"
+              placeholder={'Acme Retail'}
               inputSize="lg"
             />
           </Field>
@@ -391,22 +405,24 @@ export function useNumberConfigSections(number: OwnedNumber): ConfigSection[] {
     {
       id: 'emergency',
       icon: MapPin,
-      label: 'Emergency',
-      title: 'Where is this number located?',
-      description: 'Emergency services need a physical address to dispatch to.',
-      hint: 'Required before this number can dial 122 or 123.',
+      label: t('Emergency'),
+      title: t('Where is this number located?'),
+      description: t('Emergency services need a physical address to dispatch to.'),
+      hint: t('Required before this number can dial 122 or 123.'),
       summary: number.emergencyAddress,
       state: number.emergencyAddress ? 'set' : 'required',
       body: (
         <div className="space-y-6">
           <Field
-            label="Registered service address"
-            description="The building where this number is actually used. NTRA requires it before 122 or 123 can be dialled."
+            label={t('Registered service address')}
+            description={t(
+              'The building where this number is actually used. NTRA requires it before 122 or 123 can be dialled.',
+            )}
           >
             <Input
               value={address}
               onChange={(e) => setAddress(e.target.value)}
-              placeholder="12 Road 90, New Cairo, Cairo"
+              placeholder={'12 Road 90, New Cairo, Cairo'}
               leading={<MapPin />}
               inputSize="lg"
             />
@@ -424,11 +440,11 @@ export function useNumberConfigSections(number: OwnedNumber): ConfigSection[] {
     {
       id: 'features',
       icon: Settings2,
-      label: 'Features',
-      title: 'Optional features',
+      label: t('Features'),
+      title: t('Optional features'),
       description:
         'Everything here is off by default, applies the moment you flip it, and is safe to change later.',
-      hint: 'Recording, CNAM lookup and messaging.',
+      hint: t('Recording, CNAM lookup and messaging.'),
       summary:
         [
           number.recordingEnabled && 'Recording on',
@@ -441,21 +457,21 @@ export function useNumberConfigSections(number: OwnedNumber): ConfigSection[] {
       body: (
         <div className="divide-y divide-line-soft">
           <FeatureRow
-            label="Call recording"
-            description="Stored 30 days, encrypted at rest. Check local consent rules before enabling."
+            label={t('Call recording')}
+            description={t('Stored 30 days, encrypted at rest. Check local consent rules before enabling.')}
             checked={number.recordingEnabled}
             onChange={(v) => updateNumber(number.id, { recordingEnabled: v })}
           />
           <FeatureRow
-            label="CNAM lookup on inbound"
-            description="Resolve the caller's registered name where the originating carrier publishes it."
+            label={t('CNAM lookup on inbound')}
+            description={t("Resolve the caller's registered name where the originating carrier publishes it.")}
             checked={number.cnamEnabled}
             onChange={(v) => updateNumber(number.id, { cnamEnabled: v })}
           />
           {number.capabilities.includes('sms') && (
             <FeatureRow
-              label="SMS"
-              description="Send and receive messages on this number."
+              label={t('SMS')}
+              description={t('Send and receive messages on this number.')}
               checked={number.smsEnabled}
               onChange={(v) => updateNumber(number.id, { smsEnabled: v })}
             />
@@ -479,6 +495,7 @@ export function RenameNumberDrawer({
   number: OwnedNumber
   onClose: () => void
 }) {
+  const { t } = useI18n()
   const updateNumber = useApp((s) => s.updateNumber)
   const [label, setLabel] = React.useState(number.label ?? '')
 
@@ -490,12 +507,12 @@ export function RenameNumberDrawer({
     <Drawer
       open={open}
       onOpenChange={(v) => !v && onClose()}
-      title="Name this number"
-      description="A label your team will recognise faster than eleven digits."
+      title={t('Name this number')}
+      description={t('A label your team will recognise faster than eleven digits.')}
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            Cancel
+            {t('Cancel')}
           </Button>
           <Button
             variant="primary"
@@ -505,17 +522,17 @@ export function RenameNumberDrawer({
               onClose()
             }}
           >
-            Save
+            {t('Save')}
           </Button>
         </>
       }
     >
       <div className="space-y-6 pt-1">
-        <Field label="Label" description="Internal only — customers never see it.">
+        <Field label={t('Label')} description={t('Internal only — customers never see it.')}>
           <Input
             value={label}
             onChange={(e) => setLabel(e.target.value)}
-            placeholder="Support line — Cairo"
+            placeholder={'Support line — Cairo'}
             inputSize="lg"
             autoFocus
           />

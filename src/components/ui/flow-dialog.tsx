@@ -5,6 +5,7 @@ import { X } from 'lucide-react'
 import { Button } from './button'
 import { Stepper, type Step } from './stepper'
 import { cn } from '@/lib/utils'
+import { useDirSign, useI18n } from '@/lib/i18n'
 
 const EASE = [0.16, 1, 0.3, 1] as const
 
@@ -42,6 +43,8 @@ export function FlowDialog({
   footer?: React.ReactNode
   className?: string
 }) {
+  const { t } = useI18n()
+  const dirSign = useDirSign()
   return (
     <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
       <AnimatePresence>
@@ -79,7 +82,7 @@ export function FlowDialog({
                       {title}
                     </DialogPrimitive.Title>
                     <DialogPrimitive.Close asChild>
-                      <Button variant="ghost" size="icon-sm" aria-label="Close" className="shrink-0">
+                      <Button variant="ghost" size="icon-sm" aria-label={t('Close')} className="shrink-0">
                         <X />
                       </Button>
                     </DialogPrimitive.Close>
@@ -92,9 +95,9 @@ export function FlowDialog({
                     <motion.div
                       key={step}
                       custom={direction}
-                      initial={{ opacity: 0, x: direction * 26 }}
+                      initial={{ opacity: 0, x: direction * 26 * dirSign }}
                       animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: direction * -26, transition: { duration: 0.14 } }}
+                      exit={{ opacity: 0, x: direction * -26 * dirSign, transition: { duration: 0.14 } }}
                       transition={{ duration: 0.32, ease: EASE }}
                       className="mx-auto max-w-2xl px-6 py-8 sm:px-8 sm:py-10"
                     >

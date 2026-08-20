@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useI18n } from '@/lib/i18n'
 
 export type HeroMood = 'dawn' | 'signal' | 'ledger' | 'trust' | 'code' | 'quiet'
 
@@ -88,6 +89,7 @@ export function Hero({
   size?: 'sm' | 'md' | 'lg'
   className?: string
 }) {
+  const { t } = useI18n()
   const pad = { sm: 'pb-8 pt-8', md: 'pb-10 pt-10 sm:pt-14', lg: 'pb-12 pt-12 sm:pt-20' }
   const titleSize = {
     sm: 'text-2xl sm:text-3xl',
@@ -107,7 +109,7 @@ export function Hero({
       <div className={cn('flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between', pad[size])}>
         <div className="min-w-0 max-w-2xl">
           {breadcrumbs && breadcrumbs.length > 0 && (
-            <nav aria-label="Breadcrumb" className="mb-4 flex items-center gap-1 text-sm">
+            <nav aria-label={t('Breadcrumb')} className="mb-4 flex items-center gap-1 text-sm">
               {breadcrumbs.map((b, i) => (
                 <React.Fragment key={`${b.label}-${i}`}>
                   {i > 0 && <ChevronRight className="size-3.5 text-ink-faint" />}
@@ -188,7 +190,11 @@ function HeroMesh() {
     // Full-bleed regardless of the content column's width — anchored to the
     // viewport centre, not the (narrower, max-width) parent — so the mesh
     // always reaches both screen edges, even on very wide viewports.
-    <div className="pointer-events-none absolute -top-24 bottom-0 left-1/2 -z-10 w-screen -translate-x-1/2 overflow-hidden">
+    // `start-1/2` mirrors with the layout but `translate-x` is physical: in a
+    // right-to-left layout `right: 50%` anchors the element's trailing edge to
+    // the centre, so the offset that re-centres it has to go the other way.
+    // Without the rtl: variant the whole band lands off-screen.
+    <div className="pointer-events-none absolute -top-24 bottom-0 start-1/2 -z-10 w-screen -translate-x-1/2 overflow-hidden rtl:translate-x-1/2">
       <span className="hero-mesh" />
       <span className="hero-grain" />
     </div>
@@ -221,7 +227,8 @@ function HeroArtwork({
   return (
     <div
       className={cn(
-        'pointer-events-none absolute -top-16 left-1/2 -z-10 -translate-x-1/2 overflow-hidden',
+        // See HeroMesh: the centring offset mirrors with the layout.
+        'pointer-events-none absolute -top-16 start-1/2 -z-10 -translate-x-1/2 overflow-hidden rtl:translate-x-1/2',
         // The artwork is the header's atmosphere and ends with it. A long tail
         // (this was +20rem) pushed the fade's strong middle out over the first
         // card — and because the cards are translucent glass, the gradient read
@@ -240,7 +247,10 @@ function HeroArtwork({
           // A 1.6-aspect image can't fit a wide banner uncropped; framing on the
           // upper-middle keeps the map, mast and skyline in view.
           'size-full select-none object-cover object-[50%_20%]',
-          'hero-fade',
+          // `hero-art` is the hook the stylesheet uses to mirror the composition
+          // in a right-to-left layout, so its focal mass stays behind the
+          // headline rather than opposite it.
+          'hero-fade hero-art',
           // Dark mode keeps the same ratio the pale art was tuned at (0.2/0.6),
           // so one number per hero covers both themes.
           '[opacity:var(--hero-img)] dark:[opacity:calc(var(--hero-img)*0.36)]',

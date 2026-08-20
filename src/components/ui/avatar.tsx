@@ -40,7 +40,7 @@ export function Avatar({
       {status && (
         <span
           className={cn(
-            'absolute -bottom-px -right-px rounded-full ring-2 ring-surface',
+            'absolute -bottom-px -end-px rounded-full ring-2 ring-surface',
             size === 'xs' || size === 'sm' ? 'size-1.5' : 'size-2.5',
             status === 'online' ? 'bg-success' : 'bg-ink-faint',
           )}
@@ -70,13 +70,13 @@ export function AvatarStack({
           name={p.name}
           hue={p.hue}
           size={size}
-          className={cn('ring-2 ring-surface', i > 0 && '-ml-2')}
+          className={cn('ring-2 ring-surface', i > 0 && '-ms-2')}
         />
       ))}
       {extra > 0 && (
         <span
           className={cn(
-            '-ml-2 inline-flex items-center justify-center rounded-full bg-surface-3 font-semibold text-ink-muted ring-2 ring-surface',
+            '-ms-2 inline-flex items-center justify-center rounded-full bg-surface-3 font-semibold text-ink-muted ring-2 ring-surface',
             sizes[size],
           )}
         >

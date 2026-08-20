@@ -8,7 +8,7 @@ export function MobileIdentity() {
   return (
     <Link
       to="/"
-      className="chrome pointer-events-auto flex h-9 items-center gap-2 rounded-full pl-1.5 pr-3.5 lg:hidden"
+      className="chrome pointer-events-auto flex h-9 items-center gap-2 rounded-full pe-3.5 ps-1.5 lg:hidden"
     >
       <Logo size={24} />
       <span className="max-w-[9rem] truncate text-sm font-medium text-ink">{workspace.name}</span>

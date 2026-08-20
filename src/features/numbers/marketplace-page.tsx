@@ -37,6 +37,7 @@ import type { Capability, NumberType, PhoneNumber } from '@/lib/types'
 import { formatE164, money, num } from '@/lib/format'
 import { cn, sleep } from '@/lib/utils'
 import { useApp } from '@/store/app'
+import { useI18n } from '@/lib/i18n'
 
 const CAP_OPTIONS: { value: Capability; label: string; icon: React.ReactNode }[] = [
   { value: 'voice', label: 'Voice', icon: <Phone /> },
@@ -55,6 +56,7 @@ const TYPE_OPTIONS: { value: NumberType; label: string }[] = [
 type Sort = 'price-asc' | 'price-desc' | 'type' | 'city'
 
 export default function MarketplacePage() {
+  const { t } = useI18n()
   const navigate = useNavigate()
   const [params, setParams] = useSearchParams()
 
@@ -153,9 +155,12 @@ export default function MarketplacePage() {
     <>
       <Hero
         size="md"
-        breadcrumbs={[{ label: 'Phone numbers', href: '/numbers' }, { label: 'Buy' }]}
-        title="Find your number"
-        lede={`Live inventory across ${COUNTRIES.filter((c) => c.live).length} countries. Pick one and it's routable within seconds of checkout.`}
+        breadcrumbs={[{ label: t('Phone numbers'), href: '/numbers' }, { label: t('Buy') }]}
+        title={t('Find your number')}
+        lede={t(
+          'Live inventory across {n} countries. Pick one and it is routable within seconds of checkout.',
+          { n: COUNTRIES.filter((c) => c.live).length },
+        )}
       >
         {/* ── The search is the page ─────────────────── */}
         <div className="chrome relative z-10 rounded-[26px] p-2">
@@ -182,7 +187,7 @@ export default function MarketplacePage() {
                   </SelectItem>
                 ))}
                 {COUNTRIES.filter((c) => !c.live).map((c) => (
-                  <SelectItem key={c.code} value={c.code} disabled hint="Waitlist">
+                  <SelectItem key={c.code} value={c.code} disabled hint={t('Waitlist')}>
                     <span className="flex items-center gap-2">
                       <span>{c.flag}</span>
                       {c.name}
@@ -193,20 +198,20 @@ export default function MarketplacePage() {
             </Select>
 
             <div className="relative flex min-w-0 flex-1 items-center">
-              <Search className="pointer-events-none absolute left-3.5 size-4 text-ink-faint" />
+              <Search className="pointer-events-none absolute start-3.5 size-4 text-ink-faint" />
               <input
                 value={contains}
                 onChange={(e) => setContains(e.target.value.replace(/[^\d]/g, ''))}
                 inputMode="numeric"
-                placeholder="Search for digits you want — 1000, 4444, your street number…"
-                aria-label="Digits the number should contain"
-                className="h-11 w-full min-w-0 rounded-[18px] bg-transparent pl-10 pr-10 text-md tabular-nums text-ink placeholder:text-ink-faint focus:outline-none"
+                placeholder={t('Search for digits you want — 1000, 4444, your street number…')}
+                aria-label={t('Digits the number should contain')}
+                className="h-11 w-full min-w-0 rounded-[18px] bg-transparent pe-10 ps-10 text-md tabular-nums text-ink placeholder:text-ink-faint focus:outline-none"
               />
               {contains && (
                 <button
                   onClick={() => setContains('')}
-                  className="absolute right-3 grid size-6 place-items-center rounded-full text-ink-faint transition-colors hover:bg-veil-strong hover:text-ink"
-                  aria-label="Clear"
+                  className="absolute end-3 grid size-6 place-items-center rounded-full text-ink-faint transition-colors hover:bg-veil-strong hover:text-ink"
+                  aria-label={t('Clear')}
                 >
                   <X className="size-3.5" />
                 </button>
@@ -215,7 +220,12 @@ export default function MarketplacePage() {
           </div>
 
           <div className="mt-2 flex flex-wrap items-center gap-2 px-1 pb-1">
-            <ChipGroup size="sm" options={TYPE_OPTIONS} value={types} onChange={setTypes} />
+            <ChipGroup
+              size="sm"
+              options={TYPE_OPTIONS.map((o) => ({ ...o, label: t(o.label) }))}
+              value={types}
+              onChange={setTypes}
+            />
             <span className="hidden h-4 w-px bg-line sm:block" aria-hidden />
             <button
               onClick={() => setRefineOpen((v) => !v)}
@@ -227,7 +237,7 @@ export default function MarketplacePage() {
                   : 'text-ink-muted hover:bg-veil-strong hover:text-ink',
               )}
             >
-              Refine
+              {t('Refine')}
               {refineCount > 0 && <span className="tabular-nums">· {refineCount}</span>}
               <ChevronDown className={cn('size-3 transition-transform', refineOpen && 'rotate-180')} />
             </button>
@@ -241,11 +251,11 @@ export default function MarketplacePage() {
               )}
             >
               <Heart className={cn('size-3', onlySaved && 'fill-current')} />
-              Saved
+              {t('Saved')}
               {favorites.length > 0 && <span className="tabular-nums">{favorites.length}</span>}
             </button>
-            <span className="ml-auto text-xs tabular-nums text-ink-faint">
-              {isFetching && !data ? 'Searching…' : `${num(results.length)} available`}
+            <span className="ms-auto text-xs tabular-nums text-ink-faint">
+              {isFetching && !data ? t('Searching…') : t('{n} available', { n: num(results.length) })}
             </span>
           </div>
 
@@ -260,13 +270,13 @@ export default function MarketplacePage() {
                 className="overflow-hidden"
               >
                 <div className="grid gap-4 border-t border-line-soft px-1 pb-1 pt-4 sm:grid-cols-3">
-                  <Field label="Region">
+                  <Field label={t('Region')}>
                     <Select value={region} onValueChange={setRegion}>
                       <SelectTrigger size="sm">
-                        <SelectValue placeholder="Any region" />
+                        <SelectValue placeholder={t('Any region')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="any">Any region</SelectItem>
+                        <SelectItem value="any">{t('Any region')}</SelectItem>
                         {meta.regions.map((r) => (
                           <SelectItem key={r.name} value={r.name} hint={`0${r.areaCode}`}>
                             {r.name}
@@ -275,13 +285,15 @@ export default function MarketplacePage() {
                       </SelectContent>
                     </Select>
                   </Field>
-                  <Field label="City">
+                  <Field label={t('City')}>
                     <Select value={city} onValueChange={setCity} disabled={region === 'any'}>
                       <SelectTrigger size="sm">
-                        <SelectValue placeholder={region === 'any' ? 'Pick a region first' : 'Any city'} />
+                        <SelectValue
+                          placeholder={region === 'any' ? t('Pick a region first') : t('Any city')}
+                        />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="any">Any city</SelectItem>
+                        <SelectItem value="any">{t('Any city')}</SelectItem>
                         {(meta.regions.find((r) => r.name === region)?.cities ?? []).map((c) => (
                           <SelectItem key={c} value={c}>
                             {c}
@@ -290,7 +302,7 @@ export default function MarketplacePage() {
                       </SelectContent>
                     </Select>
                   </Field>
-                  <Field label="Must support">
+                  <Field label={t('Must support')}>
                     <ChipGroup size="sm" options={CAP_OPTIONS} value={caps} onChange={setCaps} />
                   </Field>
                 </div>
@@ -303,14 +315,14 @@ export default function MarketplacePage() {
         {meta.regulated && kycStage !== 'approved' && (
           <p className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-ink-subtle">
             <TriangleAlert className="size-3.5 shrink-0 text-warning" />
-            National, mobile and toll-free ranges need a verified entity.
+            {t('National, mobile and toll-free ranges need a verified entity.')}
             <button
               onClick={() => navigate('/verification')}
               className="font-medium text-brand-ink underline decoration-brand/30 underline-offset-4 hover:decoration-brand"
             >
-              Verify now
+              {t('Verify now')}
             </button>
-            <span className="text-ink-faint">— local numbers are available immediately.</span>
+            <span className="text-ink-faint">{t('— local numbers are available immediately.')}</span>
           </p>
         )}
       </Hero>
@@ -327,10 +339,10 @@ export default function MarketplacePage() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="price-asc">Cheapest first</SelectItem>
-              <SelectItem value="price-desc">Priciest first</SelectItem>
-              <SelectItem value="type">By number type</SelectItem>
-              <SelectItem value="city">By city</SelectItem>
+              <SelectItem value="price-asc">{t('Cheapest first')}</SelectItem>
+              <SelectItem value="price-desc">{t('Priciest first')}</SelectItem>
+              <SelectItem value="type">{t('By number type')}</SelectItem>
+              <SelectItem value="city">{t('By city')}</SelectItem>
             </SelectContent>
           </Select>
         }
@@ -338,11 +350,13 @@ export default function MarketplacePage() {
         {isError ? (
           <EmptyState
             icon={<TriangleAlert />}
-            title="Inventory is temporarily unavailable"
-            description="Our carrier partner didn't respond in time. Nothing was charged — try the search again."
+            title={t('Inventory is temporarily unavailable')}
+            description={t(
+              "Our carrier partner didn't respond in time. Nothing was charged — try the search again.",
+            )}
             action={
               <Button variant="primary" onClick={() => refetch()}>
-                Retry search
+                {t('Retry search')}
               </Button>
             }
           />
@@ -352,7 +366,7 @@ export default function MarketplacePage() {
               <li key={i} className="flex items-center gap-4 py-4" style={{ opacity: 1 - i * 0.1 }}>
                 <Skeleton className="h-4 w-40" />
                 <Skeleton className="h-3 w-20" />
-                <Skeleton className="ml-auto h-4 w-16" />
+                <Skeleton className="ms-auto h-4 w-16" />
                 <Skeleton className="h-8 w-[68px] rounded-xl" />
               </li>
             ))}
@@ -361,18 +375,20 @@ export default function MarketplacePage() {
           onlySaved ? (
             <EmptyState
               icon={<Heart />}
-              title="Nothing saved yet"
-              description="Tap the star beside any number to keep it here while you compare options with your team."
+              title={t('Nothing saved yet')}
+              description={t(
+                'Tap the star beside any number to keep it here while you compare options with your team.',
+              )}
               action={
                 <Button variant="secondary" onClick={() => setOnlySaved(false)}>
-                  Browse all numbers
+                  {t('Browse all numbers')}
                 </Button>
               }
             />
           ) : (
             <EmptyState
               icon={<Search />}
-              title="No numbers match that"
+              title={t('No numbers match that')}
               description={`We couldn't find ${
                 types.length
                   ? types.map((t) => NUMBER_TYPE_META[t].label.toLowerCase()).join(' or ')
@@ -380,7 +396,7 @@ export default function MarketplacePage() {
               } in ${region === 'any' ? meta.name : region}${debounced ? ` containing ${debounced}` : ''}. Widening the search usually helps.`}
               action={
                 <Button variant="primary" onClick={reset} icon={<RotateCcw />}>
-                  Clear filters
+                  {t('Clear filters')}
                 </Button>
               }
             />
@@ -407,7 +423,7 @@ export default function MarketplacePage() {
                       <button
                         onClick={() => toggleFavorite(r.id)}
                         className="shrink-0 text-ink-faint/60 transition-colors hover:text-warning"
-                        aria-label={saved ? 'Remove from saved' : 'Save this number'}
+                        aria-label={saved ? t('Remove from saved') : t('Save this number')}
                       >
                         <Star className={cn('size-4', saved && 'fill-warning text-warning')} />
                       </button>
@@ -426,7 +442,7 @@ export default function MarketplacePage() {
                           <span className="truncate">{r.city}</span>
                           {r.isNew && (
                             <Badge tone="brand" size="sm" className="h-4 px-1 text-[9px]">
-                              New
+                              {t('New')}
                             </Badge>
                           )}
                           {r.requiresRegulatoryDocs && (
@@ -448,7 +464,7 @@ export default function MarketplacePage() {
                                 ) : (
                                   <TriangleAlert className="size-3" />
                                 )}
-                                {kycStage === 'approved' ? 'Cleared' : 'Docs needed'}
+                                {kycStage === 'approved' ? t('Cleared') : t('Docs needed')}
                               </span>
                             </Tooltip>
                           )}
@@ -461,7 +477,7 @@ export default function MarketplacePage() {
                         className="hidden shrink-0 md:flex"
                       />
 
-                      <div className="shrink-0 text-right">
+                      <div className="shrink-0 text-end">
                         <p className="text-base font-medium tabular-nums text-ink">
                           {money(r.monthly, currency)}
                         </p>
@@ -477,7 +493,7 @@ export default function MarketplacePage() {
                         className="min-w-[68px] shrink-0 justify-center"
                         icon={added ? <Check /> : undefined}
                       >
-                        {added ? 'Added' : 'Select'}
+                        {added ? t('Added') : t('Select')}
                       </Button>
                     </div>
                   </motion.li>
@@ -505,10 +521,10 @@ export default function MarketplacePage() {
             transition={{ type: 'spring', stiffness: 380, damping: 34 }}
             className={cn(
               'fixed inset-x-0 bottom-0 z-30 flex justify-center px-4 pb-20 transition-[padding] duration-300 ease-out sm:px-6 lg:pb-6',
-              navPinned ? 'lg:pl-[calc(264px+1.5rem)]' : 'lg:pl-[calc(76px+1.5rem)]',
+              navPinned ? 'lg:ps-[calc(264px+1.5rem)]' : 'lg:ps-[calc(76px+1.5rem)]',
             )}
           >
-            <div className="flex w-full max-w-2xl items-center gap-3 rounded-[26px] bg-onyx p-3 pl-4 text-onyx-fg shadow-xl">
+            <div className="flex w-full max-w-2xl items-center gap-3 rounded-[26px] bg-onyx p-3 ps-4 text-onyx-fg shadow-xl">
               <span className="grid size-9 shrink-0 place-items-center rounded-2xl bg-white/10">
                 <Sparkles className="size-4 text-white/80" />
               </span>
@@ -544,7 +560,7 @@ export default function MarketplacePage() {
                 className="shrink-0 bg-white text-onyx shadow-none hover:bg-white/90"
                 onClick={() => navigate('/numbers/checkout')}
               >
-                Review order
+                {t('Review order')}
                 <ArrowRight className="size-4" />
               </Button>
             </div>

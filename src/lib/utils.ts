@@ -66,9 +66,17 @@ export function initials(name: string) {
     .join('')
 }
 
+/**
+ * Bidi control characters — isolates, embeddings and marks. The formatters in
+ * `lib/format` add these so numbers survive a right-to-left paragraph; they are
+ * invisible on screen but would be pasted into a dialpad or a spreadsheet as
+ * junk, so the clipboard gets the clean string.
+ */
+const BIDI_CONTROLS = /[\u200e\u200f\u202a-\u202e\u2066-\u2069]/g
+
 export async function copyText(text: string) {
   try {
-    await navigator.clipboard.writeText(text)
+    await navigator.clipboard.writeText(text.replace(BIDI_CONTROLS, ''))
     return true
   } catch {
     return false

@@ -17,6 +17,7 @@ import { bytes, relativeTime } from '@/lib/format'
 import { cn, sleep } from '@/lib/utils'
 import type { DocKind, VerificationDoc } from '@/lib/types'
 import { toast } from '@/components/ui/toast'
+import { useI18n } from '@/lib/i18n'
 
 export const DOC_META: Record<DocKind, { label: string; hint: string; accept: string; example: string }> = {
   passport: {
@@ -76,6 +77,7 @@ export function DocUploadCard({
   index?: number
   readOnly?: boolean
 }) {
+  const { t } = useI18n()
   const meta = DOC_META[doc.kind]
   const inputRef = React.useRef<HTMLInputElement>(null)
   const [dragging, setDragging] = React.useState(false)
@@ -84,7 +86,7 @@ export function DocUploadCard({
 
   const handleFile = async (file: File) => {
     if (file.size > 10 * 1024 * 1024) {
-      toast.error('File is too large', { description: 'Documents must be under 10 MB.' })
+      toast.error('File is too large', { description: t('Documents must be under 10 MB.') })
       return
     }
     setProgress(0)
@@ -97,7 +99,9 @@ export function DocUploadCard({
     await sleep(900)
     setScanning(false)
     onUpload({ name: file.name, size: file.size })
-    toast.success(`${meta.label} uploaded`, { description: 'We extracted the key fields for you to confirm.' })
+    toast.success(`${t(meta.label)} uploaded`, {
+      description: t('We extracted the key fields for you to confirm.'),
+    })
   }
 
   const uploaded = doc.status !== 'missing'
@@ -156,20 +160,20 @@ export function DocUploadCard({
 
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
-              <h4 className="text-base font-semibold text-ink">{meta.label}</h4>
+              <h4 className="text-base font-semibold text-ink">{t(meta.label)}</h4>
               {doc.status === 'approved' && (
                 <Badge tone="success" size="sm">
-                  Approved
+                  {t('Approved')}
                 </Badge>
               )}
               {doc.status === 'submitted' && (
                 <Badge tone="info" size="sm">
-                  In review
+                  {t('In review')}
                 </Badge>
               )}
               {doc.status === 'rejected' && (
                 <Badge tone="danger" size="sm">
-                  Resubmit
+                  {t('Resubmit')}
                 </Badge>
               )}
             </div>
@@ -182,7 +186,7 @@ export function DocUploadCard({
               size="icon-xs"
               className="text-ink-faint hover:text-danger"
               onClick={onRemove}
-              aria-label={`Remove ${meta.label}`}
+              aria-label={`Remove ${t(meta.label)}`}
             >
               <Trash2 />
             </Button>
@@ -243,7 +247,7 @@ export function DocUploadCard({
                 </div>
                 {!readOnly && (
                   <Button variant="ghost" size="xs" onClick={() => inputRef.current?.click()}>
-                    Replace
+                    {t('Replace')}
                   </Button>
                 )}
               </div>

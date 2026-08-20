@@ -1,5 +1,10 @@
 @import '@fontsource-variable/inter/wght.css';
 @import '@fontsource-variable/geist/wght.css';
+/* Cairo ships per-script subsets with unicode-range, so the Arabic file is
+   only fetched once an Arabic glyph is actually painted. It sits at the end of
+   the Latin stacks in tailwind.config.js, which means Arabic renders correctly
+   even inside the English UI (a customer name, an address) at zero cost. */
+@import '@fontsource-variable/cairo/wght.css';
 
 @tailwind base;
 @tailwind components;
@@ -503,4 +508,171 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
   }
+}
+
+/* ─────────────────────────────────────────────────────────
+   Arabic and right-to-left
+   ─────────────────────────────────────────────────────────
+   Layout mirroring is handled entirely by logical properties in the utility
+   classes (ps-/pe-, ms-/me-, start-/end-, text-start/end), which follow the
+   `dir` attribute React puts on <html>. What can't be expressed that way lives
+   here: type metrics that don't survive the script change, and the handful of
+   physical gradients and masks.
+*/
+
+/* Arabic is a cursive script: letter-spacing prises joined glyphs apart, and the
+   tight tracking our display face is tuned for makes words look broken. Reset it
+   everywhere Arabic renders, and give the taller x-height a little more line. */
+[lang='ar'] {
+  font-family: 'Cairo Variable', 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+}
+
+[lang='ar'] .headline,
+[lang='ar'] .display,
+[lang='ar'] h1,
+[lang='ar'] h2,
+[lang='ar'] h3,
+[lang='ar'] h4 {
+  font-family: 'Cairo Variable', 'Geist Variable', ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: 0;
+  font-variation-settings: normal;
+}
+
+[lang='ar'] .headline {
+  line-height: 1.28;
+}
+
+/* Arabic has no case, so `uppercase` is a no-op — but the wide tracking that
+   makes a Latin eyebrow legible shatters an Arabic one. */
+[lang='ar'] .eyebrow {
+  letter-spacing: 0;
+}
+
+/* Latin-tuned negative tracking, applied by utility classes on hero numerals
+   and headings, has the same problem. */
+[lang='ar'] [class*='tracking-'] {
+  letter-spacing: 0;
+}
+
+/* Numerals stay Western-Arabic (0-9): that is what Egyptian carriers, invoices
+   and dialpads use, and it keeps every figure comparable across locales. */
+[lang='ar'] .tabular,
+[lang='ar'] .tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* An E.164 number, an amount, an API key or a code sample is a left-to-right
+   string no matter what surrounds it. `isolate` stops the bidi algorithm
+   dragging a trailing +, - or / to the wrong end. */
+[dir='rtl'] .ltr-island {
+  direction: ltr;
+  unicode-bidi: isolate;
+  text-align: start;
+}
+
+/* Charts keep a left-to-right time axis in Arabic — that is the convention in
+   Arabic-language analytics, and mirroring it would invert every trend line.
+   The <svg> elements carry dir="ltr" so their `textAnchor="start"` axis labels
+   stay anchored to the earliest data point; the HTML legends around them are
+   left in the page direction. */
+
+/* Mixed-language text.
+
+   Arabic covers the chrome, every page header, the actions, tabs and statuses;
+   deeper body copy is still English and is filled in over time. An English
+   sentence dropped into a right-to-left paragraph is not merely left-aligned
+   wrongly — the bidi algorithm reorders its runs, so "…right now. 7 things are
+   waiting." comes out as ".things are waiting 7 …right now".
+
+   `unicode-bidi: plaintext` resolves each block's direction from its own first
+   strong character instead of inheriting the page's, so an English paragraph
+   reads left-to-right with its punctuation intact while an Arabic one beside it
+   stays right-to-left. Scoped to text-bearing blocks — applying it to every
+   inline span would break genuinely mixed runs like "٥ من 10 SIP trunks". */
+[dir='rtl'] :is(p, h1, h2, h3, h4, h5, h6, li, dt, dd, figcaption, blockquote, th, td, label) {
+  unicode-bidi: plaintext;
+}
+
+/* For free-text blocks that aren't one of those elements — an alert body, a
+   toast description — opted into explicitly. */
+[dir='rtl'] .bidi-auto {
+  unicode-bidi: plaintext;
+}
+
+/* Physical gradients and masks — the only things `dir` can't flip for us. */
+[dir='rtl'] .mask-fade-r {
+  mask-image: linear-gradient(to left, black 82%, transparent 100%);
+}
+
+/* The canvas washes read as light falling from the leading edge, so they mirror
+   with the layout rather than staying pinned to the left of the screen. */
+[dir='rtl'] body {
+  background-image:
+    radial-gradient(115% 85% at 92% -12%, hsl(var(--wash-1)) 0%, transparent 58%),
+    radial-gradient(105% 75% at 4% -6%, hsl(var(--wash-2)) 0%, transparent 54%),
+    radial-gradient(90% 60% at 50% 108%, hsl(var(--wash-3)) 0%, transparent 60%);
+}
+
+/* The hero artwork is a photograph-like composition, not an icon: mirroring it
+   keeps its focal mass on the same side as the headline it sits behind. */
+[dir='rtl'] .hero-art {
+  transform: scaleX(-1);
+}
+
+/* Directional icons.
+
+   Lucide stamps every icon with its own class (`lucide-arrow-right`), which lets
+   one rule mirror the whole set — including the many icons passed around as bare
+   component references in config arrays, where a wrapper component or a
+   className codemod could never reach them.
+
+   Only icons that mean *forward*, *back* or *outward* are listed. Trend arrows
+   are deliberately absent: a rising line still rises to the right in an Arabic
+   report, and charts keep their left-to-right time axis. */
+[dir='rtl']
+  :is(
+    .lucide-arrow-right,
+    .lucide-arrow-left,
+    .lucide-arrow-up-right,
+    .lucide-arrow-up-left,
+    .lucide-arrow-down-right,
+    .lucide-arrow-down-left,
+    .lucide-arrow-right-left,
+    .lucide-chevron-right,
+    .lucide-chevron-left,
+    .lucide-chevrons-right,
+    .lucide-chevrons-left,
+    .lucide-chevron-first,
+    .lucide-chevron-last,
+    .lucide-corner-down-right,
+    .lucide-corner-up-right,
+    .lucide-move-right,
+    .lucide-move-left,
+    .lucide-square-arrow-out-up-right,
+    .lucide-external-link,
+    .lucide-forward,
+    .lucide-reply,
+    .lucide-send,
+    .lucide-phone-forwarded,
+    .lucide-phone-incoming,
+    .lucide-phone-outgoing,
+    .lucide-log-out,
+    .lucide-log-in,
+    .lucide-undo-2,
+    .lucide-redo-2
+  ) {
+  /* The individual `scale` property, not `transform: scaleX(-1)`.
+     Several of these arrows also carry a Tailwind hover nudge
+     (`group-hover:translate-x-0.5`), which writes the `transform` property — a
+     `transform` here would collide with it and one of the two would be dropped.
+     `scale` is applied *outside* `transform`, so both compose; and because the
+     nudge's translate then happens inside the flipped coordinate space, the
+     arrow still slides in the direction it points. */
+  scale: -1 1;
+}
+
+/* Escape hatch, for the rare icon that must keep its physical direction inside
+   an otherwise mirrored context (a diagram, a keyboard hint). */
+[dir='rtl'] .no-flip-rtl {
+  scale: 1 1;
 }

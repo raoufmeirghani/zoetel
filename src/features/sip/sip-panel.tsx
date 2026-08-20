@@ -10,6 +10,7 @@ import { useApp } from '@/store/app'
 import { num } from '@/lib/format'
 import { SipRegisterDrawer, useSipConfigSections } from './config-drawers'
 import type { SipConnection } from '@/lib/types'
+import { useI18n } from '@/lib/i18n'
 
 const TONE = {
   active: 'success',
@@ -20,6 +21,7 @@ const TONE = {
 
 /** Settings for one trunk, in place — the list stays put behind it. */
 export function SipPanel({ conn, onClose }: { conn?: SipConnection; onClose: () => void }) {
+  const { t } = useI18n()
   return (
     <SidePanel
       open={!!conn}
@@ -41,7 +43,7 @@ export function SipPanel({ conn, onClose }: { conn?: SipConnection; onClose: () 
       title={conn?.name ?? ''}
       subtitle={conn ? `${conn.concurrentCalls} of ${conn.channelLimit} channels in use` : undefined}
       fullHref={conn ? `/sip/${conn.id}` : undefined}
-      fullLabel="Open full details"
+      fullLabel={t('Open full details')}
     >
       {conn && <SipPanelBody key={conn.id} conn={conn} />}
     </SidePanel>
@@ -49,6 +51,7 @@ export function SipPanel({ conn, onClose }: { conn?: SipConnection; onClose: () 
 }
 
 function SipPanelBody({ conn }: { conn: SipConnection }) {
+  const { t } = useI18n()
   const sections = useSipConfigSections(conn)
   const numbers = useApp((s) => s.numbers)
   const assigned = numbers.filter((n) => n.connectionId === conn.id)
@@ -60,7 +63,7 @@ function SipPanelBody({ conn }: { conn: SipConnection }) {
         {conn.srtp && (
           <Badge tone="outline" size="sm">
             <ShieldCheck />
-            SRTP
+            {t('SRTP')}
           </Badge>
         )}
         <Badge tone="neutral" size="sm">
@@ -71,9 +74,9 @@ function SipPanelBody({ conn }: { conn: SipConnection }) {
           size="xs"
           icon={<Terminal />}
           onClick={() => setRegistering(true)}
-          className="ml-auto"
+          className="ms-auto"
         >
-          Register a PBX
+          {t('Register a PBX')}
         </Button>
       </div>
 

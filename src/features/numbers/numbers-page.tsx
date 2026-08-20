@@ -36,10 +36,12 @@ import { isRouted, type OwnedNumber } from '@/lib/types'
 import { toast } from '@/components/ui/toast'
 import { Tooltip } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
+import { useI18n } from '@/lib/i18n'
 
 type Tab = 'all' | 'active' | 'pending' | 'unrouted'
 
 export default function NumbersPage() {
+  const { t } = useI18n()
   const navigate = useNavigate()
   const numbers = useApp((s) => s.numbers)
   const connections = useApp((s) => s.connections)
@@ -95,12 +97,12 @@ export default function NumbersPage() {
         <Hero
           backdropImage={HERO_ART}
           backdropOpacity={0.85}
-          title="Phone numbers"
-          lede="A number is how the world reaches you. You don't have one yet."
+          title={t('Phone numbers')}
+          lede={t("A number is how the world reaches you. You don't have one yet.")}
           actions={
             <Button size="lg" variant="primary" asChild>
               <Link to="/numbers/buy">
-                Buy your first number
+                {t('Buy your first number')}
                 <ArrowRight className="size-4" />
               </Link>
             </Button>
@@ -115,8 +117,10 @@ export default function NumbersPage() {
                 <Phone className="relative size-8 text-brand" />
               </div>
             }
-            title="Nothing here yet — and that's the fun part"
-            description="Pick a local Cairo line for support, a mobile range for SMS, or a toll-free hotline for national campaigns. Local numbers are live seconds after checkout."
+            title={t("Nothing here yet — and that's the fun part")}
+            description={t(
+              'Pick a local Cairo line for support, a mobile range for SMS, or a toll-free hotline for national campaigns. Local numbers are live seconds after checkout.',
+            )}
             action={
               <Button variant="primary" size="lg" asChild>
                 <Link to="/numbers/buy">Browse the marketplace</Link>
@@ -124,7 +128,7 @@ export default function NumbersPage() {
             }
             secondaryAction={
               <Button variant="ghost" size="lg">
-                Port a number in
+                {t('Port a number in')}
               </Button>
             }
           />
@@ -138,24 +142,28 @@ export default function NumbersPage() {
       <Hero
         backdropImage={HERO_ART}
         backdropOpacity={0.85}
-        title="Phone numbers"
-        lede={`${counts.active} active across ${numbers.length} numbers, ${money(recurring, currency)} a month.`}
+        title={t('Phone numbers')}
+        lede={t('{active} active across {total} numbers, {spend} a month.', {
+          active: counts.active,
+          total: numbers.length,
+          spend: money(recurring, currency),
+        })}
         actions={
           <>
             <Button variant="primary" asChild icon={<Plus />}>
               <Link to="/numbers/buy">
                 <Plus className="size-4" />
-                Buy a number
+                {t('Buy a number')}
               </Link>
             </Button>
             <Button
               variant="ghost"
               icon={<Download />}
               onClick={() =>
-                toast.success('Export queued', { description: 'A CSV will land in your inbox shortly.' })
+                toast.success('Export queued', { description: t('A CSV will land in your inbox shortly.') })
               }
             >
-              Export
+              {t('Export')}
             </Button>
           </>
         }
@@ -167,7 +175,7 @@ export default function NumbersPage() {
       <div
         className={cn(
           'transition-[padding] duration-300 ease-out',
-          openNumber && 'lg:pr-[calc(var(--panel-w)+2rem)]',
+          openNumber && 'lg:pe-[calc(var(--panel-w)+2rem)]',
         )}
       >
         <Section>
@@ -177,16 +185,16 @@ export default function NumbersPage() {
               onValueChange={setTab}
               layoutId="numbers-tabs"
               items={[
-                { value: 'all', label: 'All', count: counts.all },
-                { value: 'active', label: 'Active', count: counts.active },
-                { value: 'pending', label: 'Pending', count: counts.pending },
-                { value: 'unrouted', label: 'Not routed', count: counts.unrouted },
+                { value: 'all', label: t('All'), count: counts.all },
+                { value: 'active', label: t('Active'), count: counts.active },
+                { value: 'pending', label: t('Pending'), count: counts.pending },
+                { value: 'unrouted', label: t('Not routed'), count: counts.unrouted },
               ]}
             />
             <SearchInput
               value={q}
               onChange={setQ}
-              placeholder="Search numbers, labels or tags…"
+              placeholder={t('Search numbers, labels or tags…')}
               size="sm"
               className="sm:max-w-64"
             />
@@ -196,8 +204,8 @@ export default function NumbersPage() {
             <EmptyState
               compact
               icon={<Phone />}
-              title="Nothing matches that"
-              description="Try a different status or clear the search."
+              title={t('Nothing matches that')}
+              description={t('Try a different status or clear the search.')}
               action={
                 <Button
                   variant="secondary"
@@ -206,7 +214,7 @@ export default function NumbersPage() {
                     setTab('all')
                   }}
                 >
-                  Clear filters
+                  {t('Clear filters')}
                 </Button>
               }
             />
@@ -231,7 +239,7 @@ export default function NumbersPage() {
                       type="button"
                       onClick={() => openPanel(n.id)}
                       aria-expanded={n.id === openId}
-                      className="min-w-0 flex-1 text-left"
+                      className="min-w-0 flex-1 text-start"
                     >
                       <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
                         <p className="truncate text-base font-medium text-ink">
@@ -243,7 +251,7 @@ export default function NumbersPage() {
                           <Tooltip content="Reserved but not routable until verification clears">
                             <Badge tone="warning" size="sm">
                               <TriangleAlert />
-                              Held
+                              {t('Held')}
                             </Badge>
                           </Tooltip>
                         ) : (
@@ -298,7 +306,7 @@ export default function NumbersPage() {
                           to={`/numbers/${n.id}/setup`}
                           className="inline-flex items-center gap-1.5 text-sm font-medium text-warning-ink hover:underline"
                         >
-                          Not routed
+                          {t('Not routed')}
                           <ArrowRight className="size-3" />
                         </Link>
                       )}
@@ -306,7 +314,7 @@ export default function NumbersPage() {
 
                     {/* Beside an open panel the list is an index, not a report —
                       the secondary columns only return once there's real room. */}
-                    <div className={cn('hidden w-24 shrink-0 text-right sm:block', openNumber && 'sm:hidden')}>
+                    <div className={cn('hidden w-24 shrink-0 text-end sm:block', openNumber && 'sm:hidden')}>
                       <p className="text-sm tabular-nums text-ink">{num(n.usage.minutes)} min</p>
                       <p className="mt-0.5 text-xs tabular-nums text-ink-faint">
                         {money(n.monthly, currency)}/mo
@@ -329,15 +337,15 @@ export default function NumbersPage() {
                       <MenuContent>
                         <MenuItem onSelect={() => openPanel(n.id)}>
                           <Settings2 />
-                          Settings
+                          {t('Settings')}
                         </MenuItem>
                         <MenuItem onSelect={() => navigate(`/numbers/${n.id}`)}>
                           <ArrowUpRight />
-                          Full details
+                          {t('Full details')}
                         </MenuItem>
                         <MenuItem onSelect={() => navigate(`/numbers/${n.id}/setup`)}>
                           <Network />
-                          Guided setup
+                          {t('Guided setup')}
                         </MenuItem>
                         <MenuItem
                           onSelect={() => {
@@ -348,18 +356,18 @@ export default function NumbersPage() {
                           }}
                         >
                           <Phone />
-                          {n.recordingEnabled ? 'Disable recording' : 'Enable recording'}
+                          {n.recordingEnabled ? t('Disable recording') : t('Enable recording')}
                         </MenuItem>
                         {n.compliance === 'required' && (
                           <MenuItem onSelect={() => navigate('/verification')}>
                             <ShieldCheck />
-                            Submit documents
+                            {t('Submit documents')}
                           </MenuItem>
                         )}
                         <MenuSeparator />
                         <MenuItem destructive onSelect={() => setReleasing(n)}>
                           <Trash2 />
-                          Release number
+                          {t('Release number')}
                         </MenuItem>
                       </MenuContent>
                     </Menu>
@@ -376,9 +384,11 @@ export default function NumbersPage() {
       <ConfirmDialog
         open={!!releasing}
         onOpenChange={(v) => !v && setReleasing(null)}
-        title={`Release ${releasing ? formatE164(releasing.e164) : ''}?`}
-        description="The number returns to the carrier pool immediately and cannot be recovered. Routing, caller ID and compliance records attached to it are deleted."
-        confirmLabel="Release number"
+        title={t('Release {number}?', { number: releasing ? formatE164(releasing.e164) : '' })}
+        description={t(
+          'The number returns to the carrier pool immediately and cannot be recovered. Routing, caller ID and compliance records attached to it are deleted.',
+        )}
+        confirmLabel={t('Release number')}
         destructive
         icon={<Trash2 />}
         onConfirm={() => {
@@ -392,11 +402,11 @@ export default function NumbersPage() {
         {releasing && (
           <dl className="divide-y divide-line-soft text-sm">
             <div className="flex justify-between py-2">
-              <dt className="text-ink-muted">Active since</dt>
+              <dt className="text-ink-muted">{t('Active since')}</dt>
               <dd className="text-ink">{relativeTime(releasing.purchasedAt)}</dd>
             </div>
             <div className="flex justify-between py-2">
-              <dt className="text-ink-muted">Lifetime minutes</dt>
+              <dt className="text-ink-muted">{t('Lifetime minutes')}</dt>
               <dd className="tabular-nums text-ink">{num(releasing.usage.minutes)}</dd>
             </div>
           </dl>

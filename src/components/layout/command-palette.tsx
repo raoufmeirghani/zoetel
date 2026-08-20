@@ -21,9 +21,11 @@ import { useApp } from '@/store/app'
 import { cn } from '@/lib/utils'
 import { Kbd } from '@/components/ui/misc'
 import { formatE164 } from '@/lib/format'
+import { useI18n } from '@/lib/i18n'
 import { toast } from '@/components/ui/toast'
 
 export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenChange: (v: boolean) => void }) {
+  const { t } = useI18n()
   const navigate = useNavigate()
   const numbers = useApp((s) => s.numbers)
   const connections = useApp((s) => s.connections)
@@ -55,7 +57,7 @@ export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenCh
             </DialogPrimitive.Overlay>
             <DialogPrimitive.Content
               forceMount
-              aria-label="Command palette"
+              aria-label={t('Command palette')}
               className="fixed inset-x-0 top-[12vh] z-50 flex justify-center px-4 focus:outline-none"
               onClick={(e) => {
                 if (e.target === e.currentTarget) onOpenChange(false)
@@ -68,7 +70,7 @@ export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenCh
                 transition={{ type: 'spring', stiffness: 460, damping: 34 }}
                 className="w-full max-w-[36rem] overflow-hidden rounded-2xl bg-surface shadow-pop"
               >
-                <DialogPrimitive.Title className="sr-only">Command palette</DialogPrimitive.Title>
+                <DialogPrimitive.Title className="sr-only">{t('Command palette')}</DialogPrimitive.Title>
                 <Command loop className="flex flex-col">
                   <div className="flex items-center gap-2.5 border-b border-line px-4">
                     <Search className="size-4 shrink-0 text-ink-faint" />
@@ -76,7 +78,7 @@ export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenCh
                       value={query}
                       onValueChange={setQuery}
                       autoFocus
-                      placeholder="Search numbers, pages and actions…"
+                      placeholder={t('Search numbers, pages and actions…')}
                       className="h-13 flex-1 bg-transparent text-md text-ink placeholder:text-ink-faint focus:outline-none"
                     />
                     <Kbd className="shrink-0">Esc</Kbd>
@@ -84,21 +86,21 @@ export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenCh
 
                   <Command.List className="max-h-[min(56vh,26rem)] overflow-y-auto overscroll-contain p-2">
                     <Command.Empty className="py-10 text-center text-base text-ink-subtle">
-                      No results for “{query}”
+                      {t('No results for')} “{query}”
                     </Command.Empty>
 
-                    <Group heading="Actions">
+                    <Group heading={t('Actions')}>
                       <Item icon={<Plus />} onSelect={() => go('/numbers/buy')} shortcut="B">
-                        Buy a phone number
+                        {t('Buy a phone number')}
                       </Item>
                       <Item icon={<Network />} onSelect={() => go('/sip?new=1')}>
-                        Create a SIP connection
+                        {t('Create a SIP connection')}
                       </Item>
                       <Item icon={<Wallet />} onSelect={() => go('/billing?topup=1')}>
-                        Add funds to wallet
+                        {t('Add funds to wallet')}
                       </Item>
                       <Item icon={<Key />} onSelect={() => go('/developers?new=1')}>
-                        Generate an API key
+                        {t('Generate an API key')}
                       </Item>
                       <Item
                         icon={theme === 'dark' ? <Sun /> : <Moon />}
@@ -107,28 +109,28 @@ export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenCh
                           onOpenChange(false)
                         }}
                       >
-                        Switch to {theme === 'dark' ? 'light' : 'dark'} appearance
+                        {theme === 'dark' ? t('Switch to light appearance') : t('Switch to dark appearance')}
                       </Item>
                     </Group>
 
-                    <Group heading="Go to">
+                    <Group heading={t('Go to')}>
                       {allNav.map((item) => (
                         <Item
                           key={item.to}
                           icon={<item.icon weight="fill" />}
                           onSelect={() => go(item.to)}
-                          hint={item.description}
+                          hint={item.description && t(item.description)}
                         >
-                          {item.label}
+                          {t(item.label)}
                         </Item>
                       ))}
                       <Item icon={<Banknote />} onSelect={() => go('/pricing')}>
-                        Pricing
+                        {t('Pricing')}
                       </Item>
                     </Group>
 
                     {numbers.length > 0 && (
-                      <Group heading="Your numbers">
+                      <Group heading={t('Your numbers')}>
                         {numbers.slice(0, 6).map((n) => (
                           <Item
                             key={n.id}
@@ -144,7 +146,7 @@ export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenCh
                     )}
 
                     {connections.length > 0 && (
-                      <Group heading="SIP connections">
+                      <Group heading={t('SIP connections')}>
                         {connections.slice(0, 5).map((c) => (
                           <Item
                             key={c.id}
@@ -158,7 +160,7 @@ export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenCh
                       </Group>
                     )}
 
-                    <Group heading="Support">
+                    <Group heading={t('Support')}>
                       <Item
                         icon={<ArrowRight />}
                         onSelect={() => {
@@ -168,7 +170,7 @@ export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenCh
                           })
                         }}
                       >
-                        Contact support
+                        {t('Contact support')}
                       </Item>
                     </Group>
                   </Command.List>

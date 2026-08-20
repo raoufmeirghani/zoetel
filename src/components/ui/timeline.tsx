@@ -2,6 +2,7 @@ import * as React from 'react'
 import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { relativeTime } from '@/lib/format'
+import { useDirSign } from '@/lib/i18n'
 
 export interface TimelineEntry {
   id: string
@@ -31,18 +32,19 @@ export function Timeline({
   className?: string
   dense?: boolean
 }) {
+  const dirSign = useDirSign()
   return (
     <ol className={cn('relative', className)}>
       {entries.map((e, i) => (
         <motion.li
           key={e.id}
-          initial={{ opacity: 0, x: -6 }}
+          initial={{ opacity: 0, x: -6 * dirSign }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.3, delay: Math.min(i * 0.045, 0.4), ease: [0.16, 1, 0.3, 1] }}
           className={cn('relative flex gap-3.5', dense ? 'pb-4' : 'pb-5', 'last:pb-0')}
         >
           {i < entries.length - 1 && (
-            <span className="absolute left-[15px] top-8 h-[calc(100%-1.5rem)] w-px bg-line" />
+            <span className="absolute start-[15px] top-8 h-[calc(100%-1.5rem)] w-px bg-line" />
           )}
           <span
             className={cn(

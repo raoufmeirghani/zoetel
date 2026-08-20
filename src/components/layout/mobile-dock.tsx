@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils'
 import { NAV } from './nav-config'
 import { useJourney } from '@/lib/journey'
 import { Badge } from '@/components/ui/badge'
+import { useI18n } from '@/lib/i18n'
 
 const PRIMARY: { to: string; label: string; icon: Icon; end?: boolean }[] = [
   { to: '/', label: 'Overview', icon: SquaresFour, end: true },
@@ -19,6 +20,7 @@ const PRIMARY: { to: string; label: string; icon: Icon; end?: boolean }[] = [
 
 /** Thumb-reachable dock. Replaces the drawer pattern on phones. */
 export function MobileDock({ onOpenSearch }: { onOpenSearch: () => void }) {
+  const { t } = useI18n()
   const [sheet, setSheet] = React.useState(false)
   const location = useLocation()
   const { attention } = useJourney()
@@ -31,7 +33,7 @@ export function MobileDock({ onOpenSearch }: { onOpenSearch: () => void }) {
     <>
       <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center pb-3 lg:hidden">
         <nav
-          aria-label="Primary"
+          aria-label={t('Primary')}
           className="chrome pointer-events-auto flex items-center gap-0.5 rounded-full p-1.5"
         >
           {PRIMARY.map((item) => (
@@ -45,7 +47,7 @@ export function MobileDock({ onOpenSearch }: { onOpenSearch: () => void }) {
                   isActive ? 'text-brand' : 'text-ink-faint',
                 )
               }
-              aria-label={item.label}
+              aria-label={t(item.label)}
             >
               {({ isActive }) => (
                 <>
@@ -64,18 +66,18 @@ export function MobileDock({ onOpenSearch }: { onOpenSearch: () => void }) {
           <button
             onClick={onOpenSearch}
             className="grid size-11 place-items-center rounded-full text-ink-faint"
-            aria-label="Search"
+            aria-label={t('Search')}
           >
             <Search className="size-[19px]" />
           </button>
           <button
             onClick={() => setSheet(true)}
             className="relative grid size-11 place-items-center rounded-full text-ink-faint"
-            aria-label="More"
+            aria-label={t('More')}
           >
             <Ellipsis className="size-[19px]" />
             {attention.length > 0 && (
-              <span className="absolute right-2 top-2 size-1.5 rounded-full bg-warning ring-2 ring-surface" />
+              <span className="absolute end-2 top-2 size-1.5 rounded-full bg-warning ring-2 ring-surface" />
             )}
           </button>
         </nav>
@@ -101,7 +103,7 @@ export function MobileDock({ onOpenSearch }: { onOpenSearch: () => void }) {
                   transition={{ type: 'spring', stiffness: 400, damping: 36 }}
                   className="fixed inset-x-0 bottom-0 z-50 rounded-t-[28px] bg-surface p-5 pb-8 shadow-pop lg:hidden"
                 >
-                  <DialogPrimitive.Title className="sr-only">More destinations</DialogPrimitive.Title>
+                  <DialogPrimitive.Title className="sr-only">{t('More destinations')}</DialogPrimitive.Title>
                   <div className="mx-auto mb-5 h-1 w-10 rounded-full bg-line-strong" />
                   <ul className="grid grid-cols-2 gap-2">
                     {secondary.map((item) => (
@@ -112,7 +114,7 @@ export function MobileDock({ onOpenSearch }: { onOpenSearch: () => void }) {
                           className="flex items-center gap-2.5 rounded-2xl px-3 py-3 text-base text-ink transition-colors hover:bg-veil-strong"
                         >
                           <item.icon weight="fill" className="size-4 shrink-0 text-ink-faint" />
-                          <span className="min-w-0 flex-1 truncate">{item.label}</span>
+                          <span className="min-w-0 flex-1 truncate">{t(item.label)}</span>
                           {item.badge === 'verification' && attention.some((a) => a.id.startsWith('kyc')) && (
                             <Badge tone="danger" size="sm">
                               !

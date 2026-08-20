@@ -21,6 +21,7 @@ import { cn } from '@/lib/utils'
 import { toast } from '@/components/ui/toast'
 import type { RequestLog } from '@/lib/types'
 import { seedRequestLogs } from '@/lib/data/seed'
+import { useI18n } from '@/lib/i18n'
 
 const METHOD_TONE = {
   GET: 'info',
@@ -37,6 +38,7 @@ function statusTone(status: number) {
 }
 
 export default function LogsPage() {
+  const { t } = useI18n()
   const storeLogs = useApp((s) => s.requestLogs)
   const [logs, setLogs] = React.useState(storeLogs)
   const [q, setQ] = React.useState('')
@@ -95,7 +97,7 @@ export default function LogsPage() {
   const columns: Column<RequestLog>[] = [
     {
       id: 'method',
-      header: 'Method',
+      header: t('Method'),
       width: '10%',
       cell: (r) => (
         <Badge tone={METHOD_TONE[r.method]} size="sm" className="font-mono">
@@ -105,13 +107,13 @@ export default function LogsPage() {
     },
     {
       id: 'path',
-      header: 'Path',
+      header: t('Path'),
       headerClassName: 'w-full sm:w-[36%]',
       cell: (r) => <span className="truncate font-mono text-[12.5px] text-ink">{r.path}</span>,
     },
     {
       id: 'status',
-      header: 'Status',
+      header: t('Status'),
       width: '12%',
       cell: (r) => (
         <Badge tone={statusTone(r.status)} size="sm" className="font-mono tabular-nums">
@@ -121,7 +123,7 @@ export default function LogsPage() {
     },
     {
       id: 'latency',
-      header: 'Latency',
+      header: t('Latency'),
       align: 'right',
       width: '12%',
       hideBelow: 'sm',
@@ -135,14 +137,14 @@ export default function LogsPage() {
     },
     {
       id: 'key',
-      header: 'API key',
+      header: t('API key'),
       width: '16%',
       hideBelow: '2xl',
       cell: (r) => <span className="truncate text-sm text-ink-muted">{r.keyName}</span>,
     },
     {
       id: 'at',
-      header: 'When',
+      header: t('When'),
       align: 'right',
       width: '14%',
       hideBelow: 'sm',
@@ -156,15 +158,17 @@ export default function LogsPage() {
         backdropImage={HERO_ART_SIP}
         mood="code"
         size="md"
-        title="Request logs"
-        lede="Every API call your keys made, with status, latency and the full request body. Retained for 30 days."
+        title={t('Request logs')}
+        lede={t(
+          'Every API call your keys made, with status, latency and the full request body. Retained for 30 days.',
+        )}
         actions={
           <>
             <Button variant="secondary" icon={<RefreshCw />} loading={refreshing} onClick={refresh}>
-              Refresh
+              {t('Refresh')}
             </Button>
             <Button variant="ghost" icon={<Download />} onClick={() => toast.success('Export queued')}>
-              Export
+              {t('Export')}
             </Button>
           </>
         }
@@ -175,17 +179,22 @@ export default function LogsPage() {
       <Section index={0}>
         <div className="grid grid-cols-2 gap-y-7 sm:divide-x sm:divide-line lg:grid-cols-4">
           {[
-            { label: 'Requests', value: num(logs.length * 1284), hint: 'Last hour' },
-            { label: 'Error rate', value: `${errorRate.toFixed(1)}%`, hint: 'Target < 1%', bad: errorRate > 1 },
-            { label: 'p50 latency', value: `${p50} ms`, hint: 'Median' },
-            { label: 'p99 latency', value: `${p99} ms`, hint: 'Slowest 1%' },
+            { label: t('Requests'), value: num(logs.length * 1284), hint: t('Last hour') },
+            {
+              label: t('Error rate'),
+              value: `${errorRate.toFixed(1)}%`,
+              hint: t('Target < 1%'),
+              bad: errorRate > 1,
+            },
+            { label: t('p50 latency'), value: `${p50} ms`, hint: t('Median') },
+            { label: t('p99 latency'), value: `${p99} ms`, hint: t('Slowest 1%') },
           ].map((s, i) => (
             <motion.div
               key={s.label}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.34, delay: i * 0.05 }}
-              className={cn('min-w-0 sm:px-6', i === 0 && 'sm:pl-0', 'lg:first:pl-0')}
+              className={cn('min-w-0 sm:px-6', i === 0 && 'sm:ps-0', 'lg:first:ps-0')}
             >
               <p className="eyebrow">{s.label}</p>
               <p
@@ -203,12 +212,12 @@ export default function LogsPage() {
       </Section>
 
       <div className="mt-14 grid grid-cols-1 gap-14 lg:grid-cols-3 lg:gap-10">
-        <Section className="lg:col-span-2" eyebrow="Live" title="Requests" index={1}>
+        <Section className="lg:col-span-2" eyebrow={t('Live')} title={t('Requests')} index={1}>
           <div className="mb-4 flex flex-wrap items-center gap-2">
             <SearchInput
               value={q}
               onChange={setQ}
-              placeholder="Search paths or IPs…"
+              placeholder={t('Search paths or IPs…')}
               size="sm"
               className="w-full sm:max-w-56"
             />
@@ -220,11 +229,11 @@ export default function LogsPage() {
                 </span>
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="any">Any method</SelectItem>
-                <SelectItem value="GET">GET</SelectItem>
-                <SelectItem value="POST">POST</SelectItem>
-                <SelectItem value="PATCH">PATCH</SelectItem>
-                <SelectItem value="DELETE">DELETE</SelectItem>
+                <SelectItem value="any">{t('Any method')}</SelectItem>
+                <SelectItem value="GET">{'GET'}</SelectItem>
+                <SelectItem value="POST">{'POST'}</SelectItem>
+                <SelectItem value="PATCH">{'PATCH'}</SelectItem>
+                <SelectItem value="DELETE">{'DELETE'}</SelectItem>
               </SelectContent>
             </Select>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -232,13 +241,13 @@ export default function LogsPage() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="any">Any status</SelectItem>
+                <SelectItem value="any">{t('Any status')}</SelectItem>
                 <SelectItem value="2xx">2xx success</SelectItem>
                 <SelectItem value="4xx">4xx client error</SelectItem>
                 <SelectItem value="5xx">5xx server error</SelectItem>
               </SelectContent>
             </Select>
-            <div className="ml-auto">
+            <div className="ms-auto">
               <Segmented
                 size="sm"
                 value={range}
@@ -262,8 +271,8 @@ export default function LogsPage() {
               <EmptyState
                 compact
                 icon={<Search />}
-                title="No requests match those filters"
-                description="Widen the time range or clear the filters. Logs are retained for 30 days."
+                title={t('No requests match those filters')}
+                description={t('Widen the time range or clear the filters. Logs are retained for 30 days.')}
                 action={
                   <Button
                     variant="secondary"
@@ -273,7 +282,7 @@ export default function LogsPage() {
                       setStatusFilter('any')
                     }}
                   >
-                    Clear filters
+                    {t('Clear filters')}
                   </Button>
                 }
               />
@@ -282,11 +291,11 @@ export default function LogsPage() {
         </Section>
 
         <div className="space-y-5">
-          <Section eyebrow="All requests in range" title="Latency" index={2}>
+          <Section eyebrow={t('All requests in range')} title={t('Latency')} index={2}>
             <BarChart data={histogram} height={160} formatValue={(n) => `${n} reqs`} />
           </Section>
 
-          <Section eyebrow="By request volume" title="Top endpoints" index={3}>
+          <Section eyebrow={t('By request volume')} title={t('Top endpoints')} index={3}>
             <ul className="space-y-3">
               {[
                 { p: 'POST /v2/calls', v: 62 },
@@ -305,7 +314,7 @@ export default function LogsPage() {
             </ul>
           </Section>
 
-          <Section eyebrow="Stuck on an error?" title="Debugging a 4xx" index={4}>
+          <Section eyebrow={t('Stuck on an error?')} title={t('Debugging a 4xx')} index={4}>
             <p className="text-base leading-relaxed text-ink-muted">
               Every error response includes a <Mono>request_id</Mono>. Quote it to support and we can trace the
               request end to end — including exactly what the carrier returned.
@@ -333,29 +342,29 @@ export default function LogsPage() {
               {selected.status < 400 ? (
                 <Badge tone="success" size="lg">
                   <CircleCheck />
-                  Succeeded
+                  {t('Succeeded')}
                 </Badge>
               ) : (
                 <Badge tone="danger" size="lg">
                   <TriangleAlert />
-                  Failed
+                  {t('Failed')}
                 </Badge>
               )}
             </div>
 
             <dl className="divide-y divide-line">
-              <DetailRow label="Request ID">
+              <DetailRow label={t('Request ID')}>
                 <Mono copy>{`req_${selected.id.replace('req_', '')}8k2m`}</Mono>
               </DetailRow>
-              <DetailRow label="API key">{selected.keyName}</DetailRow>
-              <DetailRow label="Source IP">
+              <DetailRow label={t('API key')}>{selected.keyName}</DetailRow>
+              <DetailRow label={t('Source IP')}>
                 <span className="tabular-nums">{selected.ip}</span>
               </DetailRow>
-              <DetailRow label="Region">eg-cai-1</DetailRow>
-              <DetailRow label="Timestamp">{dateTime(selected.at)}</DetailRow>
+              <DetailRow label={t('Region')}>eg-cai-1</DetailRow>
+              <DetailRow label={t('Timestamp')}>{dateTime(selected.at)}</DetailRow>
             </dl>
 
-            <Separator label="Request" />
+            <Separator label={t('Request')} />
             <CodeBlock
               filename="request.json"
               code={
@@ -371,7 +380,7 @@ export default function LogsPage() {
               }
             />
 
-            <Separator label="Response" />
+            <Separator label={t('Response')} />
             <CodeBlock
               filename="response.json"
               code={
@@ -420,7 +429,7 @@ export default function LogsPage() {
                   className="mt-3"
                   trailing={<ChevronRight className="size-3.5" />}
                 >
-                  Open the error reference
+                  {t('Open the error reference')}
                 </Button>
               </div>
             )}

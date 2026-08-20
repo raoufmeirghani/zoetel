@@ -12,10 +12,12 @@ import { money } from '@/lib/format'
 import { cn, sleep } from '@/lib/utils'
 import { toast } from '@/components/ui/toast'
 import { AnimatedNumber } from '@/components/ui/animated-number'
+import { useI18n } from '@/lib/i18n'
 
 const PRESETS = [100, 250, 500, 1000, 2500]
 
 export function TopUpDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (v: boolean) => void }) {
+  const { t } = useI18n()
   const currency = useApp((s) => s.workspace.currency)
   const balance = useApp((s) => s.balance)
   const methods = useApp((s) => s.paymentMethods)
@@ -62,7 +64,7 @@ export function TopUpDialog({ open, onOpenChange }: { open: boolean; onOpenChang
         state === 'form' ? (
           <>
             <Button variant="ghost" onClick={() => onOpenChange(false)}>
-              Cancel
+              {t('Cancel')}
             </Button>
             <Button variant="primary" onClick={submit} disabled={amount <= 0}>
               Pay {money(total, currency)}
@@ -91,7 +93,7 @@ export function TopUpDialog({ open, onOpenChange }: { open: boolean; onOpenChang
         </div>
       ) : (
         <div className="space-y-5">
-          <Field label="Amount" hint={`Balance ${money(balance, currency)}`}>
+          <Field label={t('Amount')} hint={`Balance ${money(balance, currency)}`}>
             <CurrencyInput
               value={amount}
               onChange={setAmount}
@@ -103,14 +105,14 @@ export function TopUpDialog({ open, onOpenChange }: { open: boolean; onOpenChang
             />
           </Field>
 
-          <Field label="Payment method">
+          <Field label={t('Payment method')}>
             <div className="space-y-1.5">
               {methods.map((m) => (
                 <button
                   key={m.id}
                   onClick={() => setMethodId(m.id)}
                   className={cn(
-                    'flex w-full items-center gap-3 rounded-2xl p-3 text-left transition-colors duration-150',
+                    'flex w-full items-center gap-3 rounded-2xl p-3 text-start transition-colors duration-150',
                     methodId === m.id ? 'bg-brand-softer ring-1 ring-brand/40' : 'veil hover:bg-veil-strong',
                   )}
                 >
@@ -128,12 +130,12 @@ export function TopUpDialog({ open, onOpenChange }: { open: boolean; onOpenChang
                   {methodId === m.id && <CircleCheck className="size-4 shrink-0 text-brand" />}
                 </button>
               ))}
-              <button className="veil flex w-full items-center gap-3 rounded-2xl p-3 text-left text-ink-muted transition-colors hover:bg-veil-strong">
+              <button className="veil flex w-full items-center gap-3 rounded-2xl p-3 text-start text-ink-muted transition-colors hover:bg-veil-strong">
                 <span className="grid size-8 place-items-center rounded-lg bg-surface-3">
                   <Building2 className="size-4" />
                 </span>
                 <span className="text-base font-medium">Bank transfer (EGP)</span>
-                <span className="ml-auto text-xs text-ink-faint">1–2 business days</span>
+                <span className="ms-auto text-xs text-ink-faint">1–2 business days</span>
               </button>
             </div>
           </Field>
@@ -166,7 +168,7 @@ export function TopUpDialog({ open, onOpenChange }: { open: boolean; onOpenChang
                 <Switch
                   checked={autoRecharge.enabled}
                   onCheckedChange={(v) => setAutoRecharge({ enabled: v })}
-                  aria-label="Enable auto-recharge"
+                  aria-label={t('Enable auto-recharge')}
                 />
               </div>
             </Alert>

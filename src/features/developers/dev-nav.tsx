@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router-dom'
 import { Activity, Key, Webhook } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useI18n } from '@/lib/i18n'
 
 const LINKS = [
   { to: '/developers', label: 'API keys', icon: Key, end: true },
@@ -10,6 +11,7 @@ const LINKS = [
 
 /** Contextual navigation for the developer surfaces, styled as quiet chips. */
 export function DevNav() {
+  const { t } = useI18n()
   return (
     <nav className="no-scrollbar -mx-1 flex items-center gap-0.5 overflow-x-auto px-1 pb-1">
       {LINKS.map((l) => (
@@ -27,7 +29,7 @@ export function DevNav() {
           }
         >
           <l.icon className="size-4" />
-          {l.label}
+          {t(l.label)}
         </NavLink>
       ))}
     </nav>

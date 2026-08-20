@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { CircleAlert, CircleCheck, Info, TriangleAlert, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from './button'
+import { useI18n } from '@/lib/i18n'
 
 type Tone = 'info' | 'success' | 'warning' | 'danger' | 'brand' | 'neutral'
 
@@ -34,6 +35,7 @@ export function Alert({
   icon?: React.ReactNode
   compact?: boolean
 }) {
+  const { t } = useI18n()
   const s = toneStyles[tone]
   return (
     <div
@@ -44,7 +46,9 @@ export function Alert({
       <div className="min-w-0 flex-1">
         {title && <p className="text-base font-semibold leading-snug">{title}</p>}
         {children && (
-          <div className={cn('text-sm leading-relaxed opacity-90', title && 'mt-1')}>{children}</div>
+          // `bidi-auto` because an alert body is a free-text block that may hold
+          // an untranslated English sentence inside an Arabic layout.
+          <div className={cn('bidi-auto text-sm leading-relaxed opacity-90', title && 'mt-1')}>{children}</div>
         )}
         {action && <div className="mt-3 flex flex-wrap items-center gap-2">{action}</div>}
       </div>
@@ -52,7 +56,7 @@ export function Alert({
         <button
           onClick={onDismiss}
           className="-m-1 h-fit rounded-md p-1 opacity-50 transition-opacity hover:opacity-100"
-          aria-label="Dismiss"
+          aria-label={t('Dismiss')}
         >
           <X className="size-4" />
         </button>
@@ -79,6 +83,7 @@ export function Banner({
   onDismiss?: () => void
   className?: string
 }) {
+  const { t } = useI18n()
   const s = toneStyles[tone]
   return (
     <motion.div
@@ -111,7 +116,7 @@ export function Banner({
             variant="ghost"
             size="icon-sm"
             onClick={onDismiss}
-            aria-label="Dismiss"
+            aria-label={t('Dismiss')}
             className="opacity-60"
           >
             <X />

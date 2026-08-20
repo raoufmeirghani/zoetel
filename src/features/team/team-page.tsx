@@ -45,6 +45,7 @@ import { relativeTime } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { toast } from '@/components/ui/toast'
 import type { Member, Role } from '@/lib/types'
+import { useI18n } from '@/lib/i18n'
 
 const ROLES: { value: Role; label: string; blurb: string; can: string[] }[] = [
   {
@@ -91,6 +92,7 @@ const CATEGORY_TONE = {
 type Tab = 'members' | 'roles' | 'security' | 'audit'
 
 export default function TeamPage() {
+  const { t } = useI18n()
   const members = useApp((s) => s.members)
   const audit = useApp((s) => s.audit)
   const inviteMember = useApp((s) => s.inviteMember)
@@ -125,11 +127,11 @@ export default function TeamPage() {
         backdropImage={HERO_ART_OVERVIEW}
         mood="quiet"
         size="md"
-        title="Team"
-        lede="Invite the people who need access, with the narrowest role that lets them do their job."
+        title={t('Team')}
+        lede={t('Invite the people who need access, with the narrowest role that lets them do their job.')}
         actions={
           <Button variant="primary" icon={<UserPlus />} onClick={() => setInviteOpen(true)}>
-            Invite member
+            {t('Invite member')}
           </Button>
         }
       >
@@ -139,10 +141,10 @@ export default function TeamPage() {
           layoutId="team-tabs"
           className="pb-1"
           items={[
-            { value: 'members', label: 'Members', count: members.length },
-            { value: 'roles', label: 'Roles' },
-            { value: 'security', label: 'Security' },
-            { value: 'audit', label: 'Audit log', count: audit.length },
+            { value: 'members', label: t('Members'), count: members.length },
+            { value: 'roles', label: t('Roles') },
+            { value: 'security', label: t('Security') },
+            { value: 'audit', label: t('Audit log'), count: audit.length },
           ]}
         />
       </Hero>
@@ -152,21 +154,21 @@ export default function TeamPage() {
           <div className="grid grid-cols-3 gap-y-7 sm:divide-x sm:divide-line-soft">
             {[
               {
-                label: 'Active',
+                label: t('Active'),
                 value: String(members.filter((m) => m.status === 'active').length),
               },
               {
-                label: 'Invited',
+                label: t('Invited'),
                 value: String(members.filter((m) => m.status === 'invited').length),
               },
               {
-                label: 'With 2FA',
+                label: t('With 2FA'),
                 value: `${members.filter((m) => m.twoFactor).length}/${members.filter((m) => m.status === 'active').length}`,
                 tone: withoutTwoFactor.length ? ('warning' as const) : ('success' as const),
               },
             ].map((f, i) => (
-              <div key={f.label} className={cn('min-w-0 sm:px-6', i === 0 && 'sm:pl-0', 'sm:last:pr-0')}>
-                <p className="eyebrow">{f.label}</p>
+              <div key={f.label} className={cn('min-w-0 sm:px-6', i === 0 && 'sm:ps-0', 'sm:last:pe-0')}>
+                <p className="eyebrow">{t(f.label)}</p>
                 <p
                   className={cn(
                     'display mt-2.5 text-[1.75rem] font-semibold tabular-nums leading-none',
@@ -210,7 +212,7 @@ export default function TeamPage() {
               toast.success('Two-factor authentication is now required')
             }}
           >
-            Require 2FA
+            {t('Require 2FA')}
           </Button>
         </div>
       )}
@@ -218,21 +220,27 @@ export default function TeamPage() {
       {/* ── Members ────────────────────────────────────── */}
       {tab === 'members' && (
         <Section
-          eyebrow="Who has access"
-          title="Members"
+          eyebrow={t('Who has access')}
+          title={t('Members')}
           action={
-            <SearchInput value={q} onChange={setQ} placeholder="Search members…" size="sm" className="w-52" />
+            <SearchInput
+              value={q}
+              onChange={setQ}
+              placeholder={t('Search members…')}
+              size="sm"
+              className="w-52"
+            />
           }
         >
           {filtered.length === 0 ? (
             <EmptyState
               compact
               icon={<Mail />}
-              title="Nobody matches that"
-              description="Try a different name or email."
+              title={t('Nobody matches that')}
+              description={t('Try a different name or email.')}
               action={
                 <Button variant="secondary" onClick={() => setQ('')}>
-                  Clear search
+                  {t('Clear search')}
                 </Button>
               }
             />
@@ -258,7 +266,7 @@ export default function TeamPage() {
                       {m.status !== 'active' && <StatusBadge status={m.status} size="sm" />}
                       {!m.twoFactor && m.status === 'active' && (
                         <Badge tone="warning" size="sm">
-                          No 2FA
+                          {t('No 2FA')}
                         </Badge>
                       )}
                     </div>
@@ -279,7 +287,7 @@ export default function TeamPage() {
                         <SelectContent className="w-64">
                           {ROLES.filter((x) => x.value !== 'owner').map((x) => (
                             <SelectItem key={x.value} value={x.value}>
-                              {x.label}
+                              {t(x.label)}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -287,7 +295,7 @@ export default function TeamPage() {
                     )}
                   </div>
 
-                  <span className="hidden w-28 shrink-0 text-right text-xs tabular-nums text-ink-faint lg:block">
+                  <span className="hidden w-28 shrink-0 text-end text-xs tabular-nums text-ink-faint lg:block">
                     {m.lastActiveAt ? relativeTime(m.lastActiveAt) : 'never signed in'}
                   </span>
 
@@ -306,7 +314,7 @@ export default function TeamPage() {
                       {m.status === 'invited' && (
                         <MenuItem onSelect={() => toast.success('Invitation resent', { description: m.email })}>
                           <Send />
-                          Resend invitation
+                          {t('Resend invitation')}
                         </MenuItem>
                       )}
                       <MenuLabel>Change role</MenuLabel>
@@ -316,7 +324,7 @@ export default function TeamPage() {
                       >
                         {ROLES.filter((x) => x.value !== 'owner').map((x) => (
                           <MenuRadioItem key={x.value} value={x.value} disabled={m.role === 'owner'}>
-                            {x.label}
+                            {t(x.label)}
                           </MenuRadioItem>
                         ))}
                       </MenuRadioGroup>
@@ -329,11 +337,11 @@ export default function TeamPage() {
                         }}
                       >
                         <Lock />
-                        {m.status === 'suspended' ? 'Restore access' : 'Suspend access'}
+                        {m.status === 'suspended' ? t('Restore access') : t('Suspend access')}
                       </MenuItem>
                       <MenuItem destructive disabled={m.role === 'owner'} onSelect={() => setRemoving(m)}>
                         <Trash2 />
-                        Remove from workspace
+                        {t('Remove from workspace')}
                       </MenuItem>
                     </MenuContent>
                   </Menu>
@@ -347,8 +355,8 @@ export default function TeamPage() {
       {/* ── Roles ──────────────────────────────────────── */}
       {tab === 'roles' && (
         <Section
-          eyebrow="Permissions"
-          title="What each role can do"
+          eyebrow={t('Permissions')}
+          title={t('What each role can do')}
           lede="Pick the narrowest role that lets someone do their job. You can change it any time."
         >
           <div className="divide-y divide-line-soft">
@@ -362,7 +370,7 @@ export default function TeamPage() {
               >
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
-                    <h3 className="text-md font-medium text-ink">{r.label}</h3>
+                    <h3 className="text-md font-medium text-ink">{t(r.label)}</h3>
                     <Badge tone="outline" size="sm" className="tabular-nums">
                       {members.filter((m) => m.role === r.value).length}
                     </Badge>
@@ -384,7 +392,7 @@ export default function TeamPage() {
                 <div className="flex items-center gap-2">
                   <h3 className="text-md font-medium text-ink">Custom roles</h3>
                   <Badge tone="brand" size="sm">
-                    Volume plan
+                    {t('Volume plan')}
                   </Badge>
                 </div>
                 <p className="mt-1.5 text-sm leading-relaxed text-ink-subtle">
@@ -397,7 +405,7 @@ export default function TeamPage() {
                   one line and nothing else. Available on volume and enterprise plans.
                 </p>
                 <Button variant="secondary" size="sm" className="mt-4">
-                  Talk to sales
+                  {t('Talk to sales')}
                 </Button>
               </div>
             </div>
@@ -408,11 +416,11 @@ export default function TeamPage() {
       {/* ── Security ───────────────────────────────────── */}
       {tab === 'security' && (
         <div className="space-y-5">
-          <Section eyebrow="Workspace policy" title="Security" index={0}>
+          <Section eyebrow={t('Workspace policy')} title={t('Security')} index={0}>
             <div className="divide-y divide-line-soft">
               <PolicyRow
-                label="Require two-factor authentication"
-                description="Members without 2FA are prompted to enrol at their next sign-in."
+                label={t('Require two-factor authentication')}
+                description={t('Members without 2FA are prompted to enrol at their next sign-in.')}
                 checked={requireTwoFactor}
                 onChange={(v) => {
                   setRequireTwoFactor(v)
@@ -420,20 +428,20 @@ export default function TeamPage() {
                 }}
               />
               <PolicyRow
-                label="Restrict API keys to admins"
-                description="Developers keep using existing keys, but can't create new ones."
+                label={t('Restrict API keys to admins')}
+                description={t("Developers keep using existing keys, but can't create new ones.")}
                 checked={false}
                 onChange={() => {}}
               />
               <PolicyRow
-                label="Require approval for purchases"
-                description="Numbers over $10 a month need an owner or admin to approve."
+                label={t('Require approval for purchases')}
+                description={t('Numbers over $10 a month need an owner or admin to approve.')}
                 checked
                 onChange={() => {}}
               />
               <PolicyRow
-                label="Sign out idle sessions after 12 hours"
-                description="Shorter is safer; 12 hours covers a working day."
+                label={t('Sign out idle sessions after 12 hours')}
+                description={t('Shorter is safer; 12 hours covers a working day.')}
                 checked
                 onChange={() => {}}
               />
@@ -441,8 +449,8 @@ export default function TeamPage() {
           </Section>
 
           <Section
-            eyebrow="Sessions"
-            title="Where you're signed in"
+            eyebrow={t('Sessions')}
+            title={t("Where you're signed in")}
             lede="Sign out anything you don't recognise."
             divided
             index={1}
@@ -484,7 +492,7 @@ export default function TeamPage() {
                       {s.current && (
                         <span className="inline-flex items-center gap-1.5 text-xs text-success-ink">
                           <StatusDot tone="success" />
-                          This device
+                          {t('This device')}
                         </span>
                       )}
                     </div>
@@ -500,7 +508,7 @@ export default function TeamPage() {
                       icon={<LogOut />}
                       onClick={() => toast.success('Session revoked')}
                     >
-                      Revoke
+                      {t('Revoke')}
                     </Button>
                   )}
                 </li>
@@ -512,11 +520,11 @@ export default function TeamPage() {
               className="mt-5"
               onClick={() => toast.success('All other sessions signed out')}
             >
-              Sign out all other devices
+              {t('Sign out all other devices')}
             </Button>
           </Section>
 
-          <Section eyebrow="Your account" title="Sign-in methods" divided index={2}>
+          <Section eyebrow={t('Your account')} title={t('Sign-in methods')} divided index={2}>
             <div className="grid gap-10 lg:grid-cols-2">
               <div>
                 <div className="flex items-center gap-3 rounded-2xl bg-success-soft p-4">
@@ -528,19 +536,19 @@ export default function TeamPage() {
                 </div>
                 <div className="mt-4 flex flex-wrap gap-2">
                   <Button variant="secondary" size="sm">
-                    Add a passkey
+                    {t('Add a passkey')}
                   </Button>
                   <Button variant="ghost" size="sm">
-                    View recovery codes
+                    {t('View recovery codes')}
                   </Button>
                 </div>
               </div>
               <div>
                 <p className="eyebrow mb-2.5 flex items-center gap-1.5">
                   <Key className="size-3" />
-                  Single sign-on
-                  <Badge tone="brand" size="sm" className="ml-1">
-                    Enterprise
+                  {t('Single sign-on')}
+                  <Badge tone="brand" size="sm" className="ms-1">
+                    {t('Enterprise')}
                   </Badge>
                 </p>
                 <p className="text-base leading-relaxed text-ink-muted">
@@ -548,7 +556,7 @@ export default function TeamPage() {
                   automatically via SCIM, and role mapping comes from your directory groups.
                 </p>
                 <Button variant="secondary" size="sm" className="mt-4">
-                  Request SSO setup
+                  {t('Request SSO setup')}
                 </Button>
               </div>
             </div>
@@ -559,12 +567,12 @@ export default function TeamPage() {
       {/* ── Audit ──────────────────────────────────────── */}
       {tab === 'audit' && (
         <Section
-          eyebrow="Retained 12 months"
-          title="Audit log"
+          eyebrow={t('Retained 12 months')}
+          title={t('Audit log')}
           lede="Every configuration change, with actor, IP and timestamp."
           action={
             <Button variant="ghost" size="sm" onClick={() => toast.success('Audit export queued')}>
-              Export
+              {t('Export')}
             </Button>
           }
         >
@@ -596,10 +604,10 @@ export default function TeamPage() {
                 >
                   {e.category}
                 </Badge>
-                <span className="hidden w-28 shrink-0 text-right font-mono text-xs tabular-nums text-ink-faint md:block">
+                <span className="hidden w-28 shrink-0 text-end font-mono text-xs tabular-nums text-ink-faint md:block">
                   {e.ip}
                 </span>
-                <span className="w-24 shrink-0 text-right text-xs tabular-nums text-ink-faint">
+                <span className="w-24 shrink-0 text-end text-xs tabular-nums text-ink-faint">
                   {relativeTime(e.at)}
                 </span>
               </li>
@@ -611,30 +619,30 @@ export default function TeamPage() {
       <Modal
         open={inviteOpen}
         onOpenChange={setInviteOpen}
-        title="Invite a team member"
-        description="They'll get an email with a link that expires in 7 days."
+        title={t('Invite a team member')}
+        description={t("They'll get an email with a link that expires in 7 days.")}
         icon={<UserPlus />}
         footer={
           <>
             <Button variant="ghost" onClick={() => setInviteOpen(false)}>
-              Cancel
+              {t('Cancel')}
             </Button>
             <Button variant="primary" onClick={invite} disabled={!validEmail}>
-              Send invitation
+              {t('Send invitation')}
             </Button>
           </>
         }
       >
         <div className="space-y-5">
           <Field
-            label="Email address"
+            label={t('Email address')}
             required
             error={email && !validEmail ? 'Enter a valid email address' : undefined}
           >
             <Input
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="name@company.com"
+              placeholder={'name@company.com'}
               type="email"
               autoFocus
               inputSize="lg"
@@ -642,7 +650,7 @@ export default function TeamPage() {
               aria-invalid={!!email && !validEmail}
             />
           </Field>
-          <Field label="Role" description={ROLES.find((r) => r.value === role)?.blurb}>
+          <Field label={t('Role')} description={ROLES.find((r) => r.value === role)?.blurb}>
             <Select value={role} onValueChange={(v) => setRole(v as Role)}>
               <SelectTrigger size="lg">
                 <SelectValue />
@@ -650,7 +658,7 @@ export default function TeamPage() {
               <SelectContent>
                 {ROLES.filter((r) => r.value !== 'owner').map((r) => (
                   <SelectItem key={r.value} value={r.value}>
-                    {r.label}
+                    {t(r.label)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -673,9 +681,11 @@ export default function TeamPage() {
       <ConfirmDialog
         open={!!removing}
         onOpenChange={(v) => !v && setRemoving(null)}
-        title={`Remove ${removing?.name}?`}
-        description="They lose access immediately and all their sessions are signed out. API keys they created keep working — revoke those separately if needed."
-        confirmLabel="Remove member"
+        title={t('Remove {name}?', { name: removing?.name ?? '' })}
+        description={t(
+          'They lose access immediately and all their sessions are signed out. API keys they created keep working — revoke those separately if needed.',
+        )}
+        confirmLabel={t('Remove member')}
         destructive
         icon={<Trash2 />}
         onConfirm={() => {

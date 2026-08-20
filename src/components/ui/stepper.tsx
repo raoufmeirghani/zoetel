@@ -34,7 +34,7 @@ export function Stepper({
             <button
               disabled={!clickable}
               onClick={() => clickable && onStepClick(i)}
-              className={cn('flex items-center gap-2.5 text-left', clickable && 'cursor-pointer')}
+              className={cn('flex items-center gap-2.5 text-start', clickable && 'cursor-pointer')}
             >
               <span className="relative grid size-6 shrink-0 place-items-center">
                 {active && (
@@ -105,7 +105,7 @@ export function StepList({
           {i < steps.length - 1 && (
             <span
               className={cn(
-                'absolute left-[11px] top-6 h-[calc(100%-1rem)] w-px',
+                'absolute start-[11px] top-6 h-[calc(100%-1rem)] w-px',
                 s.state === 'done' ? 'bg-brand/35' : 'bg-line',
               )}
             />

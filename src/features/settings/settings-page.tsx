@@ -32,6 +32,7 @@ import { dateShort, money } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { toast } from '@/components/ui/toast'
 import type { Currency } from '@/lib/types'
+import { useI18n } from '@/lib/i18n'
 
 const CURRENCIES: { value: Currency; label: string }[] = [
   { value: 'USD', label: 'US Dollar (USD)' },
@@ -118,6 +119,7 @@ const NOTIFICATION_GROUPS = [
 type Tab = 'workspace' | 'profile' | 'appearance' | 'notifications'
 
 export default function SettingsPage() {
+  const { t } = useI18n()
   const [params, setParams] = useSearchParams()
   const workspace = useApp((s) => s.workspace)
   const profile = useApp((s) => s.profile)
@@ -170,8 +172,8 @@ export default function SettingsPage() {
         backdropImage={HERO_ART_OVERVIEW}
         mood="quiet"
         size="md"
-        title="Settings"
-        lede="Workspace, profile, appearance and what we send you."
+        title={t('Settings')}
+        lede={t('Workspace, profile, appearance and what we send you.')}
         actions={
           wsDirty && tab === 'workspace' ? (
             <Button
@@ -182,7 +184,7 @@ export default function SettingsPage() {
                 toast.success('Workspace updated')
               }}
             >
-              Save changes
+              {t('Save changes')}
             </Button>
           ) : profDirty && tab === 'profile' ? (
             <Button
@@ -193,7 +195,7 @@ export default function SettingsPage() {
                 toast.success('Profile updated')
               }}
             >
-              Save changes
+              {t('Save changes')}
             </Button>
           ) : undefined
         }
@@ -204,10 +206,10 @@ export default function SettingsPage() {
           layoutId="settings-tabs"
           className="pb-1"
           items={[
-            { value: 'workspace', label: 'Workspace', icon: <Building2 /> },
-            { value: 'profile', label: 'Profile', icon: <User /> },
-            { value: 'appearance', label: 'Appearance', icon: <Sun /> },
-            { value: 'notifications', label: 'Notifications', icon: <Bell /> },
+            { value: 'workspace', label: t('Workspace'), icon: <Building2 /> },
+            { value: 'profile', label: t('Profile'), icon: <User /> },
+            { value: 'appearance', label: t('Appearance'), icon: <Sun /> },
+            { value: 'notifications', label: t('Notifications'), icon: <Bell /> },
           ]}
         />
       </Hero>
@@ -215,16 +217,19 @@ export default function SettingsPage() {
       {/* ── Workspace ──────────────────────────────────── */}
       {tab === 'workspace' && (
         <div className="space-y-5">
-          <Section eyebrow="Identity" title="General" index={0}>
+          <Section eyebrow={t('Identity')} title={t('General')} index={0}>
             <div className="grid gap-6 sm:grid-cols-2">
-              <Field label="Workspace name" description="Shown in the sidebar and on invoices.">
+              <Field label={t('Workspace name')} description={t('Shown in the sidebar and on invoices.')}>
                 <Input
                   value={ws.name}
                   onChange={(e) => setWs({ ...ws, name: e.target.value })}
                   inputSize="lg"
                 />
               </Field>
-              <Field label="Legal business name" description="Must match your commercial registration.">
+              <Field
+                label={t('Legal business name')}
+                description={t('Must match your commercial registration.')}
+              >
                 <Input
                   value={ws.businessName}
                   onChange={(e) => setWs({ ...ws, businessName: e.target.value })}
@@ -235,14 +240,14 @@ export default function SettingsPage() {
           </Section>
 
           <Section
-            eyebrow="Locale"
-            title="Country, time and money"
+            eyebrow={t('Locale')}
+            title={t('Country, time and money')}
             lede="Affects rates, tax treatment and how dates are shown."
             divided
             index={1}
           >
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              <Field label="Country" description="Determines the regulator and default rate table.">
+              <Field label={t('Country')} description={t('Determines the regulator and default rate table.')}>
                 <Select value={ws.country} onValueChange={(v) => setWs({ ...ws, country: v })}>
                   <SelectTrigger size="lg">
                     <SelectValue />
@@ -259,7 +264,7 @@ export default function SettingsPage() {
                   </SelectContent>
                 </Select>
               </Field>
-              <Field label="Timezone" description="Used for reports and scheduled exports.">
+              <Field label={t('Timezone')} description={t('Used for reports and scheduled exports.')}>
                 <Select value={ws.timezone} onValueChange={(v) => setWs({ ...ws, timezone: v })}>
                   <SelectTrigger size="lg">
                     <SelectValue />
@@ -274,8 +279,8 @@ export default function SettingsPage() {
                 </Select>
               </Field>
               <Field
-                label="Display currency"
-                description="Balances are converted for display; billing stays in USD."
+                label={t('Display currency')}
+                description={t('Balances are converted for display; billing stays in USD.')}
               >
                 <Select value={ws.currency} onValueChange={(v) => setWs({ ...ws, currency: v as Currency })}>
                   <SelectTrigger size="lg">
@@ -284,7 +289,7 @@ export default function SettingsPage() {
                   <SelectContent>
                     {CURRENCIES.map((c) => (
                       <SelectItem key={c.value} value={c.value}>
-                        {c.label}
+                        {t(c.label)}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -300,23 +305,23 @@ export default function SettingsPage() {
             )}
           </Section>
 
-          <Section eyebrow="Facts" title="This workspace" divided index={2}>
+          <Section eyebrow={t('Facts')} title={t('This workspace')} divided index={2}>
             <div className="grid gap-8 lg:grid-cols-[1fr_20rem]">
               <dl className="grid gap-y-4 sm:grid-cols-2">
-                <Fact label="Workspace ID">
+                <Fact label={t('Workspace ID')}>
                   <Mono copy>{workspace.id}</Mono>
                 </Fact>
-                <Fact label="Created">{dateShort(workspace.createdAt)}</Fact>
-                <Fact label="Plan">
+                <Fact label={t('Created')}>{dateShort(workspace.createdAt)}</Fact>
+                <Fact label={t('Plan')}>
                   <Badge tone={workspace.plan === 'volume' ? 'brand' : 'outline'}>
-                    {workspace.plan === 'payg' ? 'Pay as you go' : 'Volume'}
+                    {workspace.plan === 'payg' ? t('Pay as you go') : t('Volume')}
                   </Badge>
                 </Fact>
-                <Fact label="Numbers">{numbers.length}</Fact>
-                <Fact label="Balance">{money(balance, ws.currency)}</Fact>
-                <Fact label="Data residency">Egypt (eg-cai-1)</Fact>
+                <Fact label={t('Numbers')}>{numbers.length}</Fact>
+                <Fact label={t('Balance')}>{money(balance, ws.currency)}</Fact>
+                <Fact label={t('Data residency')}>Egypt (eg-cai-1)</Fact>
               </dl>
-              <p className="text-sm leading-relaxed text-ink-subtle lg:border-l lg:border-line-soft lg:pl-8">
+              <p className="text-sm leading-relaxed text-ink-subtle lg:border-s lg:border-line-soft lg:ps-8">
                 Call metadata and recordings for Egyptian numbers stay on infrastructure inside Egypt.
                 Enterprise agreements can pin every region explicitly.
               </p>
@@ -339,7 +344,7 @@ export default function SettingsPage() {
                 onClick={() => setResetOpen(true)}
                 className="shrink-0"
               >
-                Reset workspace data
+                {t('Reset workspace data')}
               </Button>
             </div>
           </Section>
@@ -349,25 +354,25 @@ export default function SettingsPage() {
       {/* ── Profile ────────────────────────────────────── */}
       {tab === 'profile' && (
         <div className="space-y-5">
-          <Section eyebrow="You" title="Your details" index={0}>
+          <Section eyebrow={t('You')} title={t('Your details')} index={0}>
             <div className="flex items-center gap-5">
               <Avatar name={prof.name} hue={profile.avatarHue} size="xl" />
               <div>
                 <Button variant="secondary" size="sm">
-                  Upload a photo
+                  {t('Upload a photo')}
                 </Button>
                 <p className="mt-2 text-xs text-ink-faint">JPG or PNG, up to 2 MB.</p>
               </div>
             </div>
             <div className="mt-8 grid gap-6 sm:grid-cols-2">
-              <Field label="Full name">
+              <Field label={t('Full name')}>
                 <Input
                   value={prof.name}
                   onChange={(e) => setProf({ ...prof, name: e.target.value })}
                   inputSize="lg"
                 />
               </Field>
-              <Field label="Email address" description="Used for sign-in and every notification.">
+              <Field label={t('Email address')} description={t('Used for sign-in and every notification.')}>
                 <Input
                   type="email"
                   value={prof.email}
@@ -375,7 +380,7 @@ export default function SettingsPage() {
                   inputSize="lg"
                 />
               </Field>
-              <Field label="Mobile number" description="For verification codes and urgent alerts.">
+              <Field label={t('Mobile number')} description={t('For verification codes and urgent alerts.')}>
                 <PhoneInput
                   country={prof.country}
                   onCountryChange={(c) => setProf({ ...prof, country: c })}
@@ -383,7 +388,7 @@ export default function SettingsPage() {
                   onChange={setPhone}
                 />
               </Field>
-              <Field label="Country of residence">
+              <Field label={t('Country of residence')}>
                 <Select value={prof.country} onValueChange={(v) => setProf({ ...prof, country: v })}>
                   <SelectTrigger size="lg">
                     <SelectValue />
@@ -403,12 +408,18 @@ export default function SettingsPage() {
             </div>
           </Section>
 
-          <Section eyebrow="Access" title="Password" lede="Last changed 64 days ago." divided index={1}>
+          <Section
+            eyebrow={t('Access')}
+            title={t('Password')}
+            lede="Last changed 64 days ago."
+            divided
+            index={1}
+          >
             <div className="grid max-w-2xl gap-6 sm:grid-cols-2">
-              <Field label="New password">
+              <Field label={t('New password')}>
                 <Input type="password" placeholder="••••••••••••" inputSize="lg" />
               </Field>
-              <Field label="Confirm new password">
+              <Field label={t('Confirm new password')}>
                 <Input type="password" placeholder="••••••••••••" inputSize="lg" />
               </Field>
             </div>
@@ -418,11 +429,11 @@ export default function SettingsPage() {
               className="mt-5"
               onClick={() => toast.success('Password updated')}
             >
-              Update password
+              {t('Update password')}
             </Button>
           </Section>
 
-          <Section eyebrow="Faster" title="Keyboard shortcuts" divided index={2}>
+          <Section eyebrow={t('Faster')} title={t('Keyboard shortcuts')} divided index={2}>
             <dl className="grid max-w-xl gap-y-2.5 sm:grid-cols-2">
               {[
                 { k: '⌘K', l: 'Open the command palette' },
@@ -430,7 +441,7 @@ export default function SettingsPage() {
                 { k: 'G', l: 'Go to…' },
                 { k: 'Esc', l: 'Close any overlay' },
               ].map((s) => (
-                <div key={s.k} className="flex items-center justify-between gap-4 pr-6">
+                <div key={s.k} className="flex items-center justify-between gap-4 pe-6">
                   <dt className="text-base text-ink-muted">{s.l}</dt>
                   <dd>
                     <kbd className="inline-flex h-5 min-w-6 items-center justify-center rounded-[5px] bg-veil-strong px-1.5 font-sans text-[11px] font-medium text-ink-subtle">
@@ -447,55 +458,55 @@ export default function SettingsPage() {
       {/* ── Appearance ─────────────────────────────────── */}
       {tab === 'appearance' && (
         <div className="space-y-5">
-          <Section eyebrow="Applies to this browser" title="Theme" index={0}>
+          <Section eyebrow={t('Applies to this browser')} title={t('Theme')} index={0}>
             <div className="grid gap-4 sm:grid-cols-3 lg:max-w-3xl">
               {[
-                { value: 'light' as Theme, label: 'Light', icon: Sun },
-                { value: 'dark' as Theme, label: 'Dark', icon: Moon },
-                { value: 'system' as Theme, label: 'System', icon: Monitor },
-              ].map((t) => {
-                const active = theme === t.value
+                { value: 'light' as Theme, label: t('Light'), icon: Sun },
+                { value: 'dark' as Theme, label: t('Dark'), icon: Moon },
+                { value: 'system' as Theme, label: t('System'), icon: Monitor },
+              ].map((opt) => {
+                const active = theme === opt.value
                 return (
                   <button
-                    key={t.value}
-                    onClick={() => setTheme(t.value)}
+                    key={opt.value}
+                    onClick={() => setTheme(opt.value)}
                     className={cn(
-                      'group flex flex-col gap-3 rounded-3xl p-3 text-left transition-colors',
+                      'group flex flex-col gap-3 rounded-3xl p-3 text-start transition-colors',
                       active ? 'bg-brand-softer ring-1 ring-brand/40' : 'bg-veil hover:bg-veil-strong',
                     )}
                   >
                     <span
                       className={cn(
                         'relative flex h-24 w-full overflow-hidden rounded-2xl',
-                        t.value === 'light' && 'bg-[hsl(240_20%_98%)]',
-                        t.value === 'dark' && 'bg-[hsl(240_10%_6%)]',
-                        t.value === 'system' &&
+                        opt.value === 'light' && 'bg-[hsl(240_20%_98%)]',
+                        opt.value === 'dark' && 'bg-[hsl(240_10%_6%)]',
+                        opt.value === 'system' &&
                           'bg-gradient-to-r from-[hsl(240_20%_98%)] from-50% to-[hsl(240_10%_6%)] to-50%',
                       )}
                     >
                       <span
                         className={cn(
-                          'absolute left-2 top-2 h-[calc(100%-1rem)] w-6 rounded-xl',
-                          t.value === 'dark' ? 'bg-white/10' : 'bg-black/[0.06]',
+                          'absolute start-2 top-2 h-[calc(100%-1rem)] w-6 rounded-xl',
+                          opt.value === 'dark' ? 'bg-white/10' : 'bg-black/[0.06]',
                         )}
                       />
                       <span
                         className={cn(
-                          'absolute left-10 top-3 h-2.5 w-20 rounded-full',
-                          t.value === 'dark' ? 'bg-white/15' : 'bg-black/10',
+                          'absolute start-10 top-3 h-2.5 w-20 rounded-full',
+                          opt.value === 'dark' ? 'bg-white/15' : 'bg-black/10',
                         )}
                       />
                       <span
                         className={cn(
-                          'absolute left-10 top-8 h-11 w-[calc(100%-3rem)] rounded-xl',
-                          t.value === 'dark' ? 'bg-white/[0.07]' : 'bg-white shadow-sm',
+                          'absolute start-10 top-8 h-11 w-[calc(100%-3rem)] rounded-xl',
+                          opt.value === 'dark' ? 'bg-white/[0.07]' : 'bg-white shadow-sm',
                         )}
                       />
                     </span>
                     <span className="flex items-center gap-2">
-                      <t.icon className={cn('size-4', active ? 'text-brand' : 'text-ink-faint')} />
-                      <span className="text-base font-medium text-ink">{t.label}</span>
-                      {active && <CircleCheck className="ml-auto size-4 text-brand" />}
+                      <opt.icon className={cn('size-4', active ? 'text-brand' : 'text-ink-faint')} />
+                      <span className="text-base font-medium text-ink">{t(opt.label)}</span>
+                      {active && <CircleCheck className="ms-auto size-4 text-brand" />}
                     </span>
                   </button>
                 )
@@ -503,30 +514,30 @@ export default function SettingsPage() {
             </div>
           </Section>
 
-          <Section eyebrow="Fine-tuning" title="Interface" divided index={1}>
+          <Section eyebrow={t('Fine-tuning')} title={t('Interface')} divided index={1}>
             <div className="max-w-2xl divide-y divide-line-soft">
               <ToggleRow
-                label="Reduce motion"
-                description="Follows your system preference automatically; this forces it on."
+                label={t('Reduce motion')}
+                description={t('Follows your system preference automatically; this forces it on.')}
                 checked={false}
                 onChange={() => {}}
               />
               <ToggleRow
-                label="Compact lists"
-                description="Tighter row height for denser scanning."
+                label={t('Compact lists')}
+                description={t('Tighter row height for denser scanning.')}
                 checked={false}
                 onChange={() => {}}
               />
               <ToggleRow
-                label="Show resource IDs inline"
-                description="Surface IDs next to every resource name."
+                label={t('Show resource IDs inline')}
+                description={t('Surface IDs next to every resource name.')}
                 checked
                 onChange={() => {}}
               />
             </div>
           </Section>
 
-          <Section eyebrow="For the curious" title="About this design" divided index={2}>
+          <Section eyebrow={t('For the curious')} title={t('About this design')} divided index={2}>
             <p className="max-w-2xl text-base leading-relaxed text-ink-muted">
               Every colour here is a token, so dark mode is a palette swap rather than a second design. Metrics
               use tabular figures so digits don't shift as numbers update, headlines are set in Geist so they
@@ -544,20 +555,20 @@ export default function SettingsPage() {
             <Section
               key={g.label}
               eyebrow={gi === 0 ? 'What we send you' : undefined}
-              title={g.label}
+              title={t(g.label)}
               divided={gi > 0}
               index={gi}
             >
               <div className="max-w-3xl">
-                <div className="mb-1 flex items-center justify-end gap-6 pr-1">
-                  <span className="eyebrow w-10 text-center">Email</span>
-                  <span className="eyebrow w-10 text-center">In-app</span>
+                <div className="mb-1 flex items-center justify-end gap-6 pe-1">
+                  <span className="eyebrow w-10 text-center">{t('Email')}</span>
+                  <span className="eyebrow w-10 text-center">{t('In-app')}</span>
                 </div>
                 <ul className="divide-y divide-line-soft">
                   {g.items.map((item) => (
                     <li key={item.id} className="flex items-center gap-5 py-3.5">
                       <div className="min-w-0 flex-1">
-                        <p className="text-base font-medium text-ink">{item.label}</p>
+                        <p className="text-base font-medium text-ink">{t(item.label)}</p>
                         <p className="mt-0.5 text-sm leading-relaxed text-ink-subtle">{item.desc}</p>
                       </div>
                       <span className="flex w-10 shrink-0 justify-center">
@@ -567,7 +578,7 @@ export default function SettingsPage() {
                           onCheckedChange={(v) =>
                             setPrefs((p) => ({ ...p, [item.id]: { ...p[item.id], email: v } }))
                           }
-                          aria-label={`${item.label} email`}
+                          aria-label={`${t(item.label)} email`}
                         />
                       </span>
                       <span className="flex w-10 shrink-0 justify-center">
@@ -577,7 +588,7 @@ export default function SettingsPage() {
                           onCheckedChange={(v) =>
                             setPrefs((p) => ({ ...p, [item.id]: { ...p[item.id], inApp: v } }))
                           }
-                          aria-label={`${item.label} in-app`}
+                          aria-label={`${t(item.label)} in-app`}
                         />
                       </span>
                     </li>
@@ -592,7 +603,7 @@ export default function SettingsPage() {
               <div className="min-w-0">
                 <p className="eyebrow flex items-center gap-1.5">
                   <TriangleAlert className="size-3" />
-                  Always sent
+                  {t('Always sent')}
                 </p>
                 <p className="mt-2 max-w-xl text-base leading-relaxed text-ink-muted">
                   Payment failures and verification rejections are emailed even with notifications off — they
@@ -607,7 +618,7 @@ export default function SettingsPage() {
                 className="shrink-0"
                 onClick={() => toast.success('Test notification sent')}
               >
-                Send a test notification
+                {t('Send a test notification')}
               </Button>
             </div>
           </Section>
@@ -617,15 +628,17 @@ export default function SettingsPage() {
       <ConfirmDialog
         open={resetOpen}
         onOpenChange={setResetOpen}
-        title="Reset workspace data?"
-        description="Every number, SIP connection, transaction, API key and verification state returns to the original sample data. Your theme preference is kept."
-        confirmLabel="Reset everything"
+        title={t('Reset workspace data?')}
+        description={t(
+          'Every number, SIP connection, transaction, API key and verification state returns to the original sample data. Your theme preference is kept.',
+        )}
+        confirmLabel={t('Reset everything')}
         destructive
         icon={<RotateCcw />}
         onConfirm={() => {
           restartDemo()
           setResetOpen(false)
-          toast.success('Workspace reset', { description: 'Sample data restored.' })
+          toast.success('Workspace reset', { description: t('Sample data restored.') })
         }}
       />
     </>

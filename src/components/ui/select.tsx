@@ -14,7 +14,7 @@ export const SelectTrigger = React.forwardRef<
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      'flex w-full items-center justify-between gap-2 bg-surface text-left text-ink',
+      'flex w-full items-center justify-between gap-2 bg-surface text-start text-ink',
       'shadow-[0_0_0_1px_hsl(var(--line-strong)),0_1px_2px_rgb(17_18_28/0.03)]',
       'transition-shadow duration-150 hover:shadow-[0_0_0_1px_hsl(var(--line-strong)),0_1px_3px_rgb(17_18_28/0.06)]',
       'focus:outline-none focus-visible:shadow-[0_0_0_1px_hsl(var(--brand)),0_0_0_4px_hsl(var(--brand)/0.14)]',
@@ -66,15 +66,15 @@ export const SelectItem = React.forwardRef<
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      'relative flex cursor-default select-none items-center gap-2 rounded-lg py-[7px] pl-2.5 pr-8 text-base text-ink outline-none',
+      'relative flex cursor-default select-none items-center gap-2 rounded-lg py-[7px] pe-8 ps-2.5 text-base text-ink outline-none',
       'data-[disabled]:pointer-events-none data-[highlighted]:bg-surface-3 data-[disabled]:opacity-45',
       className,
     )}
     {...props}
   >
     <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
-    {hint && <span className="ml-auto mr-1 text-xs text-ink-faint">{hint}</span>}
-    <SelectPrimitive.ItemIndicator className="absolute right-2.5">
+    {hint && <span className="me-1 ms-auto text-xs text-ink-faint">{hint}</span>}
+    <SelectPrimitive.ItemIndicator className="absolute end-2.5">
       <Check className="size-4 text-brand" />
     </SelectPrimitive.ItemIndicator>
   </SelectPrimitive.Item>

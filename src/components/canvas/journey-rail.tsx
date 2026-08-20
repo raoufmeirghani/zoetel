@@ -27,9 +27,9 @@ export function JourneyRail({ stages, className }: { stages: Stage[]; className?
   return (
     <div className={cn('relative', className)}>
       {/* The trail itself */}
-      <div className="absolute left-0 right-0 top-[13px] h-px bg-line-soft" aria-hidden />
+      <div className="absolute end-0 start-0 top-[13px] h-px bg-line-soft" aria-hidden />
       <motion.div
-        className="absolute left-0 top-[13px] h-px bg-brand/45"
+        className="absolute start-0 top-[13px] h-px bg-brand/45"
         initial={{ width: 0 }}
         animate={{ width: `${fill}%` }}
         transition={{ duration: 0.9, ease: EASE }}

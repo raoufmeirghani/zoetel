@@ -1,12 +1,16 @@
 import { Toaster as SonnerToaster, toast as sonnerToast } from 'sonner'
 import { CircleAlert, CircleCheck, Info, LoaderCircle, TriangleAlert } from 'lucide-react'
 import { useApp } from '@/store/app'
+import { useI18n } from '@/lib/i18n'
 
 export function Toaster() {
   const theme = useApp((s) => s.theme)
+  const { dir } = useI18n()
   return (
     <SonnerToaster
-      position="bottom-right"
+      // Toasts stack in the leading corner, so they mirror with the layout.
+      position={dir === 'rtl' ? 'bottom-left' : 'bottom-right'}
+      dir={dir}
       theme={theme === 'system' ? 'system' : theme}
       offset={20}
       gap={10}

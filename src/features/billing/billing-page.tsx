@@ -41,6 +41,7 @@ import { dateShort, money, relativeTime } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { toast } from '@/components/ui/toast'
 import type { Invoice, Transaction } from '@/lib/types'
+import { useI18n } from '@/lib/i18n'
 
 const KIND_LABEL: Record<Transaction['kind'], string> = {
   topup: 'Top-up',
@@ -54,6 +55,7 @@ const KIND_LABEL: Record<Transaction['kind'], string> = {
 type Tab = 'overview' | 'transactions' | 'invoices' | 'methods'
 
 export default function BillingPage() {
+  const { t } = useI18n()
   const [params, setParams] = useSearchParams()
   const currency = useApp((s) => s.workspace.currency)
   const plan = useApp((s) => s.workspace.plan)
@@ -93,10 +95,10 @@ export default function BillingPage() {
   const delta = ((monthSpend - lastMonthSpend) / lastMonthSpend) * 100
 
   const breakdown = [
-    { label: 'Outbound voice', value: monthSpend * 0.62, color: 'hsl(var(--brand))' },
-    { label: 'Inbound voice', value: monthSpend * 0.19, color: 'hsl(var(--info))' },
-    { label: 'Messaging', value: monthSpend * 0.11, color: 'hsl(var(--success))' },
-    { label: 'Numbers & channels', value: monthSpend * 0.08, color: 'hsl(var(--warning))' },
+    { label: t('Outbound voice'), value: monthSpend * 0.62, color: 'hsl(var(--brand))' },
+    { label: t('Inbound voice'), value: monthSpend * 0.19, color: 'hsl(var(--info))' },
+    { label: t('Messaging'), value: monthSpend * 0.11, color: 'hsl(var(--success))' },
+    { label: t('Numbers & channels'), value: monthSpend * 0.08, color: 'hsl(var(--warning))' },
   ]
 
   const filteredTx = transactions.filter(
@@ -112,11 +114,11 @@ export default function BillingPage() {
         backdropImage={HERO_ART_USAGE}
         mood="ledger"
         size="md"
-        title="Billing"
-        lede="A prepaid wallet, so nothing can run away from you. Usage is drawn down as it happens."
+        title={t('Billing')}
+        lede={t('A prepaid wallet, so nothing can run away from you. Usage is drawn down as it happens.')}
         actions={
           <Button variant="ghost" icon={<ShieldCheck />} onClick={() => setControlsOpen(true)}>
-            Spend controls
+            {t('Spend controls')}
           </Button>
         }
       >
@@ -126,10 +128,10 @@ export default function BillingPage() {
           layoutId="billing-tabs"
           className="pb-1"
           items={[
-            { value: 'overview', label: 'Overview' },
-            { value: 'transactions', label: 'Transactions', count: transactions.length },
-            { value: 'invoices', label: 'Invoices', count: invoices.length },
-            { value: 'methods', label: 'Payment methods', count: methods.length },
+            { value: 'overview', label: t('Overview') },
+            { value: 'transactions', label: t('Transactions'), count: transactions.length },
+            { value: 'invoices', label: t('Invoices'), count: invoices.length },
+            { value: 'methods', label: t('Payment methods'), count: methods.length },
           ]}
         />
       </Hero>
@@ -147,7 +149,7 @@ export default function BillingPage() {
             </p>
           </div>
           <Button size="sm" variant="secondary" onClick={() => setInvoice(openInvoice)} className="shrink-0">
-            View invoice
+            {t('View invoice')}
           </Button>
         </div>
       )}
@@ -159,7 +161,7 @@ export default function BillingPage() {
             <Section index={0}>
               <div className="grid gap-y-7 sm:grid-cols-3 sm:divide-x sm:divide-line">
                 <Figure
-                  label="Spend this month"
+                  label={t('Spend this month')}
                   value={money(monthSpend, currency)}
                   meta={
                     <span
@@ -175,14 +177,14 @@ export default function BillingPage() {
                   first
                 />
                 <Figure
-                  label="Recurring"
+                  label={t('Recurring')}
                   value={money(numbersMonthly, currency)}
                   meta={`${numbers.length} numbers · renews on the 1st`}
                 />
                 <Figure
-                  label="Effective rate"
+                  label={t('Effective rate')}
                   value={money(0.0231, currency, { precise: true })}
-                  meta="per minute, blended across all destinations"
+                  meta={t('per minute, blended across all destinations')}
                 />
               </div>
             </Section>
@@ -190,11 +192,11 @@ export default function BillingPage() {
           </div>
 
           <Section
-            eyebrow="Last 30 days"
-            title="Daily spend"
+            eyebrow={t('Last 30 days')}
+            title={t('Daily spend')}
             action={
               <Badge tone={plan === 'payg' ? 'outline' : 'brand'}>
-                {plan === 'payg' ? 'Pay as you go' : 'Volume pricing'}
+                {plan === 'payg' ? t('Pay as you go') : t('Volume pricing')}
               </Badge>
             }
             divided
@@ -205,12 +207,12 @@ export default function BillingPage() {
                 data={series.map((d) => ({ label: d.label, value: d.spend }))}
                 height={220}
                 formatValue={(n) => money(n, currency)}
-                ariaLabel="Daily spend over the last 30 days"
+                ariaLabel={t('Daily spend over the last 30 days')}
               />
             </div>
           </Section>
 
-          <Section eyebrow="This month" title="Where it goes" divided index={2}>
+          <Section eyebrow={t('This month')} title={t('Where it goes')} divided index={2}>
             <div className="grid gap-10 lg:grid-cols-2">
               <div className="flex items-center gap-7">
                 <DonutChart
@@ -241,10 +243,10 @@ export default function BillingPage() {
                 <p className="eyebrow mb-4">Top cost drivers</p>
                 <ul className="space-y-4">
                   {[
-                    { label: 'Egypt — mobile', value: monthSpend * 0.44, sub: '18,420 min' },
-                    { label: 'Egypt — landline', value: monthSpend * 0.24, sub: '9,120 min' },
-                    { label: 'UAE — mobile', value: monthSpend * 0.18, sub: '1,240 min' },
-                    { label: 'Saudi Arabia — mobile', value: monthSpend * 0.14, sub: '880 min' },
+                    { label: t('Egypt — mobile'), value: monthSpend * 0.44, sub: '18,420 min' },
+                    { label: t('Egypt — landline'), value: monthSpend * 0.24, sub: '9,120 min' },
+                    { label: t('UAE — mobile'), value: monthSpend * 0.18, sub: '1,240 min' },
+                    { label: t('Saudi Arabia — mobile'), value: monthSpend * 0.14, sub: '880 min' },
                   ].map((d, i) => (
                     <li key={d.label}>
                       <div className="mb-1.5 flex items-baseline justify-between gap-3 text-sm">
@@ -276,7 +278,7 @@ export default function BillingPage() {
                 </div>
                 <Button variant="primary" asChild className="shrink-0">
                   <Link to="/pricing">
-                    Compare plans
+                    {t('Compare plans')}
                     <ArrowUpRight className="size-4" />
                   </Link>
                 </Button>
@@ -289,14 +291,14 @@ export default function BillingPage() {
       {/* ── Transactions ───────────────────────────────── */}
       {tab === 'transactions' && (
         <Section
-          eyebrow="Every movement"
-          title="Transactions"
+          eyebrow={t('Every movement')}
+          title={t('Transactions')}
           action={
             <div className="flex items-center gap-2">
               <SearchInput
                 value={txSearch}
                 onChange={setTxSearch}
-                placeholder="Search…"
+                placeholder={t('Search…')}
                 size="sm"
                 className="w-48"
               />
@@ -306,7 +308,7 @@ export default function BillingPage() {
                 icon={<Download />}
                 onClick={() => toast.success('CSV export queued')}
               >
-                Export
+                {t('Export')}
               </Button>
             </div>
           }
@@ -315,8 +317,8 @@ export default function BillingPage() {
             <EmptyState
               compact
               icon={<Receipt />}
-              title="Nothing matches that"
-              description="Try a different search."
+              title={t('Nothing matches that')}
+              description={t('Try a different search.')}
             />
           ) : (
             <ul className="divide-y divide-line-soft">
@@ -357,7 +359,7 @@ export default function BillingPage() {
                   {t.status !== 'succeeded' && <StatusBadge status={t.status} size="sm" />}
                   <span
                     className={cn(
-                      'w-24 shrink-0 text-right text-base font-medium tabular-nums',
+                      'w-24 shrink-0 text-end text-base font-medium tabular-nums',
                       t.amount > 0
                         ? 'text-success-ink'
                         : t.status === 'failed'
@@ -378,8 +380,8 @@ export default function BillingPage() {
       {/* ── Invoices ───────────────────────────────────── */}
       {tab === 'invoices' && (
         <Section
-          eyebrow="Issued monthly"
-          title="Invoices"
+          eyebrow={t('Issued monthly')}
+          title={t('Invoices')}
           lede="Settled automatically from your wallet. Downloadable as PDF for your accountant."
           action={
             <Button
@@ -388,7 +390,7 @@ export default function BillingPage() {
               icon={<Download />}
               onClick={() => toast.success('All invoices queued')}
             >
-              Download all
+              {t('Download all')}
             </Button>
           }
         >
@@ -397,7 +399,7 @@ export default function BillingPage() {
               <li key={inv.id}>
                 <button
                   onClick={() => setInvoice(inv)}
-                  className="group -mx-3 flex w-[calc(100%+1.5rem)] items-center gap-4 rounded-2xl px-3 py-4 text-left transition-colors hover:bg-veil"
+                  className="group -mx-3 flex w-[calc(100%+1.5rem)] items-center gap-4 rounded-2xl px-3 py-4 text-start transition-colors hover:bg-veil"
                 >
                   <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-veil-strong text-ink-muted">
                     <Banknote className="size-4" />
@@ -410,7 +412,7 @@ export default function BillingPage() {
                     </p>
                   </div>
                   <StatusBadge status={inv.status} size="sm" />
-                  <span className="w-24 shrink-0 text-right text-base font-medium tabular-nums text-ink">
+                  <span className="w-24 shrink-0 text-end text-base font-medium tabular-nums text-ink">
                     {money(inv.amount, currency)}
                   </span>
                 </button>
@@ -423,7 +425,7 @@ export default function BillingPage() {
       {/* ── Payment methods ────────────────────────────── */}
       {tab === 'methods' && (
         <div className="space-y-5">
-          <Section eyebrow="On file" title="Payment methods" index={0}>
+          <Section eyebrow={t('On file')} title={t('Payment methods')} index={0}>
             <ul className="divide-y divide-line-soft">
               {methods.map((m) => (
                 <li key={m.id} className="flex items-center gap-4 py-4">
@@ -444,7 +446,7 @@ export default function BillingPage() {
                       {m.isDefault && (
                         <Badge tone="brand" size="sm">
                           <Star className="size-2.5" />
-                          Default
+                          {t('Default')}
                         </Badge>
                       )}
                     </div>
@@ -458,7 +460,7 @@ export default function BillingPage() {
                         variant="ghost"
                         size="icon-sm"
                         className="text-ink-faint"
-                        aria-label="Card actions"
+                        aria-label={t('Card actions')}
                       >
                         <EllipsisVertical />
                       </Button>
@@ -472,12 +474,12 @@ export default function BillingPage() {
                           }}
                         >
                           <Star />
-                          Make default
+                          {t('Make default')}
                         </MenuItem>
                       )}
                       <MenuItem>
                         <CreditCard />
-                        Update expiry
+                        {t('Update expiry')}
                       </MenuItem>
                       <MenuSeparator />
                       <MenuItem
@@ -489,7 +491,7 @@ export default function BillingPage() {
                         }}
                       >
                         <Trash2 />
-                        Remove card
+                        {t('Remove card')}
                       </MenuItem>
                     </MenuContent>
                   </Menu>
@@ -499,10 +501,10 @@ export default function BillingPage() {
             <button
               onClick={() =>
                 toast.info('Card entry opens in a secure hosted form', {
-                  description: 'Card details never touch Zoetel servers.',
+                  description: t('Card details never touch Zoetel servers.'),
                 })
               }
-              className="mt-4 flex w-full items-center gap-4 rounded-3xl border border-dashed border-line-strong p-4 text-left transition-colors hover:border-brand/50 hover:bg-veil"
+              className="mt-4 flex w-full items-center gap-4 rounded-3xl border border-dashed border-line-strong p-4 text-start transition-colors hover:border-brand/50 hover:bg-veil"
             >
               <span className="grid size-9 place-items-center rounded-xl bg-veil-strong text-ink-muted">
                 <Plus className="size-4" />
@@ -514,7 +516,7 @@ export default function BillingPage() {
             </button>
           </Section>
 
-          <Section eyebrow="For larger amounts" title="Bank transfer" divided index={1}>
+          <Section eyebrow={t('For larger amounts')} title={t('Bank transfer')} divided index={1}>
             <div className="grid gap-8 lg:grid-cols-2">
               <p className="text-base leading-relaxed text-ink-muted">
                 Above {money(5000, currency)} a local EGP transfer avoids card fees entirely. Funds land in 1–2
@@ -522,8 +524,8 @@ export default function BillingPage() {
               </p>
               <dl className="divide-y divide-line-soft">
                 {[
-                  { label: 'Bank', value: 'CIB Egypt' },
-                  { label: 'Account name', value: 'Zoetel Egypt LLC' },
+                  { label: t('Bank'), value: 'CIB Egypt' },
+                  { label: t('Account name'), value: 'Zoetel Egypt LLC' },
                 ].map((f) => (
                   <div key={f.label} className="flex items-baseline justify-between gap-4 py-2.5">
                     <dt className="text-sm text-ink-subtle">{f.label}</dt>
@@ -548,11 +550,11 @@ export default function BillingPage() {
       <Drawer
         open={controlsOpen}
         onOpenChange={setControlsOpen}
-        title="Spend controls"
-        description="Two settings that stand between a leaked credential and your whole balance."
+        title={t('Spend controls')}
+        description={t('Two settings that stand between a leaked credential and your whole balance.')}
         footer={
           <Button variant="primary" onClick={() => setControlsOpen(false)}>
-            Done
+            {t('Done')}
           </Button>
         }
       >
@@ -562,10 +564,10 @@ export default function BillingPage() {
               <div className="min-w-0">
                 <p className="flex items-center gap-2 text-md font-medium text-ink">
                   <Zap className="size-4 text-brand" />
-                  Auto-recharge
+                  {t('Auto-recharge')}
                 </p>
                 <p className="mt-1 text-sm leading-relaxed text-ink-subtle">
-                  Never drop a call because the wallet ran dry.
+                  {t('Never drop a call because the wallet ran dry.')}
                 </p>
               </div>
               <Switch
@@ -574,7 +576,7 @@ export default function BillingPage() {
                   setAutoRecharge({ enabled: v })
                   toast.success(`Auto-recharge ${v ? 'enabled' : 'disabled'}`)
                 }}
-                aria-label="Auto-recharge"
+                aria-label={t('Auto-recharge')}
               />
             </div>
             <motion.div
@@ -582,7 +584,7 @@ export default function BillingPage() {
               style={{ pointerEvents: autoRecharge.enabled ? 'auto' : 'none' }}
               className="mt-5 space-y-5"
             >
-              <Field label="When the balance falls below">
+              <Field label={t('When the balance falls below')}>
                 <CurrencyInput
                   value={autoRecharge.threshold}
                   onChange={(v) => setAutoRecharge({ threshold: v })}
@@ -591,7 +593,7 @@ export default function BillingPage() {
                   presets={[100, 250, 500]}
                 />
               </Field>
-              <Field label="Top up by">
+              <Field label={t('Top up by')}>
                 <CurrencyInput
                   value={autoRecharge.amount}
                   onChange={(v) => setAutoRecharge({ amount: v })}
@@ -614,7 +616,7 @@ export default function BillingPage() {
               <div className="min-w-0">
                 <p className="flex items-center gap-2 text-md font-medium text-ink">
                   <ShieldCheck className="size-4 text-brand" />
-                  Monthly spend limit
+                  {t('Monthly spend limit')}
                 </p>
                 <p className="mt-1 text-sm leading-relaxed text-ink-subtle">
                   A hard ceiling. Toll fraud almost always starts with a compromised credential, and this is
@@ -624,7 +626,7 @@ export default function BillingPage() {
               <Switch
                 checked={spendLimit.enabled}
                 onCheckedChange={(v) => setSpendLimit({ enabled: v })}
-                aria-label="Spend limit"
+                aria-label={t('Spend limit')}
               />
             </div>
             {spendLimit.enabled && (
@@ -642,7 +644,7 @@ export default function BillingPage() {
                     size="sm"
                   />
                 </div>
-                <Field label="Monthly limit">
+                <Field label={t('Monthly limit')}>
                   <CurrencyInput
                     value={spendLimit.monthly}
                     onChange={(v) => setSpendLimit({ monthly: v })}
@@ -666,14 +668,14 @@ export default function BillingPage() {
         footer={
           <>
             <Button variant="ghost" onClick={() => setInvoice(null)}>
-              Close
+              {t('Close')}
             </Button>
             <Button
               variant="primary"
               icon={<Download />}
               onClick={() => toast.success('Invoice downloaded', { description: `${invoice?.number}.pdf` })}
             >
-              Download PDF
+              {t('Download PDF')}
             </Button>
           </>
         }
@@ -737,7 +739,7 @@ function Figure({
   first?: boolean
 }) {
   return (
-    <div className={cn('min-w-0 sm:px-6', first && 'sm:pl-0')}>
+    <div className={cn('min-w-0 sm:px-6', first && 'sm:ps-0')}>
       <p className="eyebrow truncate">{label}</p>
       <p className="display mt-2.5 truncate text-2xl font-semibold tabular-nums text-ink sm:text-3xl">
         {value}

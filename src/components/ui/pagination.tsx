@@ -1,6 +1,7 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from './button'
 import { cn } from '@/lib/utils'
+import { useI18n } from '@/lib/i18n'
 
 export function Pagination({
   page,
@@ -19,6 +20,7 @@ export function Pagination({
   className?: string
   label?: string
 }) {
+  const { t } = useI18n()
   const from = total === 0 ? 0 : (page - 1) * pageSize + 1
   const to = Math.min(page * pageSize, total)
 
@@ -48,7 +50,7 @@ export function Pagination({
           size="icon-sm"
           disabled={page <= 1}
           onClick={() => onPageChange(page - 1)}
-          aria-label="Previous page"
+          aria-label={t('Previous page')}
         >
           <ChevronLeft />
         </Button>
@@ -76,7 +78,7 @@ export function Pagination({
           size="icon-sm"
           disabled={page >= pageCount}
           onClick={() => onPageChange(page + 1)}
-          aria-label="Next page"
+          aria-label={t('Next page')}
         >
           <ChevronRight />
         </Button>

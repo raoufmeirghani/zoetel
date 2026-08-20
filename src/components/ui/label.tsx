@@ -13,7 +13,7 @@ export const Label = React.forwardRef<
       {...props}
     >
       {children}
-      {required && <span className="ml-0.5 text-danger">*</span>}
+      {required && <span className="ms-0.5 text-danger">*</span>}
     </LabelPrimitive.Root>
     {hint && <span className="text-xs text-ink-faint">{hint}</span>}
   </div>

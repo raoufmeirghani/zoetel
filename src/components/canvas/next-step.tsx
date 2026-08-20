@@ -7,6 +7,7 @@ import type { Spotlight } from '@/lib/journey'
 import { Button } from '@/components/ui/button'
 import { openZoie, useZoieContext } from '@/lib/zoie'
 import { useApp } from '@/store/app'
+import { useI18n } from '@/lib/i18n'
 
 const TONE = {
   brand: { chip: 'bg-brand/12 text-brand', halo: 'bg-brand/20' },
@@ -30,6 +31,7 @@ export function NextStep({
   className?: string
   aside?: React.ReactNode
 }) {
+  const { t } = useI18n()
   // Above the early return — hooks can't be conditional.
   const zoie = useZoieContext()
   const markZoieHandoff = useApp((s) => s.markZoieHandoff)
@@ -48,7 +50,7 @@ export function NextStep({
         <div className="min-w-0">
           <p className="eyebrow">Nothing to do</p>
           <p className="headline mt-2 text-3xl text-ink">
-            {allClear ? 'Everything is running' : 'You’re all set up'}
+            {allClear ? t('Everything is running') : t('You’re all set up')}
           </p>
           <p className="mt-3 max-w-xl text-base leading-relaxed text-ink-muted">
             {allClear
@@ -77,11 +79,11 @@ export function NextStep({
         <div className="min-w-0">
           <p className="eyebrow">{spotlight.eyebrow}</p>
           <h2 className="headline mt-2 text-balance text-2xl text-ink sm:text-3xl">{spotlight.title}</h2>
-          <p className="mt-3 max-w-xl text-base leading-relaxed text-ink-muted">{spotlight.why}</p>
+          <p className="mt-3 max-w-xl text-base leading-relaxed text-ink-muted">{t(spotlight.why)}</p>
         </div>
       </div>
 
-      <div className="flex shrink-0 items-center gap-3 lg:pl-6">
+      <div className="flex shrink-0 items-center gap-3 lg:ps-6">
         {aside}
         {/* A step that continues in Zoie opens a tab rather than navigating —
             the infrastructure work here isn't finished. */}
@@ -94,7 +96,7 @@ export function NextStep({
               markZoieHandoff()
             }}
           >
-            {spotlight.cta}
+            {t(spotlight.cta)}
             <ArrowUpRight className="size-4" />
           </Button>
         ) : (
@@ -104,7 +106,7 @@ export function NextStep({
             asChild
           >
             <Link to={spotlight.to}>
-              {spotlight.cta}
+              {t(spotlight.cta)}
               <ArrowRight className="size-4" />
             </Link>
           </Button>

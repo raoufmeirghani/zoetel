@@ -76,9 +76,15 @@ export default {
         '4xl': '28px',
       },
       fontFamily: {
-        sans: ['"Inter Variable"', 'Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
+        // 'Cairo Variable' rides at the end of both text stacks rather than in
+        // an Arabic-only override: its unicode-range subsets mean the browser
+        // reaches for it per-glyph, so Arabic renders properly wherever it
+        // appears — including inside the English UI — and its Latin subsets are
+        // never downloaded because Inter answers first.
+        sans: ['"Inter Variable"', 'Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'Segoe UI', '"Cairo Variable"', 'sans-serif'],
         mono: ['"SF Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
-        display: ['"Geist Variable"', '"Inter Variable"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        display: ['"Geist Variable"', '"Inter Variable"', 'ui-sans-serif', 'system-ui', '"Cairo Variable"', 'sans-serif'],
+        arabic: ['"Cairo Variable"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       fontSize: {
         '2xs': ['0.6875rem', { lineHeight: '1rem', letterSpacing: '0.01em' }],
@@ -123,6 +129,8 @@ export default {
       },
       keyframes: {
         shimmer: { '100%': { transform: 'translateX(100%)' } },
+        // Mirrored sweep for right-to-left layouts.
+        'shimmer-rtl': { '100%': { transform: 'translateX(-100%)' } },
         'pulse-ring': {
           '0%': { transform: 'scale(0.8)', opacity: '0.6' },
           '100%': { transform: 'scale(2.2)', opacity: '0' },
@@ -143,6 +151,7 @@ export default {
       },
       animation: {
         shimmer: 'shimmer 1.6s infinite',
+        'shimmer-rtl': 'shimmer-rtl 1.6s infinite',
         'pulse-ring': 'pulse-ring 2s cubic-bezier(0.24, 0, 0.38, 1) infinite',
         marquee: 'marquee 40s linear infinite',
         'fade-up': 'fade-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) both',

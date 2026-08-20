@@ -4,6 +4,7 @@ import { Check, CircleAlert, Lock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import type { LucideIcon } from 'lucide-react'
+import { useI18n } from '@/lib/i18n'
 
 export interface ConfigSection {
   id: string
@@ -45,6 +46,7 @@ export function ConfigTabs({
   layout?: 'split' | 'stacked'
   layoutId?: string
 }) {
+  const { t } = useI18n()
   const first = sections.find((s) => s.state !== 'locked') ?? sections[0]
   // Anything outstanding opens first — the customer shouldn't have to hunt for
   // the one thing that's actually blocking them.
@@ -102,7 +104,7 @@ export function ConfigTabs({
             {active.onSave && (
               <div className="mt-8 flex items-center justify-end gap-2 border-t border-line-soft pt-5">
                 <Button variant="primary" onClick={active.onSave}>
-                  {active.saveLabel ?? 'Save changes'}
+                  {active.saveLabel ?? t('Save changes')}
                 </Button>
               </div>
             )}
@@ -150,6 +152,7 @@ function VerticalRail({
   onSelect: (id: string) => void
   layoutId: string
 }) {
+  const { t } = useI18n()
   return (
     <div role="tablist" aria-orientation="vertical" className="flex flex-col gap-0.5">
       {sections.map((s) => {
@@ -163,7 +166,7 @@ function VerticalRail({
             disabled={locked}
             onClick={() => onSelect(s.id)}
             className={cn(
-              'relative flex items-center gap-3.5 rounded-2xl px-3 py-3 text-left transition-colors',
+              'relative flex items-center gap-3.5 rounded-2xl px-3 py-3 text-start transition-colors',
               !active && !locked && 'hover:bg-veil',
               locked && 'cursor-not-allowed opacity-55',
             )}
@@ -185,7 +188,7 @@ function VerticalRail({
                 </span>
                 {s.state === 'required' && (
                   <span className="shrink-0 text-2xs font-semibold uppercase tracking-wider text-warning-ink">
-                    Required
+                    {t('Required')}
                   </span>
                 )}
               </span>
@@ -259,10 +262,11 @@ function TabRail({
 
 /** The tab strip's state cue: a dot, deliberately not a boxed tick. */
 function StateDot({ section }: { section: ConfigSection }) {
+  const { t } = useI18n()
   if (section.state === 'locked') return <Lock className="size-3 shrink-0 text-ink-faint" />
   if (section.state === 'required')
-    return <CircleAlert className="size-3.5 shrink-0 text-warning" aria-label="Needs attention" />
+    return <CircleAlert className="size-3.5 shrink-0 text-warning" aria-label={t('Needs attention')} />
   if (section.state === 'set')
-    return <span className="size-1.5 shrink-0 rounded-full bg-success" aria-label="Configured" />
-  return <span className="size-1.5 shrink-0 rounded-full bg-line-strong" aria-label="Not set" />
+    return <span className="size-1.5 shrink-0 rounded-full bg-success" aria-label={t('Configured')} />
+  return <span className="size-1.5 shrink-0 rounded-full bg-line-strong" aria-label={t('Not set')} />
 }

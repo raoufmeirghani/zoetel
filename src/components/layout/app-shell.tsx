@@ -37,15 +37,15 @@ export function AppShell() {
       <div
         className={cn(
           'transition-[padding] duration-300 ease-out',
-          navPinned ? 'lg:pl-[calc(264px+1.5rem)]' : 'lg:pl-[calc(76px+1.5rem)]',
+          navPinned ? 'lg:ps-[calc(264px+1.5rem)]' : 'lg:ps-[calc(76px+1.5rem)]',
         )}
       >
-        <div className="page-column relative mx-auto w-full max-w-[var(--page-max)] px-5 sm:px-8 lg:pr-10">
+        <div className="page-column relative mx-auto w-full max-w-[var(--page-max)] px-5 sm:px-8 lg:pe-10">
           {/* Chrome floats over the hero rather than sitting in a bar. */}
           <div className="pointer-events-none sticky top-0 z-30 -mx-5 px-5 sm:-mx-8 sm:px-8 lg:mx-0 lg:px-0">
             <div className="flex items-start justify-between gap-3 pb-2 pt-4">
               <MobileIdentity />
-              <TopUtilities className="pointer-events-auto ml-auto" onOpenSearch={() => setPaletteOpen(true)} />
+              <TopUtilities className="pointer-events-auto ms-auto" onOpenSearch={() => setPaletteOpen(true)} />
             </div>
           </div>
 

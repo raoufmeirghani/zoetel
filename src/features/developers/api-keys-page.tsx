@@ -37,6 +37,7 @@ import { copyText, cn } from '@/lib/utils'
 import { toast } from '@/components/ui/toast'
 import type { ApiKey } from '@/lib/types'
 import { usageSeries } from '@/lib/data/seed'
+import { useI18n } from '@/lib/i18n'
 
 const SCOPES = [
   { value: 'full', label: 'Full access', hint: 'Every endpoint' },
@@ -46,6 +47,7 @@ const SCOPES = [
 ]
 
 export default function ApiKeysPage() {
+  const { t } = useI18n()
   const [params, setParams] = useSearchParams()
   const apiKeys = useApp((s) => s.apiKeys)
   const createApiKey = useApp((s) => s.createApiKey)
@@ -85,16 +87,18 @@ export default function ApiKeysPage() {
         backdropImage={HERO_ART_SIP}
         mood="code"
         size="md"
-        title="Developers"
-        lede="Authenticate every request with a bearer token. Keys are scoped, revocable, and never shown twice."
+        title={t('Developers')}
+        lede={t(
+          'Authenticate every request with a bearer token. Keys are scoped, revocable, and never shown twice.',
+        )}
         actions={
           <>
             <Button variant="primary" icon={<Plus />} onClick={() => setCreateOpen(true)}>
-              Create key
+              {t('Create key')}
             </Button>
             <Button variant="ghost" icon={<BookOpen />} asChild>
               <a href="https://developers.zoetel.com" target="_blank" rel="noreferrer">
-                API reference
+                {t('API reference')}
               </a>
             </Button>
           </>
@@ -115,7 +119,7 @@ export default function ApiKeysPage() {
                 to="/developers/logs"
                 className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-brand-ink hover:underline"
               >
-                Inspect the log
+                {t('Inspect the log')}
               </Link>
             </div>
             <Sparkline
@@ -138,17 +142,19 @@ export default function ApiKeysPage() {
                 <Key className="relative size-8 text-brand" />
               </div>
             }
-            title="No API keys yet"
-            description="A key lets your code do everything this interface can — search numbers, place calls, stream audio, read usage. Create one per service so you can rotate a single credential without touching the rest."
+            title={t('No API keys yet')}
+            description={t(
+              'A key lets your code do everything this interface can — search numbers, place calls, stream audio, read usage. Create one per service so you can rotate a single credential without touching the rest.',
+            )}
             action={
               <Button variant="primary" size="lg" icon={<Plus />} onClick={() => setCreateOpen(true)}>
-                Generate your first key
+                {t('Generate your first key')}
               </Button>
             }
             secondaryAction={
               <Button variant="ghost" size="lg" asChild>
                 <a href="https://developers.zoetel.com/quickstart" target="_blank" rel="noreferrer">
-                  Read the quickstart
+                  {t('Read the quickstart')}
                 </a>
               </Button>
             }
@@ -156,7 +162,7 @@ export default function ApiKeysPage() {
         </Section>
       ) : (
         <div className="space-y-5">
-          <Section eyebrow="Credentials" title="Your keys" index={0}>
+          <Section eyebrow={t('Credentials')} title={t('Your keys')} index={0}>
             <ul className="divide-y divide-line-soft">
               {apiKeys.map((k, i) => (
                 <motion.li
@@ -174,7 +180,7 @@ export default function ApiKeysPage() {
                       </Badge>
                       {k.status === 'revoked' ? (
                         <Badge tone="danger" size="sm">
-                          Revoked
+                          {t('Revoked')}
                         </Badge>
                       ) : (
                         <StatusDot tone="success" />
@@ -189,7 +195,7 @@ export default function ApiKeysPage() {
                           setRevealed((v) => (v.includes(k.id) ? v.filter((x) => x !== k.id) : [...v, k.id]))
                         }
                         className="shrink-0 text-ink-faint transition-colors hover:text-ink"
-                        aria-label={revealed.includes(k.id) ? 'Hide key' : 'Reveal key'}
+                        aria-label={revealed.includes(k.id) ? t('Hide key') : t('Reveal key')}
                       >
                         {revealed.includes(k.id) ? <EyeOff className="size-3" /> : <Eye className="size-3" />}
                       </button>
@@ -217,7 +223,7 @@ export default function ApiKeysPage() {
                     </span>
                   </div>
 
-                  <span className="hidden w-24 shrink-0 text-right text-xs tabular-nums text-ink-faint lg:block">
+                  <span className="hidden w-24 shrink-0 text-end text-xs tabular-nums text-ink-faint lg:block">
                     {k.lastUsedAt ? relativeTime(k.lastUsedAt) : 'never used'}
                   </span>
 
@@ -240,16 +246,16 @@ export default function ApiKeysPage() {
                         }}
                       >
                         <Copy />
-                        Copy key
+                        {t('Copy key')}
                       </MenuItem>
                       <MenuItem disabled={k.status === 'revoked'}>
                         <RotateCcw />
-                        Rotate key
+                        {t('Rotate key')}
                       </MenuItem>
                       <MenuSeparator />
                       <MenuItem destructive disabled={k.status === 'revoked'} onSelect={() => setRevoking(k)}>
                         <TriangleAlert />
-                        Revoke key
+                        {t('Revoke key')}
                       </MenuItem>
                     </MenuContent>
                   </Menu>
@@ -263,8 +269,8 @@ export default function ApiKeysPage() {
           </Section>
 
           <Section
-            eyebrow="Get going"
-            title="Your first call"
+            eyebrow={t('Get going')}
+            title={t('Your first call')}
             lede="Everything you need in one request."
             divided
             index={1}
@@ -300,7 +306,7 @@ await zoetel.calls.answer(call.id)`}
             </div>
           </Section>
 
-          <Section eyebrow="Guardrails" title="Limits and hygiene" divided index={2}>
+          <Section eyebrow={t('Guardrails')} title={t('Limits and hygiene')} divided index={2}>
             <div className="grid gap-10 lg:grid-cols-2">
               <div>
                 <p className="eyebrow mb-3 flex items-center gap-1.5">
@@ -309,13 +315,13 @@ await zoetel.calls.answer(call.id)`}
                 </p>
                 <dl className="divide-y divide-line-soft">
                   {[
-                    { label: 'REST requests', value: '1,000 / min' },
-                    { label: 'Call creation', value: '100 / sec' },
-                    { label: 'Concurrent streams', value: '500' },
-                    { label: 'Webhook retries', value: '5 over 1 hour' },
+                    { label: t('REST requests'), value: '1,000 / min' },
+                    { label: t('Call creation'), value: '100 / sec' },
+                    { label: t('Concurrent streams'), value: '500' },
+                    { label: t('Webhook retries'), value: '5 over 1 hour' },
                   ].map((l) => (
                     <div key={l.label} className="flex items-baseline justify-between gap-4 py-2.5">
-                      <dt className="text-base text-ink-muted">{l.label}</dt>
+                      <dt className="text-base text-ink-muted">{t(l.label)}</dt>
                       <dd className="tabular-nums text-ink">{l.value}</dd>
                     </div>
                   ))}
@@ -328,7 +334,7 @@ await zoetel.calls.answer(call.id)`}
               <div>
                 <p className="eyebrow mb-3 flex items-center gap-1.5">
                   <ShieldCheck className="size-3" />
-                  Keeping keys safe
+                  {t('Keeping keys safe')}
                 </p>
                 <ul className="space-y-2.5">
                   {[
@@ -346,7 +352,7 @@ await zoetel.calls.answer(call.id)`}
                 <div className="mt-6">
                   <p className="eyebrow mb-2.5 flex items-center gap-1.5">
                     <Terminal className="size-3" />
-                    SDKs
+                    {t('SDKs')}
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {['@zoetel/node', 'zoetel-python', 'zoetel-go', 'Zoetel.NET'].map((s) => (
@@ -371,37 +377,37 @@ await zoetel.calls.answer(call.id)`}
       <Modal
         open={createOpen}
         onOpenChange={setCreateOpen}
-        title="Create an API key"
-        description="Scope it as tightly as the job allows — you can always create another."
+        title={t('Create an API key')}
+        description={t('Scope it as tightly as the job allows — you can always create another.')}
         icon={<Key />}
         footer={
           <>
             <Button variant="ghost" onClick={() => setCreateOpen(false)}>
-              Cancel
+              {t('Cancel')}
             </Button>
             <Button variant="primary" onClick={submit} disabled={name.trim().length < 2}>
-              Create key
+              {t('Create key')}
             </Button>
           </>
         }
       >
         <div className="space-y-5">
-          <Field label="Name" required description="Name it after the service that will use it.">
+          <Field label={t('Name')} required description={t('Name it after the service that will use it.')}>
             <Input
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="e.g. Billing worker"
+              placeholder={t('e.g. Billing worker')}
               autoFocus
               inputSize="lg"
             />
           </Field>
-          <Field label="Environment">
+          <Field label={t('Environment')}>
             <Segmented
               value={env}
               onChange={(v: string) => setEnv(v as ApiKey['environment'])}
               options={[
-                { value: 'live', label: 'Live' },
-                { value: 'test', label: 'Test' },
+                { value: 'live', label: t('Live') },
+                { value: 'test', label: t('Test') },
               ]}
             />
             <p className="mt-1.5 text-xs text-ink-subtle">
@@ -410,7 +416,7 @@ await zoetel.calls.answer(call.id)`}
                 : 'Test keys simulate calls end to end without spending or dialling out.'}
             </p>
           </Field>
-          <Field label="Scope">
+          <Field label={t('Scope')}>
             <ChipGroup
               multiple={false}
               value={[scope]}
@@ -425,14 +431,14 @@ await zoetel.calls.answer(call.id)`}
       <Modal
         open={!!created}
         onOpenChange={(v) => !v && setCreated(null)}
-        title="Your new API key"
-        description="This is the only time the full key is shown. Copy it into your secret manager now."
+        title={t('Your new API key')}
+        description={t('This is the only time the full key is shown. Copy it into your secret manager now.')}
         icon={<CircleCheck />}
         tone="success"
         size="lg"
         footer={
           <Button variant="primary" onClick={() => setCreated(null)}>
-            I've saved it
+            {t("I've saved it")}
           </Button>
         }
       >
@@ -458,9 +464,11 @@ await zoetel.calls.answer(call.id)`}
       <ConfirmDialog
         open={!!revoking}
         onOpenChange={(v) => !v && setRevoking(null)}
-        title={`Revoke ${revoking?.name}?`}
-        description="Requests using this key start failing with 401 immediately. Calls already in flight continue to completion."
-        confirmLabel="Revoke key"
+        title={t('Revoke {name}?', { name: revoking?.name ?? '' })}
+        description={t(
+          'Requests using this key start failing with 401 immediately. Calls already in flight continue to completion.',
+        )}
+        confirmLabel={t('Revoke key')}
         destructive
         icon={<TriangleAlert />}
         onConfirm={() => {

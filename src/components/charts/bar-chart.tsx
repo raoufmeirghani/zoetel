@@ -45,7 +45,13 @@ export function BarChart({
   return (
     <div ref={ref} className={cn('relative w-full', className)} style={{ height }}>
       {width > 0 && (
-        <svg width={w} height={height} role="img" aria-label={ariaLabel ?? 'Bar chart'}>
+        <svg
+          style={{ direction: 'ltr' }}
+          width={w}
+          height={height}
+          role="img"
+          aria-label={ariaLabel ?? 'Bar chart'}
+        >
           <line
             x1={0}
             x2={w}
@@ -127,7 +133,7 @@ export function Sparkline({
     ink: 'hsl(var(--ink) / 0.55)',
   }
   return (
-    <svg width={width} height={height} className={className} aria-hidden>
+    <svg style={{ direction: 'ltr' }} width={width} height={height} className={className} aria-hidden>
       <defs>
         <linearGradient id={`spark-${id}`} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor={strokes[tone]} stopOpacity="0.22" />

@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from './button'
+import { useDirSign, useI18n } from '@/lib/i18n'
 
 export const Dialog = DialogPrimitive.Root
 export const DialogTrigger = DialogPrimitive.Trigger
@@ -32,6 +33,7 @@ export function Modal({
   icon?: React.ReactNode
   tone?: 'brand' | 'danger' | 'success' | 'warning'
 }) {
+  const { t } = useI18n()
   const widths = { sm: 'max-w-sm', md: 'max-w-md', lg: 'max-w-xl', xl: 'max-w-3xl' }
   const tones = {
     brand: 'bg-brand-soft text-brand-ink',
@@ -109,8 +111,8 @@ export function Modal({
                   <Button
                     variant="ghost"
                     size="icon-sm"
-                    className="absolute right-4 top-4 text-ink-faint"
-                    aria-label="Close"
+                    className="absolute end-4 top-4 text-ink-faint"
+                    aria-label={t('Close')}
                   >
                     <X />
                   </Button>
@@ -193,6 +195,8 @@ export function Drawer({
   side?: 'right' | 'bottom'
   width?: string
 }) {
+  const { t } = useI18n()
+  const dirSign = useDirSign()
   const isBottom = side === 'bottom'
   return (
     <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
@@ -210,15 +214,15 @@ export function Drawer({
             </DialogPrimitive.Overlay>
             <DialogPrimitive.Content asChild forceMount>
               <motion.div
-                initial={isBottom ? { y: '100%' } : { x: '100%' }}
+                initial={isBottom ? { y: '100%' } : { x: `${100 * dirSign}%` }}
                 animate={isBottom ? { y: 0 } : { x: 0 }}
-                exit={isBottom ? { y: '100%' } : { x: '100%' }}
+                exit={isBottom ? { y: '100%' } : { x: `${100 * dirSign}%` }}
                 transition={{ type: 'spring', stiffness: 380, damping: 36, mass: 0.8 }}
                 className={cn(
                   'glass-panel fixed z-50 flex flex-col focus:outline-none',
                   isBottom
                     ? 'inset-x-0 bottom-0 max-h-[88vh] rounded-t-3xl'
-                    : cn('inset-y-0 right-0 w-full sm:rounded-l-3xl', width),
+                    : cn('inset-y-0 end-0 w-full sm:rounded-s-3xl', width),
                 )}
               >
                 {isBottom && <div className="mx-auto mt-3 h-1 w-10 rounded-full bg-line-strong" />}
@@ -235,7 +239,7 @@ export function Drawer({
                       )}
                     </div>
                     <DialogPrimitive.Close asChild>
-                      <Button variant="ghost" size="icon-sm" aria-label="Close">
+                      <Button variant="ghost" size="icon-sm" aria-label={t('Close')}>
                         <X />
                       </Button>
                     </DialogPrimitive.Close>

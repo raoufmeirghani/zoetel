@@ -105,6 +105,7 @@ export function AreaChart({
       {width > 0 && (
         <>
           <svg
+            style={{ direction: 'ltr' }}
             width={w}
             height={height}
             role="img"

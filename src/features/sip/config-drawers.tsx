@@ -30,6 +30,7 @@ import { useApp } from '@/store/app'
 import { toast } from '@/components/ui/toast'
 import { formatE164, money } from '@/lib/format'
 import type { SipConnection } from '@/lib/types'
+import { useI18n } from '@/lib/i18n'
 
 const CODECS = ['OPUS', 'G722', 'PCMA', 'PCMU', 'G729', 'iLBC']
 
@@ -43,6 +44,7 @@ const SETTING_KEYS = ['auth', 'media', 'inbound', 'outbound', 'capacity'] as con
  * and are never reset, so callers must mount with `key={conn.id}`.
  */
 function useSipConfigMeta(conn: SipConnection, onDone?: () => void) {
+  const { t } = useI18n()
   const updateConnection = useApp((s) => s.updateConnection)
   const numbers = useApp((s) => s.numbers)
   const currency = useApp((s) => s.workspace.currency)
@@ -60,7 +62,7 @@ function useSipConfigMeta(conn: SipConnection, onDone?: () => void) {
   const [outChannels, setOutChannels] = React.useState(conn.outbound.channelLimit)
 
   const done = (message: string) => {
-    toast.success(message, { description: 'New calls use this immediately.' })
+    toast.success(message, { description: t('New calls use this immediately.') })
     onDone?.()
   }
 
@@ -69,7 +71,7 @@ function useSipConfigMeta(conn: SipConnection, onDone?: () => void) {
     { title: string; description: string; body: React.ReactNode; onSave?: () => void; saveLabel?: string }
   > = {
     auth: {
-      title: 'Authentication',
+      title: t('Authentication'),
       description:
         conn.authMode === 'credential'
           ? 'Username and password — works from any IP.'
@@ -80,18 +82,18 @@ function useSipConfigMeta(conn: SipConnection, onDone?: () => void) {
         <div className="space-y-6 pt-1">
           {conn.authMode === 'credential' && (
             <>
-              <Field label="SIP username">
+              <Field label={t('SIP username')}>
                 <Input readOnly value={conn.username} trailing={<CopyButton value={conn.username ?? ''} />} />
               </Field>
               <Field
-                label="SIP password"
+                label={t('SIP password')}
                 hint={
                   <button
                     onClick={() => setShowSecret((v) => !v)}
                     className="inline-flex items-center gap-1 text-brand-ink hover:underline"
                   >
                     {showSecret ? <EyeOff className="size-3" /> : <Eye className="size-3" />}
-                    {showSecret ? 'Hide' : 'Reveal'}
+                    {showSecret ? t('Hide') : t('Reveal')}
                   </button>
                 }
               >
@@ -113,7 +115,7 @@ function useSipConfigMeta(conn: SipConnection, onDone?: () => void) {
                 icon={<RotateCcw />}
                 onClick={() => toast.success('New password generated')}
               >
-                Rotate password
+                {t('Rotate password')}
               </Button>
             </>
           )}
@@ -140,14 +142,14 @@ function useSipConfigMeta(conn: SipConnection, onDone?: () => void) {
                 ))}
               </ul>
               <Button variant="secondary" size="sm" icon={<Plus />}>
-                Add IP address
+                {t('Add IP address')}
               </Button>
             </>
           )}
 
           {conn.authMode === 'fqdn' && (
             <>
-              <Field label="Hostname" description="Every A record it resolves to is trusted.">
+              <Field label={t('Hostname')} description={t('Every A record it resolves to is trusted.')}>
                 <Input readOnly value={conn.fqdn} trailing={<CopyButton value={conn.fqdn ?? ''} />} />
               </Field>
               <div className="rounded-2xl bg-veil p-4">
@@ -172,7 +174,7 @@ function useSipConfigMeta(conn: SipConnection, onDone?: () => void) {
                 Encrypts the audio stream itself, not just signalling.
               </p>
             </div>
-            <Switch checked={srtp} onCheckedChange={setSrtp} aria-label="Encrypt media" />
+            <Switch checked={srtp} onCheckedChange={setSrtp} aria-label={t('Encrypt media')} />
           </div>
         </div>
       ),
@@ -182,30 +184,36 @@ function useSipConfigMeta(conn: SipConnection, onDone?: () => void) {
       },
     },
     media: {
-      title: 'Media & codecs',
-      description: 'What we negotiate when a call is set up.',
+      title: t('Media & codecs'),
+      description: t('What we negotiate when a call is set up.'),
       body: (
         <div className="space-y-6 pt-1">
-          <Field label="Codecs" description="Ordered by preference. OPUS gives the best quality per kbit.">
+          <Field
+            label={t('Codecs')}
+            description={t('Ordered by preference. OPUS gives the best quality per kbit.')}
+          >
             <ChipGroup
               options={CODECS.map((c) => ({ value: c, label: c }))}
               value={codecs}
               onChange={setCodecs}
             />
           </Field>
-          <Field label="DTMF signalling" description="How keypad presses reach your stack.">
+          <Field label={t('DTMF signalling')} description={t('How keypad presses reach your stack.')}>
             <Select value={dtmf} onValueChange={(v) => setDtmf(v as typeof dtmf)}>
               <SelectTrigger size="lg">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="RFC 2833">RFC 2833 (recommended)</SelectItem>
-                <SelectItem value="Inband">Inband</SelectItem>
-                <SelectItem value="SIP INFO">SIP INFO</SelectItem>
+                <SelectItem value="RFC 2833">{t('RFC 2833 (recommended)')}</SelectItem>
+                <SelectItem value="Inband">{t('Inband')}</SelectItem>
+                <SelectItem value="SIP INFO">{t('SIP INFO')}</SelectItem>
               </SelectContent>
             </Select>
           </Field>
-          <Field label="Caller ID format" description="How the calling number is presented to your PBX.">
+          <Field
+            label={t('Caller ID format')}
+            description={t('How the calling number is presented to your PBX.')}
+          >
             <ChipGroup
               multiple={false}
               value={[ani]}
@@ -224,11 +232,11 @@ function useSipConfigMeta(conn: SipConnection, onDone?: () => void) {
       },
     },
     inbound: {
-      title: 'Inbound failover',
+      title: t('Inbound failover'),
       description: "Where calls go when your primary endpoint doesn't answer.",
       body: (
         <div className="space-y-6 pt-1">
-          <Field label="Failover SIP URI" hint="Optional">
+          <Field label={t('Failover SIP URI')} hint={t('Optional')}>
             <Input
               value={failover}
               onChange={(e) => setFailover(e.target.value)}
@@ -248,33 +256,36 @@ function useSipConfigMeta(conn: SipConnection, onDone?: () => void) {
       },
     },
     outbound: {
-      title: 'Outbound calls',
-      description: 'How calls leaving this connection are routed and presented.',
+      title: t('Outbound calls'),
+      description: t('How calls leaving this connection are routed and presented.'),
       body: (
         <div className="space-y-6 pt-1">
-          <Field label="Localisation" description="Determines which carrier route and rate table applies.">
+          <Field
+            label={t('Localisation')}
+            description={t('Determines which carrier route and rate table applies.')}
+          >
             <Select value={localization} onValueChange={setLocalization}>
               <SelectTrigger size="lg">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="EG">Egypt</SelectItem>
-                <SelectItem value="AE">United Arab Emirates</SelectItem>
-                <SelectItem value="SA">Saudi Arabia</SelectItem>
-                <SelectItem value="GB">United Kingdom</SelectItem>
+                <SelectItem value="EG">{'Egypt'}</SelectItem>
+                <SelectItem value="AE">{'United Arab Emirates'}</SelectItem>
+                <SelectItem value="SA">{'Saudi Arabia'}</SelectItem>
+                <SelectItem value="GB">{t('United Kingdom')}</SelectItem>
               </SelectContent>
             </Select>
           </Field>
           <Field
-            label="Caller ID override"
-            description="Must be a number you own on this workspace, or the call is rejected."
+            label={t('Caller ID override')}
+            description={t('Must be a number you own on this workspace, or the call is rejected.')}
           >
             <Select value={callerId} onValueChange={setCallerId}>
               <SelectTrigger size="lg">
-                <SelectValue placeholder="Use the number from the INVITE" />
+                <SelectValue placeholder={t('Use the number from the INVITE')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="none">Use the number from the INVITE</SelectItem>
+                <SelectItem value="none">{t('Use the number from the INVITE')}</SelectItem>
                 {numbers.map((n) => (
                   <SelectItem key={n.id} value={n.e164} hint={n.label}>
                     {formatE164(n.e164)}
@@ -288,7 +299,7 @@ function useSipConfigMeta(conn: SipConnection, onDone?: () => void) {
               <p className="text-base font-medium text-ink">T.38 fax relay</p>
               <p className="mt-1 text-sm leading-relaxed text-ink-subtle">Required for reliable fax over IP.</p>
             </div>
-            <Switch checked={t38} onCheckedChange={setT38} aria-label="T.38 fax relay" />
+            <Switch checked={t38} onCheckedChange={setT38} aria-label={t('T.38 fax relay')} />
           </div>
           <div className="rule" />
           <div>
@@ -321,14 +332,17 @@ function useSipConfigMeta(conn: SipConnection, onDone?: () => void) {
       },
     },
     capacity: {
-      title: 'Capacity',
-      description: 'How many calls this connection may carry at once.',
+      title: t('Capacity'),
+      description: t('How many calls this connection may carry at once.'),
       body: (
         <div className="space-y-6 pt-1">
-          <Field label="Total channel limit" description="Simultaneous calls in either direction.">
+          <Field label={t('Total channel limit')} description={t('Simultaneous calls in either direction.')}>
             <NumberInput value={channels} onChange={setChannels} min={1} max={2000} step={10} suffix="ch" />
           </Field>
-          <Field label="Outbound cap" description="Caps outbound independently, so inbound is never starved.">
+          <Field
+            label={t('Outbound cap')}
+            description={t('Caps outbound independently, so inbound is never starved.')}
+          >
             <NumberInput
               value={outChannels}
               onChange={setOutChannels}
@@ -353,8 +367,8 @@ function useSipConfigMeta(conn: SipConnection, onDone?: () => void) {
       },
     },
     register: {
-      title: 'Register your PBX',
-      description: 'Drop this into your SIP configuration and you should see a 200 OK within seconds.',
+      title: t('Register your PBX'),
+      description: t('Drop this into your SIP configuration and you should see a 200 OK within seconds.'),
       body: (
         <div className="space-y-5 pt-1">
           <CodeBlock
@@ -406,6 +420,7 @@ dtmfmode = ${conn.inbound.dtmfType === 'RFC 2833' ? 'rfc2833' : 'inband'}`}
  * how-to-connect guide, not a setting, so it keeps its own sheet.
  */
 export function useSipConfigSections(conn: SipConnection): ConfigSection[] {
+  const { t } = useI18n()
   const meta = useSipConfigMeta(conn)
   const authIcon = conn.authMode === 'credential' ? Lock : conn.authMode === 'ip' ? Server : Globe
 
@@ -416,7 +431,7 @@ export function useSipConfigSections(conn: SipConnection): ConfigSection[] {
     auth: {
       icon: authIcon,
       label: 'Authentication',
-      hint: 'How we verify traffic is really coming from you.',
+      hint: t('How we verify traffic is really coming from you.'),
       summary:
         conn.authMode === 'credential'
           ? `Credentials · ${conn.username}${conn.srtp ? ' · SRTP' : ''}`
@@ -428,7 +443,7 @@ export function useSipConfigSections(conn: SipConnection): ConfigSection[] {
     media: {
       icon: Waves,
       label: 'Media & codecs',
-      hint: 'What we negotiate when a call is set up.',
+      hint: t('What we negotiate when a call is set up.'),
       summary: `${conn.inbound.codecs.join(', ')} · ${conn.inbound.dtmfType}`,
       state: 'set',
     },
@@ -442,14 +457,14 @@ export function useSipConfigSections(conn: SipConnection): ConfigSection[] {
     outbound: {
       icon: ArrowUpRight,
       label: 'Outbound calls',
-      hint: 'Route, caller ID and fax handling for calls you place.',
+      hint: t('Route, caller ID and fax handling for calls you place.'),
       summary: `${conn.outbound.localization}${conn.outbound.callerIdOverride ? ` · CLI ${formatE164(conn.outbound.callerIdOverride)}` : ''}${conn.outbound.t38 ? ' · T.38' : ''}`,
       state: 'set',
     },
     capacity: {
       icon: Sliders,
       label: 'Capacity',
-      hint: 'How many calls this connection may carry at once.',
+      hint: t('How many calls this connection may carry at once.'),
       summary: `${conn.channelLimit} channels · ${conn.outbound.channelLimit} outbound`,
       state: 'set',
     },
@@ -468,6 +483,7 @@ export function SipRegisterDrawer({
   conn: SipConnection
   onClose: () => void
 }) {
+  const { t } = useI18n()
   const meta = useSipConfigMeta(conn, onClose)
   const active = meta.register
 
@@ -479,7 +495,7 @@ export function SipRegisterDrawer({
       description={active.description}
       footer={
         <Button variant="ghost" onClick={onClose}>
-          Done
+          {t('Done')}
         </Button>
       }
     >

@@ -31,6 +31,7 @@ import { compactNum, relativeTime } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { toast } from '@/components/ui/toast'
 import type { WebhookEndpoint } from '@/lib/types'
+import { useI18n } from '@/lib/i18n'
 
 const EVENT_GROUPS = [
   {
@@ -48,6 +49,7 @@ const EVENT_GROUPS = [
 const ALL_EVENTS = EVENT_GROUPS.flatMap((g) => g.events)
 
 export default function WebhooksPage() {
+  const { t } = useI18n()
   const webhooks = useApp((s) => s.webhooks)
   const createWebhook = useApp((s) => s.createWebhook)
   const updateWebhook = useApp((s) => s.updateWebhook)
@@ -66,7 +68,7 @@ export default function WebhooksPage() {
     createWebhook(url.trim(), events)
     setCreateOpen(false)
     setUrl('')
-    toast.success('Endpoint created', { description: 'We sent a test event to verify reachability.' })
+    toast.success('Endpoint created', { description: t('We sent a test event to verify reachability.') })
   }
 
   return (
@@ -75,11 +77,13 @@ export default function WebhooksPage() {
         backdropImage={HERO_ART_SIP}
         mood="code"
         size="md"
-        title="Webhooks"
-        lede="We POST every event to your endpoints, signed and retried, so you can build reactive voice without polling."
+        title={t('Webhooks')}
+        lede={t(
+          'We POST every event to your endpoints, signed and retried, so you can build reactive voice without polling.',
+        )}
         actions={
           <Button variant="primary" icon={<Plus />} onClick={() => setCreateOpen(true)}>
-            Add endpoint
+            {t('Add endpoint')}
           </Button>
         }
       >
@@ -91,7 +95,7 @@ export default function WebhooksPage() {
       {webhooks.length > 0 && (
         <Section index={0} className="mb-5">
           <div className="grid grid-cols-2 gap-y-7 sm:grid-cols-4 sm:divide-x sm:divide-line-soft">
-            <div className="min-w-0 sm:pr-6">
+            <div className="min-w-0 sm:pe-6">
               <p className="eyebrow">Deliveries, 24h</p>
               <p className="display mt-2.5 text-[1.75rem] font-semibold tabular-nums leading-none text-ink">
                 {compactNum(totalDeliveries)}
@@ -102,7 +106,7 @@ export default function WebhooksPage() {
               { code: '4xx', pct: 0.3, tone: 'warning' as const },
               { code: '5xx', pct: 0.3, tone: 'danger' as const },
             ].map((r) => (
-              <div key={r.code} className="min-w-0 sm:px-6 sm:last:pr-0">
+              <div key={r.code} className="min-w-0 sm:px-6 sm:last:pe-0">
                 <p className="eyebrow font-mono">{r.code}</p>
                 <p className="display mt-2.5 text-[1.75rem] font-semibold tabular-nums leading-none text-ink">
                   {r.pct}%
@@ -135,7 +139,7 @@ export default function WebhooksPage() {
             onClick={() => toast.success('Retrying queued deliveries')}
             className="shrink-0"
           >
-            Retry queued
+            {t('Retry queued')}
           </Button>
         </div>
       )}
@@ -150,18 +154,20 @@ export default function WebhooksPage() {
                 <Webhook className="relative size-8 text-brand" />
               </div>
             }
-            title="No endpoints yet"
-            description="Webhooks are how your app learns that a call was answered, a digit was pressed, or a message arrived — in real time, without polling. Add one HTTPS endpoint and pick the events you care about."
+            title={t('No endpoints yet')}
+            description={t(
+              'Webhooks are how your app learns that a call was answered, a digit was pressed, or a message arrived — in real time, without polling. Add one HTTPS endpoint and pick the events you care about.',
+            )}
             action={
               <Button variant="primary" size="lg" icon={<Plus />} onClick={() => setCreateOpen(true)}>
-                Add your first endpoint
+                {t('Add your first endpoint')}
               </Button>
             }
           />
         </Section>
       ) : (
         <div className="space-y-5">
-          <Section eyebrow="Listening" title="Your endpoints" index={0}>
+          <Section eyebrow={t('Listening')} title={t('Your endpoints')} index={0}>
             <ul className="divide-y divide-line-soft">
               {webhooks.map((w, i) => (
                 <motion.li
@@ -221,7 +227,7 @@ export default function WebhooksPage() {
                           })
                         }
                       >
-                        Test
+                        {t('Test')}
                       </Button>
                       <Menu>
                         <MenuTrigger asChild>
@@ -229,7 +235,7 @@ export default function WebhooksPage() {
                             variant="ghost"
                             size="icon-sm"
                             className="text-ink-faint"
-                            aria-label="Endpoint actions"
+                            aria-label={t('Endpoint actions')}
                           >
                             <EllipsisVertical />
                           </Button>
@@ -242,23 +248,23 @@ export default function WebhooksPage() {
                             }}
                           >
                             {w.status === 'paused' ? <Play /> : <Pause />}
-                            {w.status === 'paused' ? 'Resume deliveries' : 'Pause deliveries'}
+                            {w.status === 'paused' ? t('Resume deliveries') : t('Pause deliveries')}
                           </MenuItem>
                           <MenuItem onSelect={() => toast.success('Signing secret rotated')}>
                             <RotateCcw />
-                            Rotate signing secret
+                            {t('Rotate signing secret')}
                           </MenuItem>
                           <MenuSeparator />
                           <MenuItem destructive onSelect={() => setDeleting(w)}>
                             <Trash2 />
-                            Delete endpoint
+                            {t('Delete endpoint')}
                           </MenuItem>
                         </MenuContent>
                       </Menu>
                     </div>
                   </div>
 
-                  <div className="mt-4 flex flex-wrap items-start justify-between gap-5 pl-0 sm:pl-12">
+                  <div className="mt-4 flex flex-wrap items-start justify-between gap-5 ps-0 sm:ps-12">
                     <div className="min-w-0 flex-1">
                       <p className="eyebrow mb-2">Subscribed events</p>
                       <div className="flex flex-wrap gap-1.5">
@@ -292,8 +298,8 @@ export default function WebhooksPage() {
           </Section>
 
           <Section
-            eyebrow="Security"
-            title="Verify our signature"
+            eyebrow={t('Security')}
+            title={t('Verify our signature')}
             lede="Reject anything you can't verify, and reject anything older than five minutes to prevent replay."
             divided
             index={1}
@@ -304,6 +310,7 @@ export default function WebhooksPage() {
                 code={`import { createHmac, timingSafeEqual } from 'crypto'
 
 export function verify(req: Request, body: string) {
+  const { t } = useI18n()
   const sig = req.headers.get('zoetel-signature')!
   const ts = req.headers.get('zoetel-timestamp')!
 
@@ -348,27 +355,27 @@ export function verify(req: Request, body: string) {
       <Modal
         open={createOpen}
         onOpenChange={setCreateOpen}
-        title="Add a webhook endpoint"
-        description="We'll send a test event immediately to confirm it's reachable."
+        title={t('Add a webhook endpoint')}
+        description={t("We'll send a test event immediately to confirm it's reachable.")}
         icon={<Webhook />}
         size="lg"
         footer={
           <>
             <Button variant="ghost" onClick={() => setCreateOpen(false)}>
-              Cancel
+              {t('Cancel')}
             </Button>
             <Button variant="primary" onClick={submit} disabled={!validUrl || events.length === 0}>
-              Create endpoint
+              {t('Create endpoint')}
             </Button>
           </>
         }
       >
         <div className="space-y-5">
           <Field
-            label="Endpoint URL"
+            label={t('Endpoint URL')}
             required
             error={url && !validUrl ? 'Must be a valid HTTPS URL' : undefined}
-            description="HTTPS only. Must respond 2xx within 3 seconds."
+            description={t('HTTPS only. Must respond 2xx within 3 seconds.')}
           >
             <Input
               value={url}
@@ -380,11 +387,11 @@ export function verify(req: Request, body: string) {
             />
           </Field>
 
-          <Field label="Events" hint={`${events.length} selected`} required>
+          <Field label={t('Events')} hint={`${events.length} selected`} required>
             <div className="space-y-3">
               {EVENT_GROUPS.map((g) => (
                 <div key={g.label}>
-                  <p className="eyebrow mb-1.5">{g.label}</p>
+                  <p className="eyebrow mb-1.5">{t(g.label)}</p>
                   <ChipGroup
                     size="sm"
                     options={g.events.map((e) => ({ value: e, label: e }))}
@@ -396,10 +403,10 @@ export function verify(req: Request, body: string) {
             </div>
             <div className="mt-3 flex gap-2">
               <Button variant="ghost" size="xs" onClick={() => setEvents(ALL_EVENTS)}>
-                Select all
+                {t('Select all')}
               </Button>
               <Button variant="ghost" size="xs" onClick={() => setEvents([])}>
-                Clear
+                {t('Clear')}
               </Button>
             </div>
           </Field>
@@ -414,9 +421,9 @@ export function verify(req: Request, body: string) {
       <ConfirmDialog
         open={!!deleting}
         onOpenChange={(v) => !v && setDeleting(null)}
-        title="Delete this endpoint?"
-        description="Queued deliveries are discarded and we stop sending events immediately."
-        confirmLabel="Delete endpoint"
+        title={t('Delete this endpoint?')}
+        description={t('Queued deliveries are discarded and we stop sending events immediately.')}
+        confirmLabel={t('Delete endpoint')}
         destructive
         icon={<Trash2 />}
         onConfirm={() => {

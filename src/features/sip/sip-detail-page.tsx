@@ -20,8 +20,10 @@ import { usageSeries } from '@/lib/data/seed'
 import { toast } from '@/components/ui/toast'
 import { cn } from '@/lib/utils'
 import { Tooltip } from '@/components/ui/tooltip'
+import { useI18n } from '@/lib/i18n'
 
 export default function SipDetailPage() {
+  const { t } = useI18n()
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const conn = useApp((s) => s.connections.find((c) => c.id === id))
@@ -39,13 +41,13 @@ export default function SipDetailPage() {
         <Hero
           mood="quiet"
           size="sm"
-          title="Connection not found"
-          lede="It may have been deleted by a teammate."
+          title={t('Connection not found')}
+          lede={t('It may have been deleted by a teammate.')}
         />
         <Section className="pt-4">
           <EmptyState
             icon={<Network />}
-            title="That connection no longer exists"
+            title={t('That connection no longer exists')}
             action={
               <Button variant="primary" asChild>
                 <Link to="/sip">Back to SIP connections</Link>
@@ -75,7 +77,7 @@ export default function SipDetailPage() {
       <Hero
         mood="ledger"
         size="md"
-        breadcrumbs={[{ label: 'SIP connections', href: '/sip' }, { label: conn.name }]}
+        breadcrumbs={[{ label: t('SIP connections'), href: '/sip' }, { label: conn.name }]}
         eyebrow={
           <>
             <StatusDot
@@ -100,16 +102,20 @@ export default function SipDetailPage() {
           </>
         }
         title={conn.name}
-        lede={`${conn.concurrentCalls} of ${conn.channelLimit} channels in use, carrying ${num(conn.stats.minutes)} minutes this month.`}
+        lede={t('{used} of {total} channels in use, carrying {minutes} minutes this month.', {
+          used: conn.concurrentCalls,
+          total: conn.channelLimit,
+          minutes: num(conn.stats.minutes),
+        })}
         actions={
           <>
             <Button variant="primary" icon={<Terminal />} onClick={() => setRegistering(true)}>
-              Register your PBX
+              {t('Register your PBX')}
             </Button>
             {conn.srtp && (
               <Badge tone="outline" size="lg">
                 <ShieldCheck />
-                SRTP
+                {t('SRTP')}
               </Badge>
             )}
           </>
@@ -137,7 +143,7 @@ export default function SipDetailPage() {
 
       <div className="space-y-5">
         {/* ── Health ───────────────────────────────────── */}
-        <Section eyebrow="Right now" title="Connection health" index={0}>
+        <Section eyebrow={t('Right now')} title={t('Connection health')} index={0}>
           <div className="flex flex-col gap-8 lg:flex-row lg:items-center">
             <div className="flex shrink-0 items-center gap-4">
               <div className="relative grid size-[68px] place-items-center">
@@ -167,7 +173,7 @@ export default function SipDetailPage() {
               </div>
               <div className="min-w-0">
                 <p className="text-md font-medium text-ink">
-                  {healthScore > 80 ? 'Healthy' : healthScore > 50 ? 'Degraded' : 'Not registered'}
+                  {healthScore > 80 ? 'Healthy' : healthScore > 50 ? t('Degraded') : t('Not registered')}
                 </p>
                 <p className="mt-1 max-w-[16rem] text-sm leading-relaxed text-ink-subtle">
                   {healthScore > 80
@@ -181,26 +187,26 @@ export default function SipDetailPage() {
 
             <div className="grid flex-1 grid-cols-2 gap-y-6 lg:grid-cols-4 lg:divide-x lg:divide-line">
               <Metric
-                label="MOS"
+                label={t('MOS')}
                 value={health.mos > 0 ? health.mos.toFixed(2) : '—'}
                 target="≥ 4.0"
                 good={health.mos > 4}
                 first
               />
               <Metric
-                label="ASR"
+                label={t('ASR')}
                 value={health.asr > 0 ? `${health.asr.toFixed(1)}%` : '—'}
                 target="≥ 65%"
                 good={health.asr > 65}
               />
               <Metric
-                label="Jitter"
+                label={t('Jitter')}
                 value={`${health.jitterMs} ms`}
                 target="< 15 ms"
                 good={health.jitterMs < 15}
               />
               <Metric
-                label="Packet loss"
+                label={t('Packet loss')}
                 value={`${health.packetLoss}%`}
                 target="< 0.5%"
                 good={health.packetLoss < 0.5}
@@ -215,7 +221,7 @@ export default function SipDetailPage() {
                 height={180}
                 tone="brand"
                 formatValue={(n) => `${num(n)} min`}
-                ariaLabel="Minutes on this connection over 14 days"
+                ariaLabel={t('Minutes on this connection over 14 days')}
               />
             </div>
           ) : (
@@ -232,8 +238,12 @@ export default function SipDetailPage() {
 
         {/* ── Numbers ──────────────────────────────────── */}
         <Section
-          eyebrow="Routing"
-          title={`${assigned.length} ${assigned.length === 1 ? 'number' : 'numbers'} routed here`}
+          eyebrow={t('Routing')}
+          title={
+            assigned.length === 1
+              ? t('One number routed here')
+              : t('{n} numbers routed here', { n: assigned.length })
+          }
           href="/numbers"
           hrefLabel="Manage numbers"
           divided
@@ -279,13 +289,13 @@ export default function SipDetailPage() {
         </Section>
 
         {/* ── Events ───────────────────────────────────── */}
-        <Section eyebrow="Signalling" title="Recent SIP events" divided index={3}>
+        <Section eyebrow={t('Signalling')} title={t('Recent SIP events')} divided index={3}>
           <ul className="divide-y divide-line-soft">
             {(hasTraffic
               ? [
                   {
                     code: '200 OK',
-                    label: 'OPTIONS keep-alive',
+                    label: t('OPTIONS keep-alive'),
                     tone: 'success' as const,
                     at: '40 seconds ago',
                   },
@@ -305,12 +315,17 @@ export default function SipDetailPage() {
                         },
                       ]
                     : []),
-                  { code: '200 OK', label: 'INVITE accepted', tone: 'success' as const, at: '12 minutes ago' },
+                  {
+                    code: '200 OK',
+                    label: t('INVITE accepted'),
+                    tone: 'success' as const,
+                    at: '12 minutes ago',
+                  },
                   ...(conn.status === 'offline'
                     ? [
                         {
                           code: '408 Request Timeout',
-                          label: 'OPTIONS keep-alive',
+                          label: t('OPTIONS keep-alive'),
                           tone: 'danger' as const,
                           at: '9 days ago',
                         },
@@ -320,7 +335,7 @@ export default function SipDetailPage() {
               : [
                   {
                     code: 'No data',
-                    label: 'Waiting for the first registration',
+                    label: t('Waiting for the first registration'),
                     tone: 'warning' as const,
                     at: 'just now',
                   },
@@ -341,14 +356,14 @@ export default function SipDetailPage() {
         <Section divided index={4}>
           <div className="flex flex-col gap-8 lg:flex-row lg:justify-between">
             <dl className="grid flex-1 gap-y-4 sm:grid-cols-2">
-              <Fact label="Connection ID">
+              <Fact label={t('Connection ID')}>
                 <Mono copy>{conn.id}</Mono>
               </Fact>
-              <Fact label="Created">{relativeTime(conn.createdAt)}</Fact>
-              <Fact label="Calls this month">{num(conn.stats.calls)}</Fact>
-              <Fact label="Spend this month">{money(conn.stats.spend, currency)}</Fact>
+              <Fact label={t('Created')}>{relativeTime(conn.createdAt)}</Fact>
+              <Fact label={t('Calls this month')}>{num(conn.stats.calls)}</Fact>
+              <Fact label={t('Spend this month')}>{money(conn.stats.spend, currency)}</Fact>
             </dl>
-            <div className="shrink-0 lg:max-w-xs lg:pl-8">
+            <div className="shrink-0 lg:max-w-xs lg:ps-8">
               <p className="eyebrow">Deleting</p>
               <p className="mt-2 text-base leading-relaxed text-ink-muted">
                 {conn.concurrentCalls} active {conn.concurrentCalls === 1 ? 'call' : 'calls'} would be dropped
@@ -362,7 +377,7 @@ export default function SipDetailPage() {
                 className="mt-4"
                 onClick={() => setDeleting(true)}
               >
-                Delete connection
+                {t('Delete connection')}
               </Button>
             </div>
           </div>
@@ -374,9 +389,9 @@ export default function SipDetailPage() {
       <ConfirmDialog
         open={deleting}
         onOpenChange={setDeleting}
-        title={`Delete ${conn.name}?`}
+        title={t('Delete {name}?', { name: conn.name })}
         description={`${conn.concurrentCalls} active ${conn.concurrentCalls === 1 ? 'call' : 'calls'} will be dropped and ${assigned.length} ${assigned.length === 1 ? 'number' : 'numbers'} will stop receiving traffic.`}
-        confirmLabel="Delete connection"
+        confirmLabel={t('Delete connection')}
         destructive
         icon={<Trash2 />}
         onConfirm={() => {
@@ -403,7 +418,7 @@ function Metric({
   first?: boolean
 }) {
   return (
-    <div className={cn('min-w-0 lg:px-5', first && 'lg:pl-0')}>
+    <div className={cn('min-w-0 lg:px-5', first && 'lg:ps-0')}>
       <div className="flex items-center gap-1.5">
         <Tooltip content={`Target ${target}`}>
           <span className="eyebrow cursor-help decoration-dotted underline-offset-4 hover:underline">
@@ -432,11 +447,12 @@ function Fact({ label, children }: { label: string; children: React.ReactNode })
  * drafts reset when the caller remounts it on a different trunk.
  */
 function SipConfigSection({ conn }: { conn: SipConnection }) {
+  const { t } = useI18n()
   const sections = useSipConfigSections(conn)
   return (
     <Section
-      eyebrow="Configuration"
-      title="Settings"
+      eyebrow={t('Configuration')}
+      title={t('Settings')}
       lede="Everything is on this screen — pick a heading to edit it. Defaults suit a typical production trunk."
       divided
       index={1}

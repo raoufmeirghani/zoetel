@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { openZoie, useZoieContext, type ZoieTarget } from '@/lib/zoie'
 import { useApp } from '@/store/app'
 import { cn } from '@/lib/utils'
+import { useI18n } from '@/lib/i18n'
 
 /**
  * Shown once the customer picks an AI agent as the destination. Choosing an
@@ -24,6 +25,7 @@ export function ZoieHandoff({
   number?: string
   className?: string
 }) {
+  const { t } = useI18n()
   const zoie = useZoieContext()
   const markZoieHandoff = useApp((s) => s.markZoieHandoff)
 
@@ -69,7 +71,7 @@ export function ZoieHandoff({
                 markZoieHandoff()
               }}
             >
-              Continue in Zoie
+              {t('Continue in Zoie')}
               <ArrowUpRight className="size-4" />
             </Button>
             <span className="text-xs text-ink-faint">Opens us.zoie.ai in a new tab</span>

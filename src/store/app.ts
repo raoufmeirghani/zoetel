@@ -25,6 +25,7 @@ import type {
   WebhookEndpoint,
   Workspace,
 } from '@/lib/types'
+import type { Locale } from '@/lib/i18n'
 import {
   seedActivity,
   seedApiKeys,
@@ -116,6 +117,11 @@ interface AppState {
    * the first column of every table behind it.
    */
   navPinned: boolean
+  /**
+   * UI language. Drives both translation and writing direction — Arabic is
+   * right-to-left, so this single value flips the whole layout.
+   */
+  locale: Locale
   autoRecharge: { enabled: boolean; threshold: number; amount: number }
   spendLimit: { enabled: boolean; monthly: number }
   numbers: OwnedNumber[]
@@ -163,6 +169,7 @@ interface AppState {
   topUp: (amount: number, method: string) => void
   setAutoRecharge: (p: Partial<AppState['autoRecharge']>) => void
   setNavPinned: (v: boolean) => void
+  setLocale: (l: Locale) => void
   markZoieHandoff: () => void
   setSpendLimit: (p: Partial<AppState['spendLimit']>) => void
   addPaymentMethod: (pm: Omit<PaymentMethod, 'id'>) => void
@@ -308,6 +315,7 @@ const baseState = () => ({
   balance: 1284.6,
   autoRecharge: { enabled: true, threshold: 250, amount: 500 },
   navPinned: false,
+  locale: 'en' as Locale,
   spendLimit: { enabled: false, monthly: 5000 },
   numbers: seedNumbers(),
   connections: seedConnections(),
@@ -560,6 +568,8 @@ export const useApp = create<AppState>()(
       markZoieHandoff: () => set({ zoieHandoffAt: new Date().toISOString() }),
 
       setNavPinned: (v) => set({ navPinned: v }),
+
+      setLocale: (l) => set({ locale: l }),
       setSpendLimit: (p) => set((s) => ({ spendLimit: { ...s.spendLimit, ...p } })),
       addPaymentMethod: (pm) =>
         set((s) => ({

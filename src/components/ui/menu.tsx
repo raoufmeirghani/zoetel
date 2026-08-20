@@ -55,7 +55,7 @@ export function MenuItem({
       {...props}
     >
       {children}
-      {shortcut && <span className="ml-auto text-2xs tracking-wide text-ink-faint">{shortcut}</span>}
+      {shortcut && <span className="ms-auto text-2xs tracking-wide text-ink-faint">{shortcut}</span>}
     </DropdownMenu.Item>
   )
 }
@@ -66,8 +66,8 @@ export function MenuCheckboxItem({
   ...props
 }: React.ComponentPropsWithoutRef<typeof DropdownMenu.CheckboxItem>) {
   return (
-    <DropdownMenu.CheckboxItem className={cn(itemClass, 'pl-8', className)} {...props}>
-      <DropdownMenu.ItemIndicator className="absolute left-2.5">
+    <DropdownMenu.CheckboxItem className={cn(itemClass, 'ps-8', className)} {...props}>
+      <DropdownMenu.ItemIndicator className="absolute start-2.5">
         <Check className="!text-brand" />
       </DropdownMenu.ItemIndicator>
       {children}
@@ -81,8 +81,8 @@ export function MenuRadioItem({
   ...props
 }: React.ComponentPropsWithoutRef<typeof DropdownMenu.RadioItem>) {
   return (
-    <DropdownMenu.RadioItem className={cn(itemClass, 'pl-8', className)} {...props}>
-      <DropdownMenu.ItemIndicator className="absolute left-3">
+    <DropdownMenu.RadioItem className={cn(itemClass, 'ps-8', className)} {...props}>
+      <DropdownMenu.ItemIndicator className="absolute start-3">
         <span className="block size-1.5 rounded-full bg-brand" />
       </DropdownMenu.ItemIndicator>
       {children}
@@ -125,7 +125,7 @@ export function MenuSub({
       <DropdownMenu.SubTrigger className={cn(itemClass, 'data-[state=open]:bg-surface-3')}>
         {icon}
         {label}
-        <ChevronRight className="ml-auto" />
+        <ChevronRight className="ms-auto" />
       </DropdownMenu.SubTrigger>
       <DropdownMenu.Portal>
         <DropdownMenu.SubContent className={panel} sideOffset={4} alignOffset={-4}>

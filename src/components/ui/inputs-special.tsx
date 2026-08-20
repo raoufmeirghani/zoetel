@@ -6,6 +6,7 @@ import { Input, inputBase } from './input'
 import { Button } from './button'
 import { COUNTRIES } from '@/lib/data/countries'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select'
+import { useI18n } from '@/lib/i18n'
 
 /* ── Search ─────────────────────────────────────────────── */
 export function SearchInput({
@@ -25,6 +26,7 @@ export function SearchInput({
   size?: 'sm' | 'md' | 'lg'
   onClear?: () => void
 }) {
+  const { t } = useI18n()
   return (
     <Input
       inputSize={size}
@@ -43,7 +45,7 @@ export function SearchInput({
               onChange('')
               onClear?.()
             }}
-            aria-label="Clear search"
+            aria-label={t('Clear search')}
           >
             <X />
           </Button>
@@ -69,6 +71,7 @@ export function OtpInput({
   error?: boolean
   className?: string
 }) {
+  const { t } = useI18n()
   const refs = React.useRef<(HTMLInputElement | null)[]>([])
 
   const setChar = (i: number, char: string) => {
@@ -81,7 +84,7 @@ export function OtpInput({
   }
 
   return (
-    <div className={cn('flex gap-2', className)} role="group" aria-label="One-time code">
+    <div className={cn('flex gap-2', className)} role="group" aria-label={t('One-time code')}>
       {Array.from({ length }).map((_, i) => (
         <input
           key={i}
@@ -150,7 +153,7 @@ export function PhoneInput({
       )}
     >
       <Select value={country} onValueChange={onCountryChange}>
-        <SelectTrigger className="w-auto shrink-0 rounded-none border-0 bg-surface-2 pl-3 pr-2 shadow-none hover:bg-surface-3 focus-visible:shadow-none data-[state=open]:shadow-none">
+        <SelectTrigger className="w-auto shrink-0 rounded-none border-0 bg-surface-2 pe-2 ps-3 shadow-none hover:bg-surface-3 focus-visible:shadow-none data-[state=open]:shadow-none">
           <SelectValue>
             <span className="flex items-center gap-1.5">
               <span className="text-md leading-none">{meta.flag}</span>
@@ -221,7 +224,7 @@ export function CurrencyInput({
           size === 'lg' ? 'h-12' : 'h-9',
         )}
       >
-        <span className={cn('pl-3.5 font-medium text-ink-subtle', size === 'lg' ? 'text-lg' : 'text-base')}>
+        <span className={cn('ps-3.5 font-medium text-ink-subtle', size === 'lg' ? 'text-lg' : 'text-base')}>
           {symbol}
         </span>
         <input
@@ -235,7 +238,7 @@ export function CurrencyInput({
             size === 'lg' ? 'text-lg' : 'text-base',
           )}
         />
-        {suffix && <span className="pr-3.5 text-sm text-ink-faint">{suffix}</span>}
+        {suffix && <span className="pe-3.5 text-sm text-ink-faint">{suffix}</span>}
       </div>
       {presets && (
         <div className="flex flex-wrap gap-1.5">
@@ -278,6 +281,7 @@ export function NumberInput({
   suffix?: string
   className?: string
 }) {
+  const { t } = useI18n()
   const set = (n: number) => onChange(Math.min(max, Math.max(min, n)))
   return (
     <div
@@ -290,8 +294,8 @@ export function NumberInput({
       <button
         onClick={() => set(value - step)}
         disabled={value <= min}
-        className="grid h-full w-8 place-items-center rounded-l-lg text-ink-muted transition-colors hover:bg-surface-3 disabled:opacity-35"
-        aria-label="Decrease"
+        className="grid h-full w-8 place-items-center rounded-s-lg text-ink-muted transition-colors hover:bg-surface-3 disabled:opacity-35"
+        aria-label={t('Decrease')}
       >
         <Minus className="size-3.5" />
       </button>
@@ -307,8 +311,8 @@ export function NumberInput({
       <button
         onClick={() => set(value + step)}
         disabled={value >= max}
-        className="grid h-full w-8 place-items-center rounded-r-lg text-ink-muted transition-colors hover:bg-surface-3 disabled:opacity-35"
-        aria-label="Increase"
+        className="grid h-full w-8 place-items-center rounded-e-lg text-ink-muted transition-colors hover:bg-surface-3 disabled:opacity-35"
+        aria-label={t('Increase')}
       >
         <Plus className="size-3.5" />
       </button>

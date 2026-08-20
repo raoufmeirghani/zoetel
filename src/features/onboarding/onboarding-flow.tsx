@@ -38,6 +38,7 @@ import { money } from '@/lib/format'
 import { cn, sleep } from '@/lib/utils'
 import { useThemeEffect } from '@/hooks/use-theme'
 import type { Currency, PlanKind } from '@/lib/types'
+import { useDirSign, useI18n } from '@/lib/i18n'
 
 const STEPS = [
   { id: 'welcome', label: 'Welcome' },
@@ -69,6 +70,8 @@ type FormValues = z.infer<typeof schema>
 const EASE = [0.16, 1, 0.3, 1] as const
 
 export default function OnboardingFlow() {
+  const { t } = useI18n()
+  const dirSign = useDirSign()
   useThemeEffect()
   const navigate = useNavigate()
   const onboarding = useApp((s) => s.onboarding)
@@ -152,11 +155,11 @@ export default function OnboardingFlow() {
       {/* ── Brand rail ────────────────────────────────── */}
       <aside className="relative hidden overflow-hidden bg-onyx p-10 text-onyx-fg lg:flex lg:flex-col">
         <div
-          className="top-1/5 pointer-events-none absolute -left-32 size-[34rem] rounded-full opacity-[0.34] blur-3xl"
+          className="top-1/5 pointer-events-none absolute -start-32 size-[34rem] rounded-full opacity-[0.34] blur-3xl"
           style={{ background: 'radial-gradient(circle, hsl(var(--brand)) 0%, transparent 66%)' }}
         />
         <div
-          className="pointer-events-none absolute -right-24 bottom-0 size-[26rem] rounded-full opacity-[0.2] blur-3xl"
+          className="pointer-events-none absolute -end-24 bottom-0 size-[26rem] rounded-full opacity-[0.2] blur-3xl"
           style={{ background: 'radial-gradient(circle, hsl(28 92% 62%) 0%, transparent 66%)' }}
         />
         <div className="relative flex items-center gap-2.5">
@@ -167,7 +170,7 @@ export default function OnboardingFlow() {
         <div className="relative mt-14 flex-1">
           <StepList
             steps={STEPS.slice(1, 7).map((s, i) => ({
-              label: s.label,
+              label: t(s.label),
               state: step - 1 > i ? 'done' : step - 1 === i ? 'active' : 'pending',
             }))}
             className="[&_p.text-ink-subtle]:text-white/40 [&_p]:text-white/85"
@@ -213,15 +216,15 @@ export default function OnboardingFlow() {
           <div className="lg:hidden">
             <Wordmark />
           </div>
-          <div className="ml-auto flex items-center gap-3">
+          <div className="ms-auto flex items-center gap-3">
             {step > 0 && step < 7 && (
               <span className="text-sm tabular-nums text-ink-faint">
-                Step {step} of {STEPS.length - 2}
+                {t('Step {n} of {total}', { n: step, total: STEPS.length - 2 })}
               </span>
             )}
             {step < 7 && (
               <Button variant="ghost" size="sm" onClick={() => leave('/')} className="text-ink-subtle">
-                Skip for now
+                {t('Skip for now')}
               </Button>
             )}
           </div>
@@ -239,9 +242,9 @@ export default function OnboardingFlow() {
               <motion.div
                 key={current.id}
                 custom={direction}
-                initial={{ opacity: 0, x: direction * 24 }}
+                initial={{ opacity: 0, x: direction * 24 * dirSign }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: direction * -24 }}
+                exit={{ opacity: 0, x: direction * -24 * dirSign }}
                 transition={{ duration: 0.32, ease: EASE }}
               >
                 {/* ── 0 Welcome ─────────────────────── */}
@@ -269,17 +272,17 @@ export default function OnboardingFlow() {
                         onClick={() => go(1)}
                         className="w-full sm:w-auto sm:px-8"
                       >
-                        Get started
+                        {t('Get started')}
                         <ArrowRight className="size-[18px]" />
                       </Button>
                       <button
                         onClick={() => leave('/')}
                         className="text-sm text-ink-subtle transition-colors hover:text-ink"
                       >
-                        I already have an account
+                        {t('I already have an account')}
                       </button>
                     </div>
-                    <div className="mt-12 grid gap-3 text-left sm:grid-cols-3">
+                    <div className="mt-12 grid gap-3 text-start sm:grid-cols-3">
                       {[
                         { icon: Zap, t: 'Live in minutes', d: 'Numbers activate instantly' },
                         { icon: ShieldCheck, t: 'Compliance built in', d: 'KYC guided step by step' },
@@ -304,23 +307,25 @@ export default function OnboardingFlow() {
                 {/* ── 1 Account type ────────────────── */}
                 {current.id === 'type' && (
                   <StepShell
-                    title="Who is this account for?"
-                    description="Telecom regulators treat individuals and companies differently, so this decides which documents we'll need later — and which number ranges you can buy."
+                    title={t('Who is this account for?')}
+                    description={t(
+                      "Telecom regulators treat individuals and companies differently, so this decides which documents we'll need later — and which number ranges you can buy.",
+                    )}
                   >
                     <div className="space-y-3">
                       {[
                         {
                           value: 'individual' as const,
                           icon: User,
-                          label: 'Individual',
-                          blurb: 'Numbers in your own name.',
+                          label: t('Individual'),
+                          blurb: t('Numbers in your own name.'),
                           perks: ['Local and mobile numbers', 'ID verification only', 'Ready in under an hour'],
                         },
                         {
                           value: 'business' as const,
                           icon: Building2,
-                          label: 'Business',
-                          blurb: 'A registered company or organisation.',
+                          label: t('Business'),
+                          blurb: t('A registered company or organisation.'),
                           perks: [
                             'Every range including toll-free',
                             'Higher channel limits',
@@ -337,7 +342,7 @@ export default function OnboardingFlow() {
                               setAccountType(opt.value)
                             }}
                             className={cn(
-                              'flex w-full items-start gap-4 rounded-2xl p-4 text-left transition-all duration-200',
+                              'flex w-full items-start gap-4 rounded-2xl p-4 text-start transition-all duration-200',
                               active ? 'bg-brand-softer ring-1 ring-brand/40' : 'veil hover:bg-veil-strong',
                             )}
                           >
@@ -358,7 +363,7 @@ export default function OnboardingFlow() {
                               <span className="mt-2.5 flex flex-wrap gap-1.5">
                                 {opt.perks.map((p) => (
                                   <Badge key={p} tone={active ? 'brand' : 'neutral'} size="sm">
-                                    {p}
+                                    {t(p)}
                                   </Badge>
                                 ))}
                               </span>
@@ -371,40 +376,40 @@ export default function OnboardingFlow() {
                       onBack={() => go(0)}
                       onNext={() => go(2)}
                       nextDisabled={!values.accountType}
-                      hint="You can change this later, though it restarts verification."
+                      hint={t('You can change this later, though it restarts verification.')}
                     />
                   </StepShell>
                 )}
 
                 {/* ── 2 Profile ─────────────────────── */}
                 {current.id === 'profile' && (
-                  <StepShell title="Create your account" description="This is how you'll sign in.">
+                  <StepShell title={t('Create your account')} description={t("This is how you'll sign in.")}>
                     <div className="space-y-4">
-                      <Field label="Full name" required error={form.formState.errors.name?.message}>
+                      <Field label={t('Full name')} required error={form.formState.errors.name?.message}>
                         <Input
                           {...form.register('name')}
-                          placeholder="Youssef Hegazy"
+                          placeholder={'Youssef Hegazy'}
                           autoFocus
                           inputSize="lg"
                           aria-invalid={!!form.formState.errors.name}
                         />
                       </Field>
                       <Field
-                        label="Work email"
+                        label={t('Work email')}
                         required
                         error={form.formState.errors.email?.message}
-                        description="We'll send verification updates and billing receipts here."
+                        description={t("We'll send verification updates and billing receipts here.")}
                       >
                         <Input
                           {...form.register('email')}
                           type="email"
-                          placeholder="you@company.com"
+                          placeholder={'you@company.com'}
                           inputSize="lg"
                           aria-invalid={!!form.formState.errors.email}
                         />
                       </Field>
                       <Field
-                        label="Password"
+                        label={t('Password')}
                         required
                         error={form.formState.errors.password?.message}
                         hint={
@@ -414,20 +419,20 @@ export default function OnboardingFlow() {
                             className="inline-flex items-center gap-1 text-brand-ink hover:underline"
                           >
                             {showPassword ? <EyeOff className="size-3" /> : <Eye className="size-3" />}
-                            {showPassword ? 'Hide' : 'Show'}
+                            {showPassword ? t('Hide') : t('Show')}
                           </button>
                         }
                       >
                         <Input
                           {...form.register('password')}
                           type={showPassword ? 'text' : 'password'}
-                          placeholder="At least 10 characters"
+                          placeholder={t('At least 10 characters')}
                           inputSize="lg"
                           aria-invalid={!!form.formState.errors.password}
                         />
                         <PasswordStrength value={values.password} />
                       </Field>
-                      <Field label="Country of residence" required>
+                      <Field label={t('Country of residence')} required>
                         <Select value={values.country} onValueChange={(v) => form.setValue('country', v)}>
                           <SelectTrigger size="lg">
                             <SelectValue />
@@ -448,7 +453,7 @@ export default function OnboardingFlow() {
                     <Nav
                       onBack={() => go(1)}
                       onNext={() => go(3)}
-                      hint="We never sell or share your details."
+                      hint={t('We never sell or share your details.')}
                     />
                   </StepShell>
                 )}
@@ -456,19 +461,21 @@ export default function OnboardingFlow() {
                 {/* ── 3 Workspace ───────────────────── */}
                 {current.id === 'workspace' && (
                   <StepShell
-                    title="Set up your workspace"
-                    description="A workspace holds your numbers, connections, wallet and team. Most companies need just one."
+                    title={t('Set up your workspace')}
+                    description={t(
+                      'A workspace holds your numbers, connections, wallet and team. Most companies need just one.',
+                    )}
                   >
                     <div className="space-y-4">
                       <Field
-                        label="Workspace name"
+                        label={t('Workspace name')}
                         required
                         error={form.formState.errors.workspaceName?.message}
-                        description="Something your team will recognise."
+                        description={t('Something your team will recognise.')}
                       >
                         <Input
                           {...form.register('workspaceName')}
-                          placeholder="Acme Retail"
+                          placeholder={'Acme Retail'}
                           autoFocus
                           inputSize="lg"
                           aria-invalid={!!form.formState.errors.workspaceName}
@@ -476,18 +483,20 @@ export default function OnboardingFlow() {
                       </Field>
                       {values.accountType === 'business' && (
                         <Field
-                          label="Legal business name"
-                          description="Must match your commercial registration exactly — it goes on your invoices."
+                          label={t('Legal business name')}
+                          description={t(
+                            'Must match your commercial registration exactly — it goes on your invoices.',
+                          )}
                         >
                           <Input
                             {...form.register('businessName')}
-                            placeholder="Acme Retail LLC"
+                            placeholder={'Acme Retail LLC'}
                             inputSize="lg"
                           />
                         </Field>
                       )}
                       <div className="grid gap-4 sm:grid-cols-2">
-                        <Field label="Country">
+                        <Field label={t('Country')}>
                           <Select
                             value={values.workspaceCountry}
                             onValueChange={(v) => form.setValue('workspaceCountry', v)}
@@ -507,7 +516,7 @@ export default function OnboardingFlow() {
                             </SelectContent>
                           </Select>
                         </Field>
-                        <Field label="Currency">
+                        <Field label={t('Currency')}>
                           <Select
                             value={values.currency}
                             onValueChange={(v) => form.setValue('currency', v as Currency)}
@@ -516,16 +525,16 @@ export default function OnboardingFlow() {
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="USD">US Dollar (USD)</SelectItem>
-                              <SelectItem value="EGP">Egyptian Pound (EGP)</SelectItem>
-                              <SelectItem value="EUR">Euro (EUR)</SelectItem>
-                              <SelectItem value="AED">UAE Dirham (AED)</SelectItem>
-                              <SelectItem value="GBP">British Pound (GBP)</SelectItem>
+                              <SelectItem value="USD">{t('US Dollar (USD)')}</SelectItem>
+                              <SelectItem value="EGP">{t('Egyptian Pound (EGP)')}</SelectItem>
+                              <SelectItem value="EUR">{t('Euro (EUR)')}</SelectItem>
+                              <SelectItem value="AED">{t('UAE Dirham (AED)')}</SelectItem>
+                              <SelectItem value="GBP">{t('British Pound (GBP)')}</SelectItem>
                             </SelectContent>
                           </Select>
                         </Field>
                       </div>
-                      <Field label="Timezone" description="Reports and scheduled exports use this.">
+                      <Field label={t('Timezone')} description={t('Reports and scheduled exports use this.')}>
                         <Select value={values.timezone} onValueChange={(v) => form.setValue('timezone', v)}>
                           <SelectTrigger size="lg">
                             <SelectValue />
@@ -547,8 +556,10 @@ export default function OnboardingFlow() {
                 {/* ── 4 Use case ────────────────────── */}
                 {current.id === 'usecase' && (
                   <StepShell
-                    title="What are you building?"
-                    description="This only shapes the tips and examples we show you — nothing is locked either way."
+                    title={t('What are you building?')}
+                    description={t(
+                      'This only shapes the tips and examples we show you — nothing is locked either way.',
+                    )}
                   >
                     <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
                       {USE_CASES.map((u, i) => {
@@ -561,14 +572,14 @@ export default function OnboardingFlow() {
                             transition={{ delay: i * 0.035, duration: 0.3, ease: EASE }}
                             onClick={() => form.setValue('useCase', u.id)}
                             className={cn(
-                              'flex flex-col items-start gap-1 rounded-2xl p-3.5 text-left transition-all duration-150',
+                              'flex flex-col items-start gap-1 rounded-2xl p-3.5 text-start transition-all duration-150',
                               active ? 'bg-brand-softer ring-1 ring-brand/40' : 'veil hover:bg-veil-strong',
                             )}
                           >
                             <span
                               className={cn('text-sm font-semibold', active ? 'text-brand-ink' : 'text-ink')}
                             >
-                              {u.label}
+                              {t(u.label)}
                             </span>
                             <span className="text-xs leading-relaxed text-ink-subtle">{u.blurb}</span>
                           </motion.button>
@@ -582,7 +593,7 @@ export default function OnboardingFlow() {
                 {/* ── 5 Verification ────────────────── */}
                 {current.id === 'verify' && (
                   <StepShell
-                    title="Verify your identity"
+                    title={t('Verify your identity')}
                     description={
                       values.accountType === 'business'
                         ? 'Egypt requires a verified business entity before national, mobile and toll-free numbers can be provisioned. Most reviews finish within a few hours.'
@@ -616,11 +627,11 @@ export default function OnboardingFlow() {
                         if (uploadedDocs > 0) submitVerification()
                         go(6)
                       }}
-                      nextLabel={uploadedDocs > 0 ? 'Submit and continue' : 'Continue'}
+                      nextLabel={uploadedDocs > 0 ? t('Submit and continue') : t('Continue')}
                       secondary={
                         uploadedDocs === 0 ? (
                           <Button variant="ghost" onClick={() => go(6)} className="text-ink-subtle">
-                            Do this later
+                            {t('Do this later')}
                           </Button>
                         ) : undefined
                       }
@@ -636,17 +647,19 @@ export default function OnboardingFlow() {
                 {/* ── 6 Funding ─────────────────────── */}
                 {current.id === 'funding' && (
                   <StepShell
-                    title="How would you like to pay?"
-                    description="Start with pay as you go — you can move to a committed plan any time, and discounts apply automatically as volume grows."
+                    title={t('How would you like to pay?')}
+                    description={t(
+                      'Start with pay as you go — you can move to a committed plan any time, and discounts apply automatically as volume grows.',
+                    )}
                   >
                     <div className="space-y-3">
                       {[
                         {
                           value: 'payg' as const,
                           icon: Rocket,
-                          label: 'Pay as you go',
+                          label: t('Pay as you go'),
                           price: 'No commitment',
-                          blurb: 'Perfect for startups and first integrations.',
+                          blurb: t('Perfect for startups and first integrations.'),
                           perks: [
                             'Top up your wallet, pay only for usage',
                             `Numbers from ${money(1.1, values.currency as Currency)}/month`,
@@ -657,9 +670,9 @@ export default function OnboardingFlow() {
                         {
                           value: 'volume' as const,
                           icon: TrendingDown,
-                          label: 'Volume pricing',
+                          label: t('Volume pricing'),
                           price: 'Up to 24% lower',
-                          blurb: 'For predictable monthly traffic.',
+                          blurb: t('For predictable monthly traffic.'),
                           perks: [
                             'Committed monthly minutes at lower rates',
                             'Dedicated carrier routes and priority capacity',
@@ -674,7 +687,7 @@ export default function OnboardingFlow() {
                             key={p.value}
                             onClick={() => setPlan(p.value)}
                             className={cn(
-                              'flex w-full items-start gap-4 rounded-2xl p-4 text-left transition-all duration-200',
+                              'flex w-full items-start gap-4 rounded-2xl p-4 text-start transition-all duration-200',
                               active ? 'bg-brand-softer ring-1 ring-brand/40' : 'veil hover:bg-veil-strong',
                             )}
                           >
@@ -688,7 +701,7 @@ export default function OnboardingFlow() {
                             </span>
                             <span className="min-w-0 flex-1">
                               <span className="flex flex-wrap items-center gap-2">
-                                <span className="text-md font-semibold text-ink">{p.label}</span>
+                                <span className="text-md font-semibold text-ink">{t(p.label)}</span>
                                 <Badge tone={active ? 'brand' : 'outline'} size="sm">
                                   {p.price}
                                 </Badge>
@@ -714,10 +727,10 @@ export default function OnboardingFlow() {
                     <Nav
                       onBack={() => go(5)}
                       onNext={finish}
-                      nextLabel="Create my workspace"
+                      nextLabel={t('Create my workspace')}
                       nextDisabled={!plan}
                       loading={creating}
-                      hint="No card is charged today. Volume plans start with a call from our team."
+                      hint={t('No card is charged today. Volume plans start with a call from our team.')}
                     />
                   </StepShell>
                 )}
@@ -763,11 +776,11 @@ export default function OnboardingFlow() {
                         onClick={() => leave('/numbers/buy')}
                         icon={<Phone />}
                       >
-                        Buy your first phone number
+                        {t('Buy your first phone number')}
                         <ArrowRight className="size-[18px]" />
                       </Button>
                       <Button variant="ghost" size="lg" block onClick={() => leave('/')}>
-                        Take me to the dashboard
+                        {t('Take me to the dashboard')}
                       </Button>
                     </motion.div>
 
@@ -775,7 +788,7 @@ export default function OnboardingFlow() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: 0.5 }}
-                      className="mt-10 grid gap-2.5 text-left sm:grid-cols-3"
+                      className="mt-10 grid gap-2.5 text-start sm:grid-cols-3"
                     >
                       {[
                         { icon: Phone, t: 'Numbers', d: 'Search live inventory' },
@@ -802,7 +815,7 @@ export default function OnboardingFlow() {
 
         <div className="px-5 pb-6 text-center sm:px-8">
           <p className="text-xs text-ink-faint">
-            By continuing you agree to the acceptable use policy and local telecom regulations.
+            {t('By continuing you agree to the acceptable use policy and local telecom regulations.')}
           </p>
         </div>
       </main>
@@ -868,7 +881,7 @@ function StepShell({
 function Nav({
   onBack,
   onNext,
-  nextLabel = 'Continue',
+  nextLabel,
   nextDisabled,
   loading,
   hint,
@@ -882,16 +895,17 @@ function Nav({
   hint?: string
   secondary?: React.ReactNode
 }) {
+  const { t } = useI18n()
   return (
     <div className="mt-8">
       <div className="flex items-center gap-2">
         <Button variant="ghost" size="lg" onClick={onBack} icon={<ArrowLeft />} className="text-ink-subtle">
-          Back
+          {t('Back')}
         </Button>
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ms-auto flex items-center gap-2">
           {secondary}
           <Button variant="primary" size="lg" onClick={onNext} disabled={nextDisabled} loading={loading}>
-            {nextLabel}
+            {nextLabel ?? t('Continue')}
             <ArrowRight className="size-4" />
           </Button>
         </div>
@@ -902,6 +916,7 @@ function Nav({
 }
 
 function PasswordStrength({ value }: { value: string }) {
+  const { t } = useI18n()
   const checks = [
     { label: '10+ characters', ok: value.length >= 10 },
     { label: 'A number', ok: /\d/.test(value) },
@@ -934,7 +949,7 @@ function PasswordStrength({ value }: { value: string }) {
             className={cn('flex items-center gap-1 text-2xs', c.ok ? 'text-success-ink' : 'text-ink-faint')}
           >
             {c.ok ? <Check className="size-2.5" /> : <span className="size-2.5" />}
-            {c.label}
+            {t(c.label)}
           </span>
         ))}
       </div>

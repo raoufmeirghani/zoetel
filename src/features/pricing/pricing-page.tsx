@@ -29,6 +29,7 @@ import { money, num } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { toast } from '@/components/ui/toast'
 import type { PlanKind } from '@/lib/types'
+import { useI18n } from '@/lib/i18n'
 
 interface Rate {
   id: string
@@ -130,6 +131,7 @@ const TIERS = [
 ]
 
 export default function PricingPage() {
+  const { t } = useI18n()
   const currency = useApp((s) => s.workspace.currency)
   const plan = useApp((s) => s.workspace.plan)
   const setPlan = useApp((s) => s.setPlan)
@@ -150,7 +152,7 @@ export default function PricingPage() {
   const columns: Column<Rate>[] = [
     {
       id: 'destination',
-      header: 'Destination',
+      header: t('Destination'),
       headerClassName: 'w-full sm:w-[38%]',
       cell: (r) => (
         <div className="flex items-center gap-2.5">
@@ -175,7 +177,7 @@ export default function PricingPage() {
           <span className="tabular-nums text-ink">
             {money(r.outbound * multiplier, currency, { precise: true })}
             {multiplier < 1 && (
-              <span className="ml-1.5 text-xs tabular-nums text-ink-faint line-through">
+              <span className="ms-1.5 text-xs tabular-nums text-ink-faint line-through">
                 {money(r.outbound, currency, { precise: true })}
               </span>
             )}
@@ -186,7 +188,7 @@ export default function PricingPage() {
     },
     {
       id: 'inbound',
-      header: 'Inbound / min',
+      header: t('Inbound / min'),
       align: 'right',
       hideBelow: 'md',
       sortable: true,
@@ -199,7 +201,7 @@ export default function PricingPage() {
     },
     {
       id: 'sms',
-      header: 'SMS',
+      header: t('SMS'),
       align: 'right',
       hideBelow: 'md',
       cell: (r) =>
@@ -222,15 +224,17 @@ export default function PricingPage() {
         backdropImage={HERO_ART_USAGE}
         mood="ledger"
         size="md"
-        title="Pricing"
-        lede="Per-second billing, no minimums on pay as you go, and discounts that apply automatically as you grow. There is nothing to negotiate."
+        title={t('Pricing')}
+        lede={t(
+          'Per-second billing, no minimums on pay as you go, and discounts that apply automatically as you grow. There is nothing to negotiate.',
+        )}
         actions={
           <Segmented
             value={selected}
             onChange={setSelected}
             options={[
-              { value: 'payg', label: 'Pay as you go' },
-              { value: 'volume', label: 'Volume pricing' },
+              { value: 'payg', label: t('Pay as you go') },
+              { value: 'volume', label: t('Volume pricing') },
             ]}
           />
         }
@@ -254,7 +258,7 @@ export default function PricingPage() {
               'Community and email support',
               'Cancel or pause any time',
             ],
-            cta: 'Stay on pay as you go',
+            cta: t('Stay on pay as you go'),
           },
           {
             kind: 'volume' as const,
@@ -271,7 +275,7 @@ export default function PricingPage() {
               'Monthly invoicing with net-30 terms',
               'SSO, audit exports and role policies',
             ],
-            cta: 'Talk to sales',
+            cta: t('Talk to sales'),
           },
         ].map((p, i) => {
           const active = selected === p.kind
@@ -299,7 +303,7 @@ export default function PricingPage() {
                 {p.kind === 'volume' && (
                   <span
                     className={cn(
-                      'absolute right-6 top-6 rounded-lg px-2 py-1 text-2xs font-semibold uppercase tracking-wider',
+                      'absolute end-6 top-6 rounded-lg px-2 py-1 text-2xs font-semibold uppercase tracking-wider',
                       active ? 'bg-white/12 text-white/80' : 'bg-brand-soft text-brand-ink',
                     )}
                   >
@@ -412,8 +416,8 @@ export default function PricingPage() {
       {/* ── Volume calculator ─────────────────────────── */}
       <Section
         className="mt-16"
-        eyebrow="Work out your rate"
-        title="Estimate"
+        eyebrow={t('Work out your rate')}
+        title={t('Estimate')}
         lede="Move the slider to your real monthly volume — the tier applies on its own."
         divided
       >
@@ -421,7 +425,7 @@ export default function PricingPage() {
           <div>
             <div className="flex items-baseline justify-between">
               <label htmlFor="volume" className="text-sm font-medium text-ink-muted">
-                Monthly outbound minutes
+                {t('Monthly outbound minutes')}
               </label>
               <span className="display text-xl font-semibold tabular-nums text-ink">{num(volume)}</span>
             </div>
@@ -436,29 +440,31 @@ export default function PricingPage() {
               className="mt-3 h-1.5 w-full cursor-pointer appearance-none rounded-full bg-surface-3 accent-[hsl(var(--brand))] [&::-webkit-slider-thumb]:size-4 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-brand [&::-webkit-slider-thumb]:shadow-md"
             />
             <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
-              {TIERS.map((t) => {
-                const active = volume >= t.from && volume < t.to
+              {TIERS.map((tier) => {
+                const active = volume >= tier.from && volume < tier.to
                 return (
                   <div
-                    key={t.label}
+                    key={tier.label}
                     className={cn(
                       'rounded-xl p-3 transition-all duration-200',
                       active ? 'bg-brand-softer ring-1 ring-brand/40' : 'bg-surface-2',
                     )}
                   >
-                    <p className="text-2xs font-semibold uppercase tracking-wider text-ink-faint">{t.label}</p>
+                    <p className="text-2xs font-semibold uppercase tracking-wider text-ink-faint">
+                      {t(tier.label)}
+                    </p>
                     <p
                       className={cn(
                         'mt-1 text-base font-semibold tabular-nums',
                         active ? 'text-brand-ink' : 'text-ink',
                       )}
                     >
-                      {t.discount === 0 ? 'List' : `−${t.discount}%`}
+                      {tier.discount === 0 ? 'List' : `−${tier.discount}%`}
                     </p>
                     <p className="mt-0.5 text-2xs tabular-nums text-ink-faint">
-                      {t.to === Infinity
-                        ? `${num(t.from / 1000)}k+`
-                        : `${num(t.from / 1000)}–${num(t.to / 1000)}k`}
+                      {tier.to === Infinity
+                        ? `${num(tier.from / 1000)}k+`
+                        : `${num(tier.from / 1000)}–${num(tier.to / 1000)}k`}
                     </p>
                   </div>
                 )
@@ -503,13 +509,13 @@ export default function PricingPage() {
             ? `Tier ${TIERS.findIndex((t) => t.discount === discount) + 1} rates in ${currency}`
             : `List rates in ${currency}`
         }
-        title="Voice & messaging"
+        title={t('Voice & messaging')}
         divided
         action={
           <SearchInput
             value={q}
             onChange={setQ}
-            placeholder="Search destinations…"
+            placeholder={t('Search destinations…')}
             size="sm"
             className="w-52"
           />
@@ -523,11 +529,13 @@ export default function PricingPage() {
             <EmptyState
               compact
               icon={<Search />}
-              title={`No rates for “${q}”`}
-              description="We publish rates for 190+ destinations. Search by country name or ask us for a full rate card."
+              title={t('No rates for “{q}”', { q })}
+              description={t(
+                'We publish rates for 190+ destinations. Search by country name or ask us for a full rate card.',
+              )}
               action={
                 <Button variant="secondary" onClick={() => setQ('')}>
-                  Clear search
+                  {t('Clear search')}
                 </Button>
               }
             />
@@ -541,27 +549,27 @@ export default function PricingPage() {
       </Section>
 
       {/* ── Included ──────────────────────────────────── */}
-      <Section className="mt-16" eyebrow="On every plan" title="What you always get" divided>
+      <Section className="mt-16" eyebrow={t('On every plan')} title={t('What you always get')} divided>
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {[
             {
               icon: Zap,
-              title: 'No platform fee',
+              title: t('No platform fee'),
               body: 'API, SIP, webhooks and the dashboard are included on every plan.',
             },
             {
               icon: Phone,
-              title: 'Per-second billing',
+              title: t('Per-second billing'),
               body: 'A 12-second call costs 12 seconds — no 60-second rounding.',
             },
             {
               icon: ShieldCheck,
-              title: 'Compliance included',
+              title: t('Compliance included'),
               body: 'KYC review, emergency registration and CNAM at no extra cost.',
             },
             {
               icon: Headphones,
-              title: 'Real engineers',
+              title: t('Real engineers'),
               body: 'Support is staffed by voice engineers, not a ticket queue.',
             },
           ].map((f, i) => (
@@ -587,7 +595,7 @@ export default function PricingPage() {
       <div className="mt-16 overflow-hidden rounded-[28px] bg-onyx p-6 text-onyx-fg sm:p-8">
         <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center">
           <div
-            className="pointer-events-none absolute -right-10 -top-24 size-64 rounded-full opacity-25 blur-3xl"
+            className="pointer-events-none absolute -end-10 -top-24 size-64 rounded-full opacity-25 blur-3xl"
             style={{ background: 'radial-gradient(circle, hsl(var(--brand)) 0%, transparent 70%)' }}
           />
           <span className="relative grid size-11 shrink-0 place-items-center rounded-2xl bg-white/10">
@@ -605,16 +613,16 @@ export default function PricingPage() {
             size="lg"
             className="relative shrink-0 bg-white text-onyx shadow-none hover:bg-white/90"
             onClick={() =>
-              toast.success('Request received', { description: 'Our enterprise team will email you today.' })
+              toast.success('Request received', { description: t('Our enterprise team will email you today.') })
             }
           >
-            Contact enterprise sales
+            {t('Contact enterprise sales')}
           </Button>
         </div>
       </div>
 
       {/* ── FAQ ───────────────────────────────────────── */}
-      <Section className="mt-16" eyebrow="Before you ask" title="Pricing questions" divided>
+      <Section className="mt-16" eyebrow={t('Before you ask')} title={t('Pricing questions')} divided>
         <Accordion type="single" collapsible>
           <AccordionItem value="switch" title="Can I move between plans?">
             Yes, in both directions. Moving to volume pricing takes effect at the start of the next billing
@@ -640,7 +648,7 @@ export default function PricingPage() {
         Every plan includes the full platform. We don't gate SIP, webhooks, recordings or the API behind a
         higher tier — the only thing that changes with volume is the per-minute rate.{' '}
         <Link to="/numbers/buy" className="font-medium underline underline-offset-2">
-          Start with a number
+          {t('Start with a number')}
         </Link>
         .
       </Alert>

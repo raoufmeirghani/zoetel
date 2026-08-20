@@ -29,7 +29,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       return (
         <div className={cn('group relative flex w-full items-center', className)}>
           {leading && (
-            <span className="pointer-events-none absolute left-3 z-10 flex items-center text-ink-faint [&_svg]:size-4">
+            <span className="pointer-events-none absolute start-3 z-10 flex items-center text-ink-faint [&_svg]:size-4">
               {leading}
             </span>
           )}
@@ -38,16 +38,14 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             className={cn(
               base,
               sizes[inputSize],
-              leading && 'pl-9',
-              trailing ? 'pr-10' : 'pr-3',
-              !leading && 'pl-3',
+              leading && 'ps-9',
+              trailing ? 'pe-10' : 'pe-3',
+              !leading && 'ps-3',
             )}
             {...props}
           />
           {trailing && (
-            <span className="absolute right-2.5 flex items-center text-ink-faint [&_svg]:size-4">
-              {trailing}
-            </span>
+            <span className="absolute end-2.5 flex items-center text-ink-faint [&_svg]:size-4">{trailing}</span>
           )}
         </div>
       )

@@ -5,6 +5,7 @@ import { ArrowUpRight, X } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { useDirSign, useI18n } from '@/lib/i18n'
 
 /**
  * A detached, floating slide-over — the same physical language as the nav rail:
@@ -44,6 +45,8 @@ export function SidePanel({
   children?: React.ReactNode
   width?: string
 }) {
+  const { t } = useI18n()
+  const dirSign = useDirSign()
   // Lets the page column drop its max-width so the list keeps usable room
   // beside the panel instead of being squeezed into the centred column.
   React.useEffect(() => {
@@ -67,13 +70,13 @@ export function SidePanel({
               asChild
             >
               <motion.aside
-                initial={{ opacity: 0, x: 28 }}
+                initial={{ opacity: 0, x: 28 * dirSign }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 28, transition: { duration: 0.16 } }}
+                exit={{ opacity: 0, x: 28 * dirSign, transition: { duration: 0.16 } }}
                 transition={{ type: 'spring', stiffness: 420, damping: 38, mass: 0.8 }}
                 style={{ maxWidth: `calc(100vw - 1.5rem)`, width }}
                 className={cn(
-                  'glass-panel chrome-solid-sm fixed inset-y-3 right-3 z-40 flex flex-col overflow-hidden rounded-[26px]',
+                  'glass-panel chrome-solid-sm fixed inset-y-3 end-3 z-40 flex flex-col overflow-hidden rounded-[26px]',
                   'focus:outline-none',
                 )}
               >
@@ -94,7 +97,7 @@ export function SidePanel({
                           </Link>
                         </Button>
                       )}
-                      <Button variant="ghost" size="icon-sm" onClick={onClose} aria-label="Close panel">
+                      <Button variant="ghost" size="icon-sm" onClick={onClose} aria-label={t('Close panel')}>
                         <X />
                       </Button>
                     </div>

@@ -14,6 +14,7 @@ import { useApp } from '@/store/app'
 import type { ZoieTarget } from './zoie'
 import { isRouted } from './types'
 import { monthToDate } from './data/seed'
+import { translate } from './i18n'
 
 export type StageId =
   'account' | 'verify' | 'fund' | 'number' | 'routing' | 'live' | 'agent' | 'monitor' | 'optimize'
@@ -101,6 +102,7 @@ export function useJourney(): Journey {
   const transactions = useApp((s) => s.transactions)
   const plan = useApp((s) => s.workspace.plan)
   const zoieHandoffAt = useApp((s) => s.zoieHandoffAt)
+  const locale = useApp((s) => s.locale)
 
   const verified = verification.stage === 'approved'
   const inReview = verification.stage === 'in_review'
@@ -219,6 +221,10 @@ export function useJourney(): Journey {
   const setupDone = setupStages.filter((s) => s.done).length
   const progress = Math.round((setupDone / setupStages.length) * 100)
 
+  // Attention titles carry counts and names, so they are assembled here rather
+  // than translated at the render site like the fixed strings are.
+  const tr = (key: string, vars?: Record<string, string | number>) => translate(locale, key, vars)
+
   const attention: AttentionItem[] = []
 
   if (verification.stage === 'rejected') {
@@ -240,8 +246,8 @@ export function useJourney(): Journey {
       title: balance <= 0 ? 'Your wallet is empty' : 'Wallet balance is low',
       detail:
         balance <= 0
-          ? 'Outbound calls and new purchases are being rejected until you top up.'
-          : `Below your ${threshold} threshold. Calls stop when it reaches zero.`,
+          ? tr('Outbound calls and new purchases are being rejected until you top up.')
+          : tr('Below your {amount} threshold. Calls stop when it reaches zero.', { amount: threshold }),
       to: '/billing?topup=1',
       cta: 'Add funds',
       icon: Banknote,
@@ -254,7 +260,9 @@ export function useJourney(): Journey {
     attention.push({
       id: 'sip-health',
       severity: worst.status === 'offline' ? 'critical' : 'warning',
-      title: `${worst.name} is ${worst.status}`,
+      title: tr(worst.status === 'offline' ? '{name} is offline' : '{name} is degraded', {
+        name: worst.name,
+      }),
       detail:
         worst.status === 'offline'
           ? 'No SIP registration received recently, so calls to it are failing.'
@@ -270,7 +278,9 @@ export function useJourney(): Journey {
     attention.push({
       id: 'held-numbers',
       severity: 'warning',
-      title: `${held.length} number${held.length === 1 ? '' : 's'} held for compliance`,
+      title: tr(held.length === 1 ? 'One number held for compliance' : '{n} numbers held for compliance', {
+        n: held.length,
+      }),
       detail: `${held.map((n) => n.e164).join(', ')} ${held.length === 1 ? 'is' : 'are'} reserved but can't route calls yet. You aren't billed while held.`,
       to: '/verification',
       cta: 'Complete verification',
@@ -296,7 +306,9 @@ export function useJourney(): Journey {
     attention.push({
       id: 'unrouted',
       severity: 'info',
-      title: `${unrouted.length} number${unrouted.length === 1 ? '' : 's'} not routed`,
+      title: tr(unrouted.length === 1 ? 'One number not routed' : '{n} numbers not routed', {
+        n: unrouted.length,
+      }),
       detail: 'Inbound calls to these numbers are rejected because nothing is listening.',
       to: '/numbers',
       cta: 'Assign routing',
@@ -309,7 +321,10 @@ export function useJourney(): Journey {
     attention.push({
       id: '2fa',
       severity: 'info',
-      title: `${no2fa.length} teammate${no2fa.length === 1 ? '' : 's'} without two-factor auth`,
+      title: tr(
+        no2fa.length === 1 ? 'One teammate without two-factor auth' : '{n} teammates without two-factor auth',
+        { n: no2fa.length },
+      ),
       detail: 'A single leaked password is enough to place calls on your wallet.',
       to: '/team',
       cta: 'Require 2FA',

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import {
   Banknote,
   Key,
+  Languages,
   LifeBuoy,
   LogOut,
   Monitor,
@@ -31,6 +32,7 @@ import { useApp, type Theme } from '@/store/app'
 import { cn } from '@/lib/utils'
 import { Tooltip } from '@/components/ui/tooltip'
 import { Kbd } from '@/components/ui/misc'
+import { LOCALES, useI18n, type Locale } from '@/lib/i18n'
 
 /**
  * Floating utility cluster: global actions, search and account. Deliberately not
@@ -44,6 +46,7 @@ export function TopUtilities({ className, onOpenSearch }: { className?: string; 
   const resetOnboarding = useApp((s) => s.resetOnboarding)
   const stage = useApp((s) => s.verification.stage)
   const navigate = useNavigate()
+  const { t, locale, setLocale } = useI18n()
   const [env, setEnv] = React.useState<'live' | 'test'>('live')
 
   return (
@@ -52,41 +55,41 @@ export function TopUtilities({ className, onOpenSearch }: { className?: string; 
       <Menu>
         <MenuTrigger asChild>
           <button
-            className="chrome inline-flex h-9 items-center gap-1.5 rounded-full pl-2.5 pr-3 text-sm font-medium text-ink transition-colors hover:bg-veil-strong"
-            aria-label="Create"
+            className="chrome inline-flex h-9 items-center gap-1.5 rounded-full pe-3 ps-2.5 text-sm font-medium text-ink transition-colors hover:bg-veil-strong"
+            aria-label={t('Create')}
           >
             <Plus className="size-4 text-brand" />
-            <span className="hidden sm:inline">New</span>
+            <span className="hidden sm:inline">{t('New')}</span>
           </button>
         </MenuTrigger>
         <MenuContent className="w-60">
-          <MenuLabel>Create</MenuLabel>
+          <MenuLabel>{t('Create')}</MenuLabel>
           <MenuItem onSelect={() => navigate('/numbers/buy')} shortcut="B">
             <Phone />
-            Phone number
+            {t('Phone number')}
           </MenuItem>
           <MenuItem onSelect={() => navigate('/sip?new=1')}>
             <Network />
-            SIP connection
+            {t('SIP connection')}
           </MenuItem>
           <MenuItem onSelect={() => navigate('/developers?new=1')}>
             <Key />
-            API key
+            {t('API key')}
           </MenuItem>
           <MenuSeparator />
           <MenuItem onSelect={() => navigate('/billing?topup=1')}>
             <Banknote />
-            Add funds to wallet
+            {t('Add funds to wallet')}
           </MenuItem>
         </MenuContent>
       </Menu>
 
       {/* ── Search ─────────────────────────────────── */}
-      <Tooltip content="Search or jump to…">
+      <Tooltip content={t('Search or jump to…')}>
         <button
           onClick={onOpenSearch}
           className="chrome inline-flex h-9 items-center gap-2 rounded-full px-3 text-ink-subtle transition-colors hover:bg-veil-strong hover:text-ink"
-          aria-label="Search"
+          aria-label={t('Search')}
         >
           <Search className="size-4" />
           <Kbd className="hidden bg-transparent shadow-none lg:inline-flex">⌘K</Kbd>
@@ -94,7 +97,7 @@ export function TopUtilities({ className, onOpenSearch }: { className?: string; 
       </Tooltip>
 
       {stage !== 'approved' && (
-        <Tooltip content="Verification unlocks every number range">
+        <Tooltip content={t('Verification unlocks every number range')}>
           <Link
             to="/verification"
             className={cn(
@@ -103,7 +106,7 @@ export function TopUtilities({ className, onOpenSearch }: { className?: string; 
             )}
           >
             <ShieldCheck className="size-3.5" />
-            {stage === 'in_review' ? 'In review' : 'Verify account'}
+            {stage === 'in_review' ? t('In review') : t('Verify account')}
           </Link>
         </Tooltip>
       )}
@@ -124,7 +127,7 @@ export function TopUtilities({ className, onOpenSearch }: { className?: string; 
               {e === 'live' && (
                 <span className={cn('size-1.5 rounded-full', env === 'live' ? 'bg-success' : 'bg-ink-faint')} />
               )}
-              {e}
+              {t(e === 'live' ? 'Live' : 'Test')}
             </span>
           </button>
         ))}
@@ -139,7 +142,7 @@ export function TopUtilities({ className, onOpenSearch }: { className?: string; 
         <MenuTrigger asChild>
           <button
             className="chrome grid size-9 place-items-center rounded-full transition-opacity hover:opacity-85"
-            aria-label="Account menu"
+            aria-label={t('Account')}
           >
             <Avatar name={profile.name} hue={profile.avatarHue} size="md" className="!size-7" />
           </button>
@@ -153,7 +156,7 @@ export function TopUtilities({ className, onOpenSearch }: { className?: string; 
             </div>
           </div>
           <MenuSeparator />
-          <MenuLabel>Workspace</MenuLabel>
+          <MenuLabel>{t('Workspace')}</MenuLabel>
           <MenuItem onSelect={() => navigate('/settings')}>
             <span
               className="grid size-4 shrink-0 place-items-center rounded-[5px] text-[8px] font-semibold text-white"
@@ -163,32 +166,46 @@ export function TopUtilities({ className, onOpenSearch }: { className?: string; 
             </span>
             <span className="flex-1 truncate">{workspace.name}</span>
             <span className="text-2xs text-ink-faint">
-              {workspace.plan === 'payg' ? 'Pay as you go' : 'Volume'}
+              {workspace.plan === 'payg' ? t('Pay as you go') : t('Volume')}
             </span>
           </MenuItem>
           <MenuSeparator />
           <MenuItem onSelect={() => navigate('/settings')}>
             <Settings />
-            Account settings
+            {t('Account settings')}
           </MenuItem>
           <MenuItem onSelect={() => navigate('/verification')}>
             <ShieldCheck />
-            Verification
+            {t('Verification')}
           </MenuItem>
           <MenuSeparator />
-          <MenuLabel>Appearance</MenuLabel>
+          <MenuLabel>{t('Language')}</MenuLabel>
+          {/* Language and direction are one choice: picking Arabic mirrors the
+              product. It lives beside the theme because both are personal
+              display preferences rather than workspace settings. */}
+          <MenuRadioGroup value={locale} onValueChange={(v) => setLocale(v as Locale)}>
+            {(Object.keys(LOCALES) as Locale[]).map((l) => (
+              <MenuRadioItem key={l} value={l}>
+                <Languages />
+                <span className="flex-1">{LOCALES[l].native}</span>
+                {LOCALES[l].dir === 'rtl' && <span className="text-2xs text-ink-faint">RTL</span>}
+              </MenuRadioItem>
+            ))}
+          </MenuRadioGroup>
+          <MenuSeparator />
+          <MenuLabel>{t('Theme')}</MenuLabel>
           <MenuRadioGroup value={theme} onValueChange={(v) => setTheme(v as Theme)}>
             <MenuRadioItem value="light">
               <Sun />
-              Light
+              {t('Light')}
             </MenuRadioItem>
             <MenuRadioItem value="dark">
               <Moon />
-              Dark
+              {t('Dark')}
             </MenuRadioItem>
             <MenuRadioItem value="system">
               <Monitor />
-              System
+              {t('System')}
             </MenuRadioItem>
           </MenuRadioGroup>
           <MenuSeparator />
@@ -199,11 +216,11 @@ export function TopUtilities({ className, onOpenSearch }: { className?: string; 
             }}
           >
             <LifeBuoy />
-            Replay onboarding
+            {t('Replay onboarding')}
           </MenuItem>
           <MenuItem destructive onSelect={() => navigate('/welcome')}>
             <LogOut />
-            Sign out
+            {t('Sign out')}
           </MenuItem>
         </MenuContent>
       </Menu>

@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { ArrowUpRight, Check, Clock, Cpu, Network, PhoneForwarded, Webhook } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { LucideIcon } from 'lucide-react'
+import { useI18n } from '@/lib/i18n'
 
 export type DestinationId = 'zoie' | 'sip' | 'forward' | 'webhook' | 'later'
 
@@ -77,6 +78,7 @@ export function DestinationPicker({
   exclude?: DestinationId[]
   className?: string
 }) {
+  const { t } = useI18n()
   const items = destinations.filter((d) => !exclude?.includes(d.id))
 
   return (
@@ -97,7 +99,7 @@ export function DestinationPicker({
               onClick={() => onSelect(d.id)}
               aria-pressed={active}
               className={cn(
-                'group flex items-start gap-3.5 rounded-3xl p-4 text-left transition-colors',
+                'group flex items-start gap-3.5 rounded-3xl p-4 text-start transition-colors',
                 active ? 'bg-brand-softer ring-1 ring-brand/40' : 'bg-veil hover:bg-veil-strong',
                 d.id === 'later' && 'sm:col-span-2',
               )}
@@ -112,16 +114,16 @@ export function DestinationPicker({
               </span>
               <span className="min-w-0 flex-1">
                 <span className="flex items-center gap-1.5">
-                  <span className="text-base font-medium text-ink">{d.label}</span>
+                  <span className="text-base font-medium text-ink">{t(d.label)}</span>
                   {active && <Check className="size-4 shrink-0 text-brand" />}
                   {d.external && (
                     <ArrowUpRight
                       className="size-3.5 shrink-0 text-ink-faint transition-transform group-hover:-translate-y-px group-hover:translate-x-px"
-                      aria-label="Opens in a new tab"
+                      aria-label={t('Opens in a new tab')}
                     />
                   )}
                 </span>
-                <span className="mt-1 block text-sm leading-relaxed text-ink-subtle">{d.blurb}</span>
+                <span className="mt-1 block text-sm leading-relaxed text-ink-subtle">{t(d.blurb)}</span>
               </span>
             </motion.button>
           )

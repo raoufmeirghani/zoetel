@@ -2,10 +2,12 @@ import { Suspense, lazy } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { MotionConfig } from 'framer-motion'
+import { DirectionProvider } from '@radix-ui/react-direction'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { Toaster } from '@/components/ui/toast'
 import { AppShell } from '@/components/layout/app-shell'
 import { useThemeEffect } from '@/hooks/use-theme'
+import { useApplyLocale, useI18n } from '@/lib/i18n'
 import { RouteFallback } from '@/components/shared/route-fallback'
 import { useApp } from '@/store/app'
 
@@ -35,9 +37,26 @@ const queryClient = new QueryClient({
   },
 })
 
-function ThemeGate({ children }: { children: React.ReactNode }) {
+/**
+ * Puts the two document-level preferences on <html> before anything renders:
+ * `data-theme` for the palette, and `lang`/`dir` for the writing direction.
+ * `dir` is what drives every logical property in the stylesheet, so this is the
+ * single switch that mirrors the entire product.
+ */
+function DocumentGate({ children }: { children: React.ReactNode }) {
   useThemeEffect()
+  useApplyLocale()
   return <>{children}</>
+}
+
+/**
+ * Radix primitives don't read <html dir>; they take direction from this context.
+ * Without it, menu alignment and arrow-key navigation in tabs and sliders stay
+ * left-to-right while everything around them has mirrored.
+ */
+function RadixDirection({ children }: { children: React.ReactNode }) {
+  const { dir } = useI18n()
+  return <DirectionProvider dir={dir}>{children}</DirectionProvider>
 }
 
 /** First-run visitors meet the product through onboarding, not the dashboard. */
@@ -50,43 +69,45 @@ function RequireOnboarding() {
 export function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeGate>
+      <DocumentGate>
         {/* reducedMotion="user" makes every Framer animation honour the OS setting,
             which the CSS media query alone cannot do for JS-driven motion. */}
         <MotionConfig reducedMotion="user">
-          <TooltipProvider delayDuration={280} skipDelayDuration={400}>
-            <BrowserRouter>
-              <Suspense fallback={<RouteFallback />}>
-                <Routes>
-                  <Route path="/welcome/*" element={<OnboardingFlow />} />
-                  <Route element={<RequireOnboarding />}>
-                    <Route path="/" element={<Dashboard />} />
-                    <Route path="/numbers" element={<NumbersPage />} />
-                    <Route path="/numbers/buy" element={<MarketplacePage />} />
-                    <Route path="/numbers/checkout" element={<CheckoutPage />} />
-                    <Route path="/numbers/:id" element={<NumberDetailPage />} />
-                    <Route path="/numbers/:id/setup" element={<NumberSetupPage />} />
-                    <Route path="/sip" element={<SipPage />} />
-                    <Route path="/sip/:id" element={<SipDetailPage />} />
-                    <Route path="/analytics" element={<AnalyticsPage />} />
-                    <Route path="/billing" element={<BillingPage />} />
-                    <Route path="/pricing" element={<PricingPage />} />
-                    <Route path="/developers" element={<ApiKeysPage />} />
-                    <Route path="/developers/webhooks" element={<WebhooksPage />} />
-                    <Route path="/developers/logs" element={<LogsPage />} />
-                    <Route path="/verification" element={<VerificationPage />} />
-                    <Route path="/team" element={<TeamPage />} />
-                    <Route path="/settings" element={<SettingsPage />} />
-                    <Route path="/dashboard" element={<Navigate to="/" replace />} />
-                    <Route path="*" element={<NotFoundPage />} />
-                  </Route>
-                </Routes>
-              </Suspense>
-              <Toaster />
-            </BrowserRouter>
-          </TooltipProvider>
+          <RadixDirection>
+            <TooltipProvider delayDuration={280} skipDelayDuration={400}>
+              <BrowserRouter>
+                <Suspense fallback={<RouteFallback />}>
+                  <Routes>
+                    <Route path="/welcome/*" element={<OnboardingFlow />} />
+                    <Route element={<RequireOnboarding />}>
+                      <Route path="/" element={<Dashboard />} />
+                      <Route path="/numbers" element={<NumbersPage />} />
+                      <Route path="/numbers/buy" element={<MarketplacePage />} />
+                      <Route path="/numbers/checkout" element={<CheckoutPage />} />
+                      <Route path="/numbers/:id" element={<NumberDetailPage />} />
+                      <Route path="/numbers/:id/setup" element={<NumberSetupPage />} />
+                      <Route path="/sip" element={<SipPage />} />
+                      <Route path="/sip/:id" element={<SipDetailPage />} />
+                      <Route path="/analytics" element={<AnalyticsPage />} />
+                      <Route path="/billing" element={<BillingPage />} />
+                      <Route path="/pricing" element={<PricingPage />} />
+                      <Route path="/developers" element={<ApiKeysPage />} />
+                      <Route path="/developers/webhooks" element={<WebhooksPage />} />
+                      <Route path="/developers/logs" element={<LogsPage />} />
+                      <Route path="/verification" element={<VerificationPage />} />
+                      <Route path="/team" element={<TeamPage />} />
+                      <Route path="/settings" element={<SettingsPage />} />
+                      <Route path="/dashboard" element={<Navigate to="/" replace />} />
+                      <Route path="*" element={<NotFoundPage />} />
+                    </Route>
+                  </Routes>
+                </Suspense>
+                <Toaster />
+              </BrowserRouter>
+            </TooltipProvider>
+          </RadixDirection>
         </MotionConfig>
-      </ThemeGate>
+      </DocumentGate>
     </QueryClientProvider>
   )
 }

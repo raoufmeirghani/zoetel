@@ -38,6 +38,7 @@ import { money, num, relativeTime } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { toast } from '@/components/ui/toast'
 import type { SipAuthMode, SipConnection, SipTransport } from '@/lib/types'
+import { useI18n } from '@/lib/i18n'
 
 const AUTH_MODES: { value: SipAuthMode; label: string; blurb: string; icon: React.ElementType }[] = [
   {
@@ -62,7 +63,19 @@ const AUTH_MODES: { value: SipAuthMode; label: string; blurb: string; icon: Reac
 
 const REGIONS = ['Cairo (eg-cai-1)', 'Alexandria (eg-alx-1)', 'Dubai (ae-dxb-1)', 'Frankfurt (eu-fra-1)']
 
+/**
+ * The raw status enum spelled as an English word, so it has a dictionary key.
+ * Rendering `c.status` directly worked in English by accident of naming.
+ */
+const STATUS_WORD: Record<string, string> = {
+  active: 'Active',
+  degraded: 'Degraded',
+  offline: 'Offline',
+  provisioning: 'Provisioning',
+}
+
 export default function SipPage() {
+  const { t } = useI18n()
   const navigate = useNavigate()
   const [params, setParams] = useSearchParams()
   const connections = useApp((s) => s.connections)
@@ -97,11 +110,11 @@ export default function SipPage() {
         <Hero
           mood="ledger"
           backdropImage={HERO_ART_SIP}
-          title="SIP connections"
-          lede="A SIP connection is the tunnel between your voice stack and the carrier network."
+          title={t('SIP connections')}
+          lede={t('A SIP connection is the tunnel between your voice stack and the carrier network.')}
           actions={
             <Button size="lg" variant="primary" icon={<Plus />} onClick={() => setCreateOpen(true)}>
-              Create your first connection
+              {t('Create your first connection')}
             </Button>
           }
         />
@@ -137,7 +150,7 @@ export default function SipPage() {
                 rel="noreferrer"
                 className="text-brand-ink hover:underline"
               >
-                Read the SIP guide
+                {t('Read the SIP guide')}
               </a>
             </p>
           </div>
@@ -158,11 +171,15 @@ export default function SipPage() {
       <Hero
         mood="ledger"
         backdropImage={HERO_ART_SIP}
-        title="SIP connections"
-        lede={`${usedChannels} of ${num(totalChannels)} channels in use across ${connections.length} ${connections.length === 1 ? 'connection' : 'connections'}.`}
+        title={t('SIP connections')}
+        lede={t('{used} of {total} channels in use across {n} connections.', {
+          used: usedChannels,
+          total: num(totalChannels),
+          n: connections.length,
+        })}
         actions={
           <Button variant="primary" icon={<Plus />} onClick={() => setCreateOpen(true)}>
-            New connection
+            {t('New connection')}
           </Button>
         }
       />
@@ -172,12 +189,16 @@ export default function SipPage() {
         {unhealthy.length > 0 && (
           <Alert
             tone="warning"
-            title={`${unhealthy.length} ${unhealthy.length === 1 ? 'connection needs' : 'connections need'} attention`}
+            title={
+              unhealthy.length === 1
+                ? t('One connection needs attention')
+                : t('{n} connections need attention', { n: unhealthy.length })
+            }
           >
             {unhealthy.map((c) => c.name).join(', ')} —{' '}
             {unhealthy[0].status === 'offline'
-              ? 'no SIP registration received recently.'
-              : 'packet loss above the 0.5% quality threshold.'}
+              ? t('no SIP registration received recently.')
+              : t('packet loss above the 0.5% quality threshold.')}
           </Alert>
         )}
 
@@ -186,29 +207,29 @@ export default function SipPage() {
           <div className="grid gap-y-7 sm:grid-cols-2 sm:divide-x sm:divide-line lg:grid-cols-4">
             <Figure
               icon={Gauge}
-              label="Channels in use"
+              label={t('Channels in use')}
               value={`${usedChannels} / ${num(totalChannels)}`}
-              meta={`${money(0.025, currency, { precise: true })} per channel/mo`}
+              meta={t('{rate} per channel/mo', { rate: money(0.025, currency, { precise: true }) })}
               first
             />
             <Figure
               icon={HeartPulse}
-              label="Healthy"
+              label={t('Healthy')}
               value={`${connections.length - unhealthy.length} / ${connections.length}`}
-              meta={unhealthy.length ? `${unhealthy.length} need attention` : 'All registered'}
+              meta={unhealthy.length ? t('{n} need attention', { n: unhealthy.length }) : t('All registered')}
               tone={unhealthy.length ? 'warning' : 'success'}
             />
             <Figure
               icon={Clock}
-              label="Minutes this month"
+              label={t('Minutes this month')}
               value={num(totalMinutes)}
-              meta="Across all trunks"
+              meta={t('Across all trunks')}
             />
             <Figure
               icon={AudioLines}
-              label="Best quality"
+              label={t('Best quality')}
               value={Math.max(...connections.map((c) => c.health.mos)).toFixed(2)}
-              meta="MOS, higher is better"
+              meta={t('MOS, higher is better')}
               tone="success"
             />
           </div>
@@ -216,13 +237,13 @@ export default function SipPage() {
 
         {/* ── The connections ──────────────────────────── */}
         <Section
-          eyebrow="Your trunks"
-          title="Connections"
+          eyebrow={t('Your trunks')}
+          title={t('Connections')}
           divided
           index={1}
           className={cn(
             'transition-[padding] duration-300 ease-out',
-            openConn && 'lg:pr-[calc(var(--panel-w)+2rem)]',
+            openConn && 'lg:pe-[calc(var(--panel-w)+2rem)]',
           )}
         >
           {/* Column labels once, rather than repeated on every row. */}
@@ -232,11 +253,11 @@ export default function SipPage() {
               openConn && 'lg:hidden',
             )}
           >
-            <span className="eyebrow flex-1">Connection</span>
-            <span className="eyebrow w-[5.5rem] shrink-0">Channels</span>
-            <span className="eyebrow w-10 shrink-0">MOS</span>
-            <span className="eyebrow w-12 shrink-0">ASR</span>
-            <span className="eyebrow w-16 shrink-0">Latency</span>
+            <span className="eyebrow flex-1">{t('Connection')}</span>
+            <span className="eyebrow w-[5.5rem] shrink-0">{t('Channels')}</span>
+            <span className="eyebrow w-10 shrink-0">{t('MOS')}</span>
+            <span className="eyebrow w-12 shrink-0">{t('ASR')}</span>
+            <span className="eyebrow w-16 shrink-0">{t('Latency')}</span>
             <span className="w-4 shrink-0" aria-hidden />
           </div>
           <ul className="divide-y divide-line-soft">
@@ -254,7 +275,7 @@ export default function SipPage() {
                     onClick={() => openPanel(c.id)}
                     aria-expanded={c.id === openId}
                     className={cn(
-                      'group -mx-3 flex w-[calc(100%+1.5rem)] flex-col gap-4 rounded-2xl px-3 py-5 text-left transition-colors lg:flex-row lg:items-center lg:gap-6',
+                      'group -mx-3 flex w-[calc(100%+1.5rem)] flex-col gap-4 rounded-2xl px-3 py-5 text-start transition-colors lg:flex-row lg:items-center lg:gap-6',
                       c.id === openId ? 'bg-veil-strong' : 'hover:bg-veil',
                     )}
                   >
@@ -288,17 +309,17 @@ export default function SipPage() {
                           }
                           pulse={c.status === 'provisioning'}
                         />
-                        <span className="text-xs capitalize text-ink-subtle">{c.status}</span>
+                        <span className="text-xs capitalize text-ink-subtle">{t(STATUS_WORD[c.status])}</span>
                         {c.srtp && (
                           <Badge tone="outline" size="sm">
                             <ShieldCheck />
-                            SRTP
+                            {t('SRTP')}
                           </Badge>
                         )}
                       </div>
                       <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-ink-subtle">
                         <span className="capitalize">
-                          {AUTH_MODES.find((a) => a.value === c.authMode)?.label}
+                          {t(AUTH_MODES.find((a) => a.value === c.authMode)?.label ?? '')}
                         </span>
                         <span className="text-ink-faint/60" aria-hidden>
                           ·
@@ -311,7 +332,7 @@ export default function SipPage() {
                         <span className="text-ink-faint/60" aria-hidden>
                           ·
                         </span>
-                        <span>created {relativeTime(c.createdAt)}</span>
+                        <span>{t('created {when}', { when: relativeTime(c.createdAt) })}</span>
                       </p>
                     </div>
 
@@ -368,7 +389,7 @@ export default function SipPage() {
         </Section>
 
         {/* ── Endpoints, as a quiet closing note ───────── */}
-        <Section eyebrow="Connect from anywhere" title="Edge endpoints" divided index={2}>
+        <Section eyebrow={t('Connect from anywhere')} title={t('Edge endpoints')} divided index={2}>
           <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
             <p className="max-w-lg text-base leading-relaxed text-ink-muted">
               Point your PBX at whichever edge is closest to your users. Both hostnames are anycast, resolve to
@@ -411,7 +432,7 @@ function Figure({
   first?: boolean
 }) {
   return (
-    <div className={cn('min-w-0 sm:px-6', first && 'sm:pl-0', 'lg:first:pl-0')}>
+    <div className={cn('min-w-0 sm:px-6', first && 'sm:ps-0', 'lg:first:ps-0')}>
       {/* The icon labels the metric alongside the eyebrow rather than sitting in
           a tinted chip — a plate per figure would out-shout the numbers. */}
       <div className="flex items-center gap-1.5">
@@ -447,6 +468,7 @@ function CreateConnectionDrawer({
   regions: string[]
   create: (c: Partial<SipConnection> & { name: string }) => SipConnection
 }) {
+  const { t } = useI18n()
   const [name, setName] = React.useState('')
   const [authMode, setAuthMode] = React.useState<SipAuthMode>('credential')
   const [transport, setTransport] = React.useState<SipTransport>('tls')
@@ -485,11 +507,11 @@ function CreateConnectionDrawer({
       region,
       channelLimit: channels,
       fqdn: authMode === 'fqdn' ? fqdn : undefined,
-      allowedIps: authMode === 'ip' ? [{ ip, port: 5060, label: 'Primary' }] : [],
+      allowedIps: authMode === 'ip' ? [{ ip, port: 5060, label: t('Primary') }] : [],
     })
     setSubmitting(false)
     onOpenChange(false)
-    toast.success('Connection created', { description: 'Provisioning takes a few seconds.' })
+    toast.success('Connection created', { description: t('Provisioning takes a few seconds.') })
     onCreated(conn)
   }
 
@@ -497,38 +519,38 @@ function CreateConnectionDrawer({
     <Drawer
       open={open}
       onOpenChange={onOpenChange}
-      title="New SIP connection"
-      description="Two decisions now; everything else has a sensible default you can change later."
+      title={t('New SIP connection')}
+      description={t('Two decisions now; everything else has a sensible default you can change later.')}
       footer={
         <>
           <Button variant="ghost" onClick={() => onOpenChange(false)}>
-            Cancel
+            {t('Cancel')}
           </Button>
           <Button variant="primary" disabled={!valid} loading={submitting} onClick={submit}>
-            Create connection
+            {t('Create connection')}
           </Button>
         </>
       }
     >
       <div className="space-y-7 pt-1">
-        <Field label="Name" required description="Shown in routing menus and logs.">
+        <Field label={t('Name')} required description={t('Shown in routing menus and logs.')}>
           <Input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="e.g. Production Edge"
+            placeholder={t('e.g. Production Edge')}
             autoFocus
             inputSize="lg"
           />
         </Field>
 
-        <Field label="How should we verify it's you?">
+        <Field label={t("How should we verify it's you?")}>
           <div className="space-y-2">
             {AUTH_MODES.map((m) => (
               <button
                 key={m.value}
                 onClick={() => setAuthMode(m.value)}
                 className={cn(
-                  'flex w-full items-start gap-3 rounded-2xl p-3.5 text-left transition-colors',
+                  'flex w-full items-start gap-3 rounded-2xl p-3.5 text-start transition-colors',
                   authMode === m.value
                     ? 'bg-brand-softer ring-1 ring-brand/40'
                     : 'bg-veil hover:bg-veil-strong',
@@ -543,7 +565,7 @@ function CreateConnectionDrawer({
                   <m.icon className="size-4" />
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="block text-base font-medium text-ink">{m.label}</span>
+                  <span className="block text-base font-medium text-ink">{t(m.label)}</span>
                   <span className="mt-0.5 block text-sm leading-relaxed text-ink-subtle">{m.blurb}</span>
                 </span>
                 {authMode === m.value && <Check className="size-4 shrink-0 text-brand" />}
@@ -553,15 +575,15 @@ function CreateConnectionDrawer({
         </Field>
 
         {authMode === 'fqdn' && (
-          <Field label="Hostname" required description="We resolve this every 60 seconds.">
-            <Input value={fqdn} onChange={(e) => setFqdn(e.target.value)} placeholder="pbx.yourcompany.com" />
+          <Field label={t('Hostname')} required description={t('We resolve this every 60 seconds.')}>
+            <Input value={fqdn} onChange={(e) => setFqdn(e.target.value)} placeholder={'pbx.yourcompany.com'} />
           </Field>
         )}
         {authMode === 'ip' && (
           <Field
-            label="Allowed IP address"
+            label={t('Allowed IP address')}
             required
-            description="Add more addresses after creating the connection."
+            description={t('Add more addresses after creating the connection.')}
           >
             <Input value={ip} onChange={(e) => setIp(e.target.value)} placeholder="41.33.87.12" />
           </Field>
@@ -571,7 +593,7 @@ function CreateConnectionDrawer({
 
         <button
           onClick={() => setAdvanced((v) => !v)}
-          className="flex w-full items-center justify-between text-left"
+          className="flex w-full items-center justify-between text-start"
           aria-expanded={advanced}
         >
           <span>
@@ -580,25 +602,25 @@ function CreateConnectionDrawer({
               TLS with SRTP, {channels} channels, {region.split(' ')[0]}. Sensible for most setups.
             </span>
           </span>
-          <span className="ml-4 shrink-0 text-sm font-medium text-brand-ink">
-            {advanced ? 'Hide' : 'Change'}
+          <span className="ms-4 shrink-0 text-sm font-medium text-brand-ink">
+            {advanced ? t('Hide') : t('Change')}
           </span>
         </button>
 
         {advanced && (
           <div className="space-y-6">
             <Field
-              label="Transport"
-              description="TLS is strongly recommended for anything carrying real traffic."
+              label={t('Transport')}
+              description={t('TLS is strongly recommended for anything carrying real traffic.')}
             >
               <ChipGroup
                 multiple={false}
                 value={[transport]}
                 onChange={(v) => v[0] && setTransport(v[0] as SipTransport)}
                 options={[
-                  { value: 'tls', label: 'TLS' },
-                  { value: 'tcp', label: 'TCP' },
-                  { value: 'udp', label: 'UDP' },
+                  { value: 'tls', label: t('TLS') },
+                  { value: 'tcp', label: t('TCP') },
+                  { value: 'udp', label: t('UDP') },
                 ]}
               />
             </Field>
@@ -609,10 +631,10 @@ function CreateConnectionDrawer({
                   Encrypts the audio itself, not just signalling. Adds under 1 ms.
                 </p>
               </div>
-              <Switch checked={srtp} onCheckedChange={setSrtp} aria-label="Encrypt media" />
+              <Switch checked={srtp} onCheckedChange={setSrtp} aria-label={t('Encrypt media')} />
             </div>
             <div className="grid gap-5 sm:grid-cols-2">
-              <Field label="Edge region">
+              <Field label={t('Edge region')}>
                 <Select value={region} onValueChange={setRegion}>
                   <SelectTrigger>
                     <SelectValue />
@@ -626,7 +648,7 @@ function CreateConnectionDrawer({
                   </SelectContent>
                 </Select>
               </Field>
-              <Field label="Channel limit" description="Maximum simultaneous calls.">
+              <Field label={t('Channel limit')} description={t('Maximum simultaneous calls.')}>
                 <NumberInput value={channels} onChange={setChannels} min={1} max={2000} step={10} suffix="ch" />
               </Field>
             </div>

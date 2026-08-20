@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { ArrowRight, CircleCheck } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { AttentionItem } from '@/lib/journey'
+import { useI18n } from '@/lib/i18n'
 
 const TONE = {
   critical: { dot: 'bg-danger', chip: 'bg-danger-soft text-danger', label: 'Blocking' },
@@ -23,6 +24,7 @@ export function AttentionList({
   className?: string
   limit?: number
 }) {
+  const { t } = useI18n()
   if (!items.length) {
     return (
       <div className={cn('flex items-center gap-3 py-2', className)}>
@@ -59,12 +61,12 @@ export function AttentionList({
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <span className={cn('size-1.5 shrink-0 rounded-full', tone.dot)} aria-hidden />
-                  <p className="truncate text-base font-medium text-ink">{item.title}</p>
+                  <p className="truncate text-base font-medium text-ink">{t(item.title)}</p>
                 </div>
-                <p className="mt-1 text-sm leading-relaxed text-ink-subtle">{item.detail}</p>
+                <p className="mt-1 text-sm leading-relaxed text-ink-subtle">{t(item.detail)}</p>
               </div>
               <span className="inline-flex shrink-0 items-center gap-1.5 text-sm font-medium text-ink-muted transition-colors group-hover:text-brand-ink">
-                {item.cta}
+                {t(item.cta)}
                 <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-0.5" />
               </span>
             </Link>
@@ -95,6 +97,7 @@ export function AttentionTiles({
   className?: string
   limit?: number
 }) {
+  const { t } = useI18n()
   if (!items.length) {
     return (
       <div className={cn('flex items-center gap-3 rounded-3xl bg-success-soft px-5 py-4', className)}>
@@ -137,11 +140,13 @@ export function AttentionTiles({
                   </span>
                 </div>
 
-                <p className={cn('mt-4 text-base font-medium', tone.title)}>{item.title}</p>
-                <p className={cn('mt-1.5 line-clamp-2 text-sm leading-relaxed', tone.detail)}>{item.detail}</p>
+                <p className={cn('mt-4 text-base font-medium', tone.title)}>{t(item.title)}</p>
+                <p className={cn('mt-1.5 line-clamp-2 text-sm leading-relaxed', tone.detail)}>
+                  {t(item.detail)}
+                </p>
 
                 <span className={cn('mt-5 inline-flex items-center gap-1.5 text-sm font-medium', tone.cta)}>
-                  {item.cta}
+                  {t(item.cta)}
                   <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-0.5" />
                 </span>
               </Link>
