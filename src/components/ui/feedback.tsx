@@ -46,9 +46,7 @@ export function Alert({
       <div className="min-w-0 flex-1">
         {title && <p className="text-base font-semibold leading-snug">{title}</p>}
         {children && (
-          // `bidi-auto` because an alert body is a free-text block that may hold
-          // an untranslated English sentence inside an Arabic layout.
-          <div className={cn('bidi-auto text-sm leading-relaxed opacity-90', title && 'mt-1')}>{children}</div>
+          <div className={cn('text-sm leading-relaxed opacity-90', title && 'mt-1')}>{children}</div>
         )}
         {action && <div className="mt-3 flex flex-wrap items-center gap-2">{action}</div>}
       </div>

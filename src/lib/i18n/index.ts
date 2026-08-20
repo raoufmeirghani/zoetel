@@ -19,6 +19,10 @@ export const LOCALES: Record<Locale, { label: string; native: string; dir: 'ltr'
  */
 export type Dictionary = Record<string, string>
 
+/** Left-to-right isolate, and the pop that closes it. */
+const LRI = '\u2066'
+const PDI = '\u2069'
+
 const DICTS: Record<Locale, Dictionary> = { en: {}, ar }
 
 /** Interpolates `{name}` placeholders so counts and names can sit inside copy. */
@@ -28,7 +32,14 @@ function interpolate(s: string, vars?: Record<string, string | number>): string 
 }
 
 export function translate(locale: Locale, key: string, vars?: Record<string, string | number>): string {
-  return interpolate(DICTS[locale][key] ?? key, vars)
+  const hit = DICTS[locale][key]
+  // A key with no entry falls back to English. In a right-to-left page that
+  // English needs isolating, or the bidi algorithm reorders its runs and
+  // "…right now. 7 things are waiting." comes out as ".things are waiting 7 …".
+  // Isolating in the string rather than with CSS keeps the element itself
+  // right-to-left, so the text still aligns with everything around it.
+  if (hit === undefined && LOCALES[locale].dir === 'rtl') return LRI + interpolate(key, vars) + PDI
+  return interpolate(hit ?? key, vars)
 }
 
 /**

@@ -22,6 +22,27 @@ function ltr(s: string) {
 }
 
 /**
+ * Wraps foreign text so it reads correctly inside a right-to-left page while
+ * the block it sits in still aligns with the layout.
+ *
+ * This is the string-level equivalent of `direction: ltr`, and it has to be
+ * done in the string rather than in CSS: `direction: ltr` on the element would
+ * also flip `text-align: start` to the left, tearing the text away from the
+ * Arabic label above it. An isolate inside the content leaves the element
+ * right-to-left — so alignment follows the page — while the run inside it lays
+ * out left-to-right with its punctuation intact.
+ *
+ * Use it for text the product renders but does not own: sample message bodies,
+ * customer-supplied labels, log lines.
+ */
+export function isolateForeign(s: string | undefined | null): string {
+  if (!s) return ''
+  // A no-op in a left-to-right layout: there is nothing to isolate the text
+  // from, and the English UI should not carry the marks at all.
+  return rtl ? ltr(s) : s
+}
+
+/**
  * The locale these formatters render in.
  *
  * Dates and relative times have to be localised — an English "15 hours ago"
@@ -35,9 +56,11 @@ function ltr(s: string) {
  * date in Arabic-Indic numerals beside a balance in Western ones reads as a bug.
  */
 let intlLocale = 'en-US'
+let rtl = false
 
 export function setFormatLocale(locale: 'en' | 'ar') {
   intlLocale = locale === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US'
+  rtl = locale === 'ar'
 }
 
 const RATES: Record<Currency, number> = { USD: 1, EGP: 48.6, EUR: 0.92, AED: 3.67, GBP: 0.79 }

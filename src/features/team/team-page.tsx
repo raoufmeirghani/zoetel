@@ -41,7 +41,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/toggle'
 import { SearchInput } from '@/components/ui/inputs-special'
 import { useApp } from '@/store/app'
-import { relativeTime } from '@/lib/format'
+import { isolateForeign, relativeTime } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { toast } from '@/components/ui/toast'
 import type { Member, Role } from '@/lib/types'
@@ -193,12 +193,14 @@ export default function TeamPage() {
           </span>
           <div className="min-w-0 flex-1">
             <p className="text-base font-medium text-warning-ink">
-              {withoutTwoFactor.length} teammate{withoutTwoFactor.length === 1 ? '' : 's'} can sign in with a
-              password alone
+              {withoutTwoFactor.length === 1
+                ? t('One teammate can sign in with a password alone')
+                : t('{n} teammates can sign in with a password alone', { n: withoutTwoFactor.length })}
             </p>
             <p className="mt-1 text-sm leading-relaxed text-warning-ink/85">
-              {withoutTwoFactor.map((m) => m.name).join(', ')} — one leaked password is all it takes to place
-              calls on your wallet.
+              {t('{names} — one leaked password is all it takes to place calls on your wallet.', {
+                names: withoutTwoFactor.map((m) => m.name).join(', '),
+              })}
             </p>
           </div>
           <Button
@@ -592,9 +594,9 @@ export default function TeamPage() {
                 )}
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-base text-ink">
-                    <span className="font-medium">{e.actor}</span> — {e.action}
+                    <span className="font-medium">{e.actor}</span> — {isolateForeign(e.action)}
                   </p>
-                  <p className="mt-0.5 truncate text-xs text-ink-subtle">{e.target}</p>
+                  <p className="mt-0.5 truncate text-xs text-ink-subtle">{isolateForeign(e.target)}</p>
                 </div>
                 <Badge
                   tone={CATEGORY_TONE[e.category]}

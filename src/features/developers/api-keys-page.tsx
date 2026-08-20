@@ -315,10 +315,10 @@ await zoetel.calls.answer(call.id)`}
                 </p>
                 <dl className="divide-y divide-line-soft">
                   {[
-                    { label: t('REST requests'), value: '1,000 / min' },
-                    { label: t('Call creation'), value: '100 / sec' },
+                    { label: t('REST requests'), value: t('{n} / min', { n: '1,000' }) },
+                    { label: t('Call creation'), value: t('{n} / sec', { n: 100 }) },
                     { label: t('Concurrent streams'), value: '500' },
-                    { label: t('Webhook retries'), value: '5 over 1 hour' },
+                    { label: t('Webhook retries'), value: t('{n} over 1 hour', { n: 5 }) },
                   ].map((l) => (
                     <div key={l.label} className="flex items-baseline justify-between gap-4 py-2.5">
                       <dt className="text-base text-ink-muted">{t(l.label)}</dt>

@@ -37,7 +37,7 @@ import { TopUpDialog } from './top-up-dialog'
 import { Menu, MenuContent, MenuItem, MenuSeparator, MenuTrigger } from '@/components/ui/menu'
 import { useApp } from '@/store/app'
 import { monthToDate, usageSeries } from '@/lib/data/seed'
-import { dateShort, money, relativeTime } from '@/lib/format'
+import { isolateForeign, dateShort, money, relativeTime } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { toast } from '@/components/ui/toast'
 import type { Invoice, Transaction } from '@/lib/types'
@@ -246,10 +246,22 @@ export default function BillingPage() {
                 <p className="eyebrow mb-4">Top cost drivers</p>
                 <ul className="space-y-4">
                   {[
-                    { label: t('Egypt — mobile'), value: monthSpend * 0.44, sub: '18,420 min' },
-                    { label: t('Egypt — landline'), value: monthSpend * 0.24, sub: '9,120 min' },
-                    { label: t('UAE — mobile'), value: monthSpend * 0.18, sub: '1,240 min' },
-                    { label: t('Saudi Arabia — mobile'), value: monthSpend * 0.14, sub: '880 min' },
+                    {
+                      label: t('Egypt — mobile'),
+                      value: monthSpend * 0.44,
+                      sub: t('{n} min', { n: '18,420' }),
+                    },
+                    {
+                      label: t('Egypt — landline'),
+                      value: monthSpend * 0.24,
+                      sub: t('{n} min', { n: '9,120' }),
+                    },
+                    { label: t('UAE — mobile'), value: monthSpend * 0.18, sub: t('{n} min', { n: '1,240' }) },
+                    {
+                      label: t('Saudi Arabia — mobile'),
+                      value: monthSpend * 0.14,
+                      sub: t('{n} min', { n: '880' }),
+                    },
                   ].map((d, i) => (
                     <li key={d.label}>
                       <div className="mb-1.5 flex items-baseline justify-between gap-3 text-sm">
@@ -348,7 +360,7 @@ export default function BillingPage() {
                     )}
                   </span>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-base text-ink">{t.description}</p>
+                    <p className="truncate text-base text-ink">{isolateForeign(t.description)}</p>
                     <p className="mt-0.5 truncate text-xs text-ink-subtle">
                       {KIND_LABEL[t.kind]}
                       {t.method ? ` · ${t.method}` : ''} · {relativeTime(t.createdAt)}

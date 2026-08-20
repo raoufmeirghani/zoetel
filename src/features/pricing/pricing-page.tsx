@@ -495,7 +495,9 @@ export default function PricingPage() {
             <p className="mt-1.5 text-2xs text-ink-faint">
               {discount === 24
                 ? 'Maximum standard discount reached'
-                : `${num(TIERS.find((t) => t.discount > discount)?.from ?? 0)} min unlocks the next tier`}
+                : t('{n} min unlocks the next tier', {
+                    n: num(TIERS.find((tier) => tier.discount > discount)?.from ?? 0),
+                  })}
             </p>
           </div>
         </div>

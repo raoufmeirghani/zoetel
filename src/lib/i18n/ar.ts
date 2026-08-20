@@ -1231,4 +1231,16 @@ export const ar: Dictionary = {
   // ── Accessibility labels with a name ────────────────────────────────────
   'Actions for {name}': 'إجراءات {name}',
   'Remove {name}': 'إزالة {name}',
+  '{n} SMS-enabled numbers': '{n} أرقام مفعّلة للرسائل',
+  Outbound: 'صادرة',
+  Inbound: 'واردة',
+  'One teammate can sign in with a password alone': 'عضو واحد يستطيع الدخول بكلمة مرور وحدها',
+  '{n} teammates can sign in with a password alone': '{n} أعضاء يستطيعون الدخول بكلمة مرور وحدها',
+  '{names} — one leaked password is all it takes to place calls on your wallet.':
+    '{names} — كلمة مرور واحدة مسرّبة تكفي لإجراء مكالمات على حساب محفظتك.',
+  '{n}% of traffic': '{n}٪ من المرور',
+  '{n} / min': '{n} / دقيقة',
+  '{n} / sec': '{n} / ثانية',
+  '{n} over 1 hour': '{n} خلال ساعة',
+  '{n} min unlocks the next tier': '{n} دقيقة تفتح الشريحة التالية',
 }

@@ -17,7 +17,16 @@ import { Progress } from '@/components/ui/progress'
 import { Tooltip } from '@/components/ui/tooltip'
 import { useApp } from '@/store/app'
 import { seedConcurrency, usageSeries } from '@/lib/data/seed'
-import { compactNum, duration, formatE164, money, num, relativeTime, timeOnly } from '@/lib/format'
+import {
+  compactNum,
+  duration,
+  formatE164,
+  isolateForeign,
+  money,
+  num,
+  relativeTime,
+  timeOnly,
+} from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { toast } from '@/components/ui/toast'
 import { useI18n } from '@/lib/i18n'
@@ -262,11 +271,11 @@ export default function AnalyticsPage() {
                 title="Destinations"
                 tone="success"
                 items={[
-                  { label: t('Egypt — mobile'), value: 18420, sub: '62% of traffic' },
-                  { label: t('Egypt — landline'), value: 9120, sub: '24% of traffic' },
-                  { label: t('UAE — mobile'), value: 1240, sub: '8% of traffic' },
-                  { label: t('Saudi Arabia — mobile'), value: 880, sub: '4% of traffic' },
-                  { label: t('United Kingdom'), value: 420, sub: '2% of traffic' },
+                  { label: t('Egypt — mobile'), value: 18420, sub: t('{n}% of traffic', { n: 62 }) },
+                  { label: t('Egypt — landline'), value: 9120, sub: t('{n}% of traffic', { n: 24 }) },
+                  { label: t('UAE — mobile'), value: 1240, sub: t('{n}% of traffic', { n: 8 }) },
+                  { label: t('Saudi Arabia — mobile'), value: 880, sub: t('{n}% of traffic', { n: 4 }) },
+                  { label: t('United Kingdom'), value: 420, sub: t('{n}% of traffic', { n: 2 }) },
                 ]}
               />
             </div>
@@ -374,7 +383,9 @@ export default function AnalyticsPage() {
           eyebrow={t('SMS and MMS')}
           title={t('Message log')}
           action={
-            <Badge tone="outline">{numbers.filter((n) => n.smsEnabled).length} SMS-enabled numbers</Badge>
+            <Badge tone="outline">
+              {t('{n} SMS-enabled numbers', { n: numbers.filter((n) => n.smsEnabled).length })}
+            </Badge>
           }
         >
           {messages.length === 0 ? (
@@ -404,10 +415,12 @@ export default function AnalyticsPage() {
                     <p className="truncate font-mono text-sm tabular-nums text-ink">
                       {formatE164(m.direction === 'outbound' ? m.to : m.from)}
                     </p>
-                    <p className="truncate text-xs text-ink-subtle">{m.body}</p>
+                    {/* Sample message bodies are data, not copy — isolated so they
+                        read correctly while the row still aligns with the page. */}
+                    <p className="truncate text-xs text-ink-subtle">{isolateForeign(m.body)}</p>
                   </div>
                   <Badge tone="outline" size="sm" className="hidden capitalize sm:inline-flex">
-                    {m.direction}
+                    {t(m.direction === 'outbound' ? 'Outbound' : 'Inbound')}
                   </Badge>
                   {m.status !== 'delivered' && <StatusBadge status={m.status} size="sm" />}
                   <span className="hidden w-10 shrink-0 text-end text-sm tabular-nums text-ink md:block">

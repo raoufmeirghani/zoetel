@@ -10,7 +10,7 @@ import { useApp, selConcurrentCalls } from '@/store/app'
 import { useJourney, type AttentionItem, type Stage } from '@/lib/journey'
 import { openZoie, useZoieContext } from '@/lib/zoie'
 import { seedConcurrency, usageSeries } from '@/lib/data/seed'
-import { money, num, relativeTime } from '@/lib/format'
+import { isolateForeign, money, num, relativeTime } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { useI18n } from '@/lib/i18n'
 
@@ -213,8 +213,8 @@ export default function DashboardPage() {
                     />
                     <p className="min-w-0 flex-1 text-sm leading-relaxed">
                       <span className="font-medium text-ink">{a.actor}</span>{' '}
-                      <span className="text-ink-muted">{a.action}</span>
-                      {a.detail && <span className="text-ink-faint"> · {a.detail}</span>}
+                      <span className="text-ink-muted">{isolateForeign(a.action)}</span>
+                      {a.detail && <span className="text-ink-faint"> · {isolateForeign(a.detail)}</span>}
                     </p>
                     <span className="shrink-0 text-xs tabular-nums text-ink-faint">{relativeTime(a.at)}</span>
                   </li>

@@ -17,7 +17,7 @@ import { useApp, selUnreadCount } from '@/store/app'
 import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { EmptyState } from '@/components/ui/feedback'
-import { relativeTime } from '@/lib/format'
+import { isolateForeign, relativeTime } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import type { NotificationItem } from '@/lib/types'
 import { useI18n } from '@/lib/i18n'
@@ -53,11 +53,11 @@ function Row({ n, onRead }: { n: NotificationItem; onRead: (id: string) => void 
               n.read ? 'font-medium text-ink-muted' : 'font-semibold text-ink',
             )}
           >
-            {n.title}
+            {isolateForeign(n.title)}
           </span>
           {!n.read && <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-brand" />}
         </span>
-        <span className="mt-0.5 block text-sm leading-relaxed text-ink-subtle">{n.body}</span>
+        <span className="mt-0.5 block text-sm leading-relaxed text-ink-subtle">{isolateForeign(n.body)}</span>
         <span className="mt-1 block text-2xs tabular-nums text-ink-faint">{relativeTime(n.at)}</span>
       </span>
     </>

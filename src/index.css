@@ -579,38 +579,18 @@
 /* Mixed-language text.
 
    Arabic covers the chrome, every page header, the actions, tabs and statuses;
-   deeper body copy is still English and is filled in over time. An English
-   sentence dropped into a right-to-left paragraph is not merely left-aligned
-   wrongly — the bidi algorithm reorders its runs, so "…right now. 7 things are
-   waiting." comes out as ".things are waiting 7 …right now".
+   deeper prose and sample data are still English. Both are handled in the
+   string rather than here: `translate()` wraps an untranslated fallback in bidi
+   isolates, and `isolateForeign()` in lib/format does the same for text the
+   product renders but does not own.
 
-   `unicode-bidi: plaintext` resolves each block's direction from its own first
-   strong character instead of inheriting the page's, so an English paragraph
-   reads left-to-right with its punctuation intact while an Arabic one beside it
-   stays right-to-left. Scoped to text-bearing blocks — applying it to every
-   inline span would break genuinely mixed runs like "٥ من 10 SIP trunks". */
-[dir='rtl']
-  :is(p, h1, h2, h3, h4, h5, h6, li, dt, dd, figcaption, blockquote, th, td, label):not(
-    .tabular-nums,
-    .tnum,
-    .display
-  ) {
-  unicode-bidi: plaintext;
-}
-
-/* A figure is not prose, and must not opt into the rule above.
-   `plaintext` resolves a line's direction from its first strong character —
-   for a number-only line that is the isolate the formatters added, so the line
-   resolves left-to-right and `text-align: start` then pulls the figure to the
-   left edge, away from the label sitting right-aligned above it. Figures are
-   excluded instead: the isolate inside the string already fixes their glyph
-   order, so alignment is free to follow the page. */
-
-/* For free-text blocks that aren't one of those elements — an alert body, a
-   toast description — opted into explicitly. */
-[dir='rtl'] .bidi-auto {
-  unicode-bidi: plaintext;
-}
+   That placement is the whole point. `unicode-bidi: plaintext` also resolves
+   each block's direction correctly, but it resolves `text-align: start` along
+   with it — so an English line, and any line holding only a number, aligned
+   left while the Arabic label above it stayed right. An isolate inside the
+   content leaves the element right-to-left, so alignment follows the page,
+   and the run inside it still reads left-to-right with its punctuation
+   intact. */
 
 /* Physical gradients and masks — the only things `dir` can't flip for us. */
 [dir='rtl'] .mask-fade-r {

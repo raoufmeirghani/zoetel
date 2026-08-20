@@ -2,6 +2,7 @@ import * as React from 'react'
 import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { relativeTime } from '@/lib/format'
+import { Foreign } from './foreign'
 import { useDirSign } from '@/lib/i18n'
 
 export interface TimelineEntry {
@@ -56,12 +57,18 @@ export function Timeline({
           </span>
           <div className="min-w-0 flex-1 pt-1">
             <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
-              <p className="text-base text-ink">{e.title}</p>
+              <p className="text-base text-ink">
+                <Foreign>{e.title}</Foreign>
+              </p>
               <time className="shrink-0 text-xs tabular-nums text-ink-faint" dateTime={e.at}>
                 {relativeTime(e.at)}
               </time>
             </div>
-            {e.detail && <p className="mt-0.5 text-sm leading-relaxed text-ink-subtle">{e.detail}</p>}
+            {e.detail && (
+              <p className="mt-0.5 text-sm leading-relaxed text-ink-subtle">
+                <Foreign>{e.detail}</Foreign>
+              </p>
+            )}
             {e.meta}
           </div>
         </motion.li>
