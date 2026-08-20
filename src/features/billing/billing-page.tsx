@@ -122,11 +122,32 @@ export default function BillingPage() {
           </Button>
         }
       >
+        {openInvoice && (
+          <div className="mb-6 flex flex-col gap-4 rounded-3xl bg-info-soft p-5 sm:flex-row sm:items-center">
+            <span className="grid size-10 shrink-0 place-items-center rounded-2xl bg-white/60 text-info dark:bg-white/10">
+              <Receipt className="size-[18px]" />
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="text-base font-medium text-info-ink">
+                {t('Invoice {number} is open', { number: openInvoice.number })}
+              </p>
+              <p className="mt-1 text-sm leading-relaxed text-info-ink/85">
+                {t('{amount} accrued so far. It settles automatically from your wallet on {date}.', {
+                  amount: money(openInvoice.amount, currency),
+                  date: dateShort(openInvoice.dueAt),
+                })}
+              </p>
+            </div>
+            <Button size="sm" variant="secondary" onClick={() => setInvoice(openInvoice)} className="shrink-0">
+              {t('View invoice')}
+            </Button>
+          </div>
+        )}
+
         <ChipTabs
           value={tab}
           onValueChange={setTab}
           layoutId="billing-tabs"
-          className="pb-1"
           items={[
             { value: 'overview', label: t('Overview') },
             { value: 'transactions', label: t('Transactions'), count: transactions.length },
@@ -135,24 +156,6 @@ export default function BillingPage() {
           ]}
         />
       </Hero>
-
-      {openInvoice && tab === 'overview' && (
-        <div className="mb-10 flex flex-col gap-4 rounded-3xl bg-info-soft p-5 sm:flex-row sm:items-center">
-          <span className="grid size-10 shrink-0 place-items-center rounded-2xl bg-white/60 text-info dark:bg-white/10">
-            <Receipt className="size-[18px]" />
-          </span>
-          <div className="min-w-0 flex-1">
-            <p className="text-base font-medium text-info-ink">Invoice {openInvoice.number} is open</p>
-            <p className="mt-1 text-sm leading-relaxed text-info-ink/85">
-              {money(openInvoice.amount, currency)} accrued so far. It settles automatically from your wallet on{' '}
-              {dateShort(openInvoice.dueAt)}.
-            </p>
-          </div>
-          <Button size="sm" variant="secondary" onClick={() => setInvoice(openInvoice)} className="shrink-0">
-            {t('View invoice')}
-          </Button>
-        </div>
-      )}
 
       {/* ── Overview ───────────────────────────────────── */}
       {tab === 'overview' && (

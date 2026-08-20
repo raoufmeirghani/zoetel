@@ -13,7 +13,7 @@ const LINKS = [
 export function DevNav() {
   const { t } = useI18n()
   return (
-    <nav className="no-scrollbar -mx-1 flex items-center gap-0.5 overflow-x-auto px-1 pb-1">
+    <nav className="no-scrollbar -mx-1 flex items-center gap-0.5 overflow-x-auto px-1 py-1">
       {LINKS.map((l) => (
         <NavLink
           key={l.to}

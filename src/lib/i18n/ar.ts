@@ -1200,4 +1200,7 @@ export const ar: Dictionary = {
   'Every range including toll-free': 'كل النطاقات، بما فيها المجانية',
   'Higher channel limits': 'حدود قنوات أعلى',
   'Volume pricing available': 'أسعار الحجم متاحة',
+  'Invoice {number} is open': 'الفاتورة {number} مفتوحة',
+  '{amount} accrued so far. It settles automatically from your wallet on {date}.':
+    'تراكم حتى الآن {amount}. وتُسدَّد تلقائيًا من محفظتك في {date}.',
 }

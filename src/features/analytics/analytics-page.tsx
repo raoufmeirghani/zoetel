@@ -132,7 +132,6 @@ export default function AnalyticsPage() {
           value={tab}
           onValueChange={setTab}
           layoutId="usage-tabs"
-          className="pb-1"
           items={[
             { value: 'overview', label: t('Overview') },
             { value: 'calls', label: t('Calls'), count: calls.length },

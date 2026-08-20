@@ -139,7 +139,6 @@ export default function TeamPage() {
           value={tab}
           onValueChange={setTab}
           layoutId="team-tabs"
-          className="pb-1"
           items={[
             { value: 'members', label: t('Members'), count: members.length },
             { value: 'roles', label: t('Roles') },

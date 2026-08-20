@@ -180,7 +180,11 @@ export function Hero({
         )}
       </div>
 
-      {children}
+      {/* The children slot carries the band that closes a header — a tab row, a
+          search field, a progress trail. It needs to breathe before the page's
+          first card, and less room above than the title block has, so the band
+          still groups with the header rather than floating between the two. */}
+      {children && <div className="pb-7">{children}</div>}
     </header>
   )
 }

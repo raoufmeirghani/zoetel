@@ -204,7 +204,6 @@ export default function SettingsPage() {
           value={tab}
           onValueChange={setTab}
           layoutId="settings-tabs"
-          className="pb-1"
           items={[
             { value: 'workspace', label: t('Workspace'), icon: <Building2 /> },
             { value: 'profile', label: t('Profile'), icon: <User /> },
