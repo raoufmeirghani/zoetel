@@ -340,7 +340,7 @@ export const ar: Dictionary = {
   'Rates and volume discounts': 'الأسعار وخصومات الكميات',
   'Create and rotate credentials': 'إنشاء المفاتيح وتغييرها',
   'Event delivery endpoints': 'نقاط استلام الأحداث',
-  'Every API call, searchable': 'كل طلب API، وتقدر تبحث فيه',
+  'Every API call, searchable': 'كل طلب API، ويمكنك البحث فيه',
   'Identity and business KYC': 'التحقق من الهوية والشركة',
   'Members, roles and audit log': 'الأعضاء والأدوار وسجل النشاط',
   'Workspace preferences': 'تفضيلات مساحة العمل',
@@ -1392,4 +1392,71 @@ export const ar: Dictionary = {
   'One thing left: give your workspace a phone number. Local Cairo lines activate the moment you check out.':
     'بقيت خطوة واحدة: اختر رقم هاتف لمساحة عملك. خطوط القاهرة المحلية تعمل بمجرد الشراء.',
   'SIP trunk': 'وصلة SIP',
+
+  // ── Pricing page ────────────────────────────────────────────────────────
+  'Egypt — toll-free inbound': 'مصر — مجاني وارد',
+  'UAE — landline': 'الإمارات — أرضي',
+  'United Kingdom — landline': 'المملكة المتحدة — أرضي',
+  'United Kingdom — mobile': 'المملكة المتحدة — موبايل',
+  'United States — any': 'الولايات المتحدة — أي رقم',
+  'Germany — landline': 'ألمانيا — أرضي',
+  'Tier 1': 'الشريحة 1',
+  'Tier 2': 'الشريحة 2',
+  'Tier 3': 'الشريحة 3',
+  'Tier 4': 'الشريحة 4',
+  'Perfect for startups and first integrations': 'مناسبة للبدايات وأول تكامل',
+  'Top up your wallet, pay only for what you use': 'اشحن رصيدك، وادفع على ما تستخدمه فقط',
+  'Per-second voice billing': 'حساب المكالمات بالثانية',
+  'All API and SIP features included': 'كل خصائص API و SIP مشمولة',
+  'Unlimited API keys and webhooks': 'مفاتيح API و webhooks بلا حد',
+  'Community and email support': 'دعم بالبريد ومن المجتمع',
+  'Cancel or pause any time': 'ألغِ أو أوقف في أي وقت',
+  'For teams with predictable monthly traffic': 'للفرق التي استخدامها الشهري ثابت',
+  'Committed monthly minutes at discounted rates': 'دقائق شهرية متعاقد عليها بسعر مخفض',
+  'Automatic tier discounts up to 24%': 'خصومات تلقائية تصل إلى 24%',
+  'Custom SLA with quality guarantees': 'اتفاقية خدمة مخصصة بضمانات جودة',
+  'Monthly invoicing with net-30 terms': 'فواتير شهرية بسداد 30 يومًا',
+  'SSO, audit exports and role policies': 'دخول موحد وتصدير سجل النشاط وسياسات الأدوار',
+  'Staying on pay as you go': 'أكملت بالدفع حسب الاستخدام',
+  'A specialist will reach out today': 'سيتواصل معك متخصص اليوم',
+  "We'll model your traffic and send a rate card.": 'سنحلل استخدامك ونرسل لك قائمة الأسعار.',
+  'Your current plan': 'خطتك الحالية',
+  'Move the slider to your real monthly volume — the tier applies on its own.':
+    'حرّك المؤشر إلى حجم استخدامك الشهري الحقيقي — والشريحة تنطبق وحدها.',
+  'Saved vs list': 'الوفر مقابل السعر المعلن',
+  'Maximum standard discount reached': 'وصلت إلى أقصى خصم متاح',
+  'Tier {n} rates in {currency}': 'أسعار الشريحة {n} بـ {currency}',
+  'List rates in {currency}': 'الأسعار المعلنة بـ {currency}',
+  'Rates exclude 14% Egyptian VAT and are billed per second with a one-second minimum. Toll-free inbound is billed to you rather than the caller. Full rate cards for all 190+ destinations are available on request.':
+    'الأسعار بدون ضريبة القيمة المضافة المصرية 14٪، والحساب بالثانية بحد أدنى ثانية واحدة. المكالمات المجانية الواردة تُحسب عليك لا على المتصل. وقوائم الأسعار الكاملة لأكثر من 190 وجهة متاحة عند الطلب.',
+  'API, SIP, webhooks and the dashboard are included on every plan.':
+    'API و SIP و webhooks ولوحة التحكم مشمولة في كل الخطط.',
+  'A 12-second call costs 12 seconds — no 60-second rounding.':
+    'مكالمة 12 ثانية تحسب 12 ثانية — بلا تقريب لدقيقة كاملة.',
+  'KYC review, emergency registration and CNAM at no extra cost.':
+    'مراجعة التحقق وتسجيل الطوارئ و CNAM بلا تكلفة إضافية.',
+  'Support is staffed by voice engineers, not a ticket queue.': 'الدعم مهندسو صوت، لا طابور تذاكر.',
+  'Request received': 'وصلنا طلبك',
+  'Can I move between plans?': 'أقدر أنتقل بين الخطط؟',
+  "Yes, in both directions. Moving to volume pricing takes effect at the start of the next billing period so your current month isn't re-rated. Moving back to pay as you go happens at the end of your commitment term.":
+    'نعم، في الاتجاهين. الانتقال إلى أسعار الكميات يبدأ مع دورة الفواتير التالية، فلا نعيد حساب شهرك الحالي. والرجوع إلى الدفع حسب الاستخدام يكون في نهاية مدة التعاقد.',
+  'What happens to unused committed minutes?': 'والدقائق المتعاقد عليها ولم أستخدمها؟',
+  "They don't roll over, which is why we size commitments from your actual traffic rather than your ambitions. If you consistently overshoot, we move you up a tier automatically — you never pay list rates for volume you've already earned a discount on.":
+    'لا تنتقل للشهر التالي، ولهذا نحدد التعاقد على أساس استخدامك الفعلي لا على أساس طموحك. وإذا تجاوزت الحد باستمرار ننقلك إلى شريحة أعلى تلقائيًا — فلا تدفع السعر المعلن على حجم استحققت عليه خصمًا.',
+  'Are number fees discounted too?': 'وهل تنخفض أسعار الأرقام كذلك؟',
+  'Number rental is discounted at tier 3 and above. Setup fees are waived on all volume plans.':
+    'إيجار الأرقام مخفض من الشريحة 3 وما فوقها. ورسوم التأسيس ملغاة في كل خطط الكميات.',
+  'Can I be billed in EGP?': 'أقدر أدفع بالجنيه المصري؟',
+  'Yes. Workspaces set to EGP are invoiced in EGP at the mid-market rate on the invoice date, and local bank transfer avoids card processing fees entirely.':
+    'نعم. مساحات العمل بالجنيه المصري تُفتر بالجنيه بسعر السوق يوم الفاتورة، والتحويل البنكي المحلي يوفر رسوم البطاقات بالكامل.',
+  "Every plan includes the full platform. We don't gate SIP, webhooks, recordings or the API behind a higher tier — the only thing that changes with volume is the per-minute rate.":
+    'كل خطة تشمل المنصة كاملة. لا نحجب SIP أو webhooks أو التسجيل أو API خلف شريحة أعلى — الشيء الوحيد الذي يتغير مع الحجم هو سعر الدقيقة.',
+  'Most popular above {n} min': 'الأكثر اختيارًا فوق {n} دقيقة',
+  List: 'المعلن',
+  'Estimated monthly voice spend': 'الإنفاق الشهري المتوقع على المكالمات',
+  '{rate} effective per minute': '{rate} فعليًا للدقيقة',
+  'Tier discount': 'خصم الشريحة',
+  'Running voice at national scale?': 'مكالمات على مستوى الدولة؟',
+  'Enterprise agreements add dedicated interconnects, private carrier routes, custom SLAs with financial remedies, on-premise SBC peering and a named engineering contact. Typical onboarding is two weeks.':
+    'اتفاقيات المؤسسات تضيف روابط اتصال مخصصة، ومسارات مشغل خاصة، واتفاقيات خدمة بتعويضات مالية، وربط SBC داخل مقرك، ومهندس تواصل مخصص لك. والتجهيز يستغرق أسبوعين عادة.',
 }

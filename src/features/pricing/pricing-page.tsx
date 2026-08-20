@@ -145,6 +145,7 @@ export default function PricingPage() {
   const filtered = RATES.filter(
     (r) =>
       !q ||
+      t(r.destination).toLowerCase().includes(q.toLowerCase()) ||
       r.destination.toLowerCase().includes(q.toLowerCase()) ||
       r.country.toLowerCase() === q.toLowerCase(),
   )
@@ -158,7 +159,7 @@ export default function PricingPage() {
       cell: (r) => (
         <div className="flex items-center gap-2.5">
           <CountryFlag code={r.country} />
-          <span className="truncate font-medium text-ink">{r.destination}</span>
+          <span className="truncate font-medium text-ink">{t(r.destination)}</span>
         </div>
       ),
     },
@@ -252,34 +253,34 @@ export default function PricingPage() {
           {
             kind: 'payg' as const,
             icon: Rocket,
-            name: 'Pay as you go',
-            tagline: 'Perfect for startups and first integrations',
-            price: 'No commitment',
-            priceSub: 'Top up your wallet, pay only for what you use',
+            name: t('Pay as you go'),
+            tagline: t('Perfect for startups and first integrations'),
+            price: t('No commitment'),
+            priceSub: t('Top up your wallet, pay only for what you use'),
             features: [
-              'Numbers from ' + money(1.1, currency) + '/month',
-              'Per-second voice billing',
-              'All API and SIP features included',
-              'Unlimited API keys and webhooks',
-              'Community and email support',
-              'Cancel or pause any time',
+              t('Numbers from {price}/month', { price: money(1.1, currency) }),
+              t('Per-second voice billing'),
+              t('All API and SIP features included'),
+              t('Unlimited API keys and webhooks'),
+              t('Community and email support'),
+              t('Cancel or pause any time'),
             ],
             cta: t('Stay on pay as you go'),
           },
           {
             kind: 'volume' as const,
             icon: TrendingDown,
-            name: 'Volume pricing',
-            tagline: 'For teams with predictable monthly traffic',
-            price: 'Up to 24% lower',
-            priceSub: 'Committed monthly minutes at discounted rates',
+            name: t('Volume pricing'),
+            tagline: t('For teams with predictable monthly traffic'),
+            price: t('Up to 24% lower'),
+            priceSub: t('Committed monthly minutes at discounted rates'),
             features: [
-              'Automatic tier discounts up to 24%',
-              'Dedicated carrier routes and priority capacity',
-              'Named technical account manager',
-              'Custom SLA with quality guarantees',
-              'Monthly invoicing with net-30 terms',
-              'SSO, audit exports and role policies',
+              t('Automatic tier discounts up to 24%'),
+              t('Dedicated carrier routes and priority capacity'),
+              t('Named technical account manager'),
+              t('Custom SLA with quality guarantees'),
+              t('Monthly invoicing with net-30 terms'),
+              t('SSO, audit exports and role policies'),
             ],
             cta: t('Talk to sales'),
           },
@@ -313,7 +314,7 @@ export default function PricingPage() {
                       active ? 'bg-white/12 text-white/80' : 'bg-brand-soft text-brand-ink',
                     )}
                   >
-                    Most popular above 25k min
+                    {t('Most popular above {n} min', { n: '25k' })}
                   </span>
                 )}
                 <span
@@ -392,10 +393,10 @@ export default function PricingPage() {
                     e.stopPropagation()
                     if (p.kind === 'payg') {
                       setPlan('payg')
-                      toast.success('Staying on pay as you go')
+                      toast.success(t('Staying on pay as you go'))
                     } else {
-                      toast.success('A specialist will reach out today', {
-                        description: "We'll model your traffic and send a rate card.",
+                      toast.success(t('A specialist will reach out today'), {
+                        description: t("We'll model your traffic and send a rate card."),
                       })
                     }
                   }}
@@ -410,7 +411,7 @@ export default function PricingPage() {
                       active && p.kind === 'volume' ? 'text-white/45' : 'text-ink-faint',
                     )}
                   >
-                    Your current plan
+                    {t('Your current plan')}
                   </p>
                 )}
               </div>
@@ -424,7 +425,7 @@ export default function PricingPage() {
         className="mt-16"
         eyebrow={t('Work out your rate')}
         title={t('Estimate')}
-        lede="Move the slider to your real monthly volume — the tier applies on its own."
+        lede={t('Move the slider to your real monthly volume — the tier applies on its own.')}
         divided
       >
         <div className="grid gap-8 lg:grid-cols-[1fr_18rem]">
@@ -465,7 +466,7 @@ export default function PricingPage() {
                         active ? 'text-brand-ink' : 'text-ink',
                       )}
                     >
-                      {tier.discount === 0 ? 'List' : `−${tier.discount}%`}
+                      {tier.discount === 0 ? t('List') : `−${tier.discount}%`}
                     </p>
                     <p className="mt-0.5 text-2xs tabular-nums text-ink-faint">
                       {tier.to === Infinity
@@ -479,21 +480,23 @@ export default function PricingPage() {
           </div>
 
           <div className="rounded-3xl bg-veil p-5">
-            <p className="eyebrow">Estimated monthly voice spend</p>
+            <p className="eyebrow">{t('Estimated monthly voice spend')}</p>
             <p className="display mt-1.5 text-3xl font-semibold tabular-nums text-ink">
               {money(estMonthly, currency)}
             </p>
             <p className="mt-1 text-xs tabular-nums text-ink-faint">
-              {money((estMonthly / volume) * 1, currency, { precise: true })} effective per minute
+              {t('{rate} effective per minute', {
+                rate: money((estMonthly / volume) * 1, currency, { precise: true }),
+              })}
             </p>
             <Separator className="my-4" />
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-ink-muted">Tier discount</span>
+                <span className="text-ink-muted">{t('Tier discount')}</span>
                 <span className="font-medium tabular-nums text-brand-ink">−{discount}%</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-ink-muted">Saved vs list</span>
+                <span className="text-ink-muted">{t('Saved vs list')}</span>
                 <span className="font-medium tabular-nums text-success-ink">
                   {t('{amount}/mo', { amount: money(savings, currency) })}
                 </span>
@@ -502,7 +505,7 @@ export default function PricingPage() {
             <Progress value={(discount / 24) * 100} className="mt-4" size="xs" />
             <p className="mt-1.5 text-2xs text-ink-faint">
               {discount === 24
-                ? 'Maximum standard discount reached'
+                ? t('Maximum standard discount reached')
                 : t('{n} min unlocks the next tier', {
                     n: num(TIERS.find((tier) => tier.discount > discount)?.from ?? 0),
                   })}
@@ -516,8 +519,11 @@ export default function PricingPage() {
         className="mt-16"
         eyebrow={
           selected === 'volume'
-            ? `Tier ${TIERS.findIndex((t) => t.discount === discount) + 1} rates in ${currency}`
-            : `List rates in ${currency}`
+            ? t('Tier {n} rates in {currency}', {
+                n: TIERS.findIndex((tier) => tier.discount === discount) + 1,
+                currency,
+              })
+            : t('List rates in {currency}', { currency })
         }
         title={t('Voice & messaging')}
         divided
@@ -552,9 +558,9 @@ export default function PricingPage() {
           }
         />
         <p className="mt-5 max-w-3xl text-xs leading-relaxed text-ink-faint">
-          Rates exclude 14% Egyptian VAT and are billed per second with a one-second minimum. Toll-free inbound
-          is billed to you rather than the caller. Full rate cards for all 190+ destinations are available on
-          request.
+          {t(
+            'Rates exclude 14% Egyptian VAT and are billed per second with a one-second minimum. Toll-free inbound is billed to you rather than the caller. Full rate cards for all 190+ destinations are available on request.',
+          )}
         </p>
       </Section>
 
@@ -565,22 +571,22 @@ export default function PricingPage() {
             {
               icon: Zap,
               title: t('No platform fee'),
-              body: 'API, SIP, webhooks and the dashboard are included on every plan.',
+              body: t('API, SIP, webhooks and the dashboard are included on every plan.'),
             },
             {
               icon: Phone,
               title: t('Per-second billing'),
-              body: 'A 12-second call costs 12 seconds — no 60-second rounding.',
+              body: t('A 12-second call costs 12 seconds — no 60-second rounding.'),
             },
             {
               icon: ShieldCheck,
               title: t('Compliance included'),
-              body: 'KYC review, emergency registration and CNAM at no extra cost.',
+              body: t('KYC review, emergency registration and CNAM at no extra cost.'),
             },
             {
               icon: Headphones,
               title: t('Real engineers'),
-              body: 'Support is staffed by voice engineers, not a ticket queue.',
+              body: t('Support is staffed by voice engineers, not a ticket queue.'),
             },
           ].map((f, i) => (
             <motion.div
@@ -612,18 +618,22 @@ export default function PricingPage() {
             <Building2 className="size-5 text-white/85" />
           </span>
           <div className="relative min-w-0 flex-1">
-            <h3 className="display text-xl font-semibold text-white">Running voice at national scale?</h3>
+            <h3 className="display text-xl font-semibold text-white">
+              {t('Running voice at national scale?')}
+            </h3>
             <p className="mt-1.5 max-w-2xl text-base leading-relaxed text-white/60">
-              Enterprise agreements add dedicated interconnects, private carrier routes, custom SLAs with
-              financial remedies, on-premise SBC peering and a named engineering contact. Typical onboarding is
-              two weeks.
+              {t(
+                'Enterprise agreements add dedicated interconnects, private carrier routes, custom SLAs with financial remedies, on-premise SBC peering and a named engineering contact. Typical onboarding is two weeks.',
+              )}
             </p>
           </div>
           <Button
             size="lg"
             className="relative shrink-0 bg-white text-onyx shadow-none hover:bg-white/90"
             onClick={() =>
-              toast.success('Request received', { description: t('Our enterprise team will email you today.') })
+              toast.success(t('Request received'), {
+                description: t('Our enterprise team will email you today.'),
+              })
             }
           >
             {t('Contact enterprise sales')}
@@ -634,29 +644,31 @@ export default function PricingPage() {
       {/* ── FAQ ───────────────────────────────────────── */}
       <Section className="mt-16" eyebrow={t('Before you ask')} title={t('Pricing questions')} divided>
         <Accordion type="single" collapsible>
-          <AccordionItem value="switch" title="Can I move between plans?">
-            Yes, in both directions. Moving to volume pricing takes effect at the start of the next billing
-            period so your current month isn't re-rated. Moving back to pay as you go happens at the end of your
-            commitment term.
+          <AccordionItem value="switch" title={t('Can I move between plans?')}>
+            {t(
+              "Yes, in both directions. Moving to volume pricing takes effect at the start of the next billing period so your current month isn't re-rated. Moving back to pay as you go happens at the end of your commitment term.",
+            )}
           </AccordionItem>
-          <AccordionItem value="unused" title="What happens to unused committed minutes?">
-            They don't roll over, which is why we size commitments from your actual traffic rather than your
-            ambitions. If you consistently overshoot, we move you up a tier automatically — you never pay list
-            rates for volume you've already earned a discount on.
+          <AccordionItem value="unused" title={t('What happens to unused committed minutes?')}>
+            {t(
+              "They don't roll over, which is why we size commitments from your actual traffic rather than your ambitions. If you consistently overshoot, we move you up a tier automatically — you never pay list rates for volume you've already earned a discount on.",
+            )}
           </AccordionItem>
-          <AccordionItem value="numbers" title="Are number fees discounted too?">
-            Number rental is discounted at tier 3 and above. Setup fees are waived on all volume plans.
+          <AccordionItem value="numbers" title={t('Are number fees discounted too?')}>
+            {t('Number rental is discounted at tier 3 and above. Setup fees are waived on all volume plans.')}
           </AccordionItem>
-          <AccordionItem value="currency" title="Can I be billed in EGP?">
-            Yes. Workspaces set to EGP are invoiced in EGP at the mid-market rate on the invoice date, and local
-            bank transfer avoids card processing fees entirely.
+          <AccordionItem value="currency" title={t('Can I be billed in EGP?')}>
+            {t(
+              'Yes. Workspaces set to EGP are invoiced in EGP at the mid-market rate on the invoice date, and local bank transfer avoids card processing fees entirely.',
+            )}
           </AccordionItem>
         </Accordion>
       </Section>
 
       <Alert tone="brand" className="mt-4" icon={<CircleCheck />}>
-        Every plan includes the full platform. We don't gate SIP, webhooks, recordings or the API behind a
-        higher tier — the only thing that changes with volume is the per-minute rate.{' '}
+        {t(
+          "Every plan includes the full platform. We don't gate SIP, webhooks, recordings or the API behind a higher tier — the only thing that changes with volume is the per-minute rate.",
+        )}{' '}
         <Link to="/numbers/buy" className="font-medium underline underline-offset-2">
           {t('Start with a number')}
         </Link>
