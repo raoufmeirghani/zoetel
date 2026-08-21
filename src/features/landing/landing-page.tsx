@@ -41,6 +41,37 @@ import { ClosingScene } from './scenes/close'
  * page rendered blank.
  */
 
+/** The hero's ground, and the page's identity dark. */
+const PAGE_DARK = 'hsl(243 20% 3.5%)'
+
+/**
+ * Tells the browser chrome this page is dark.
+ *
+ * Two separate things need saying and neither can be reached from a class on a
+ * div inside `#root`. `theme-color` is what iOS Safari tints its status bar and
+ * bottom toolbar from. The `html` background is what paints the overscroll area
+ * — rubber-band past the top of a dark hero and you should not see white.
+ *
+ * Both are restored on unmount, because the rest of the application is light and
+ * a stale dark status bar over a white dashboard looks like a bug.
+ */
+function useDarkBrowserChrome() {
+  React.useEffect(() => {
+    const meta = document.querySelector('meta[name="theme-color"]')
+    const root = document.documentElement
+    const prevMeta = meta?.getAttribute('content') ?? null
+    const prevBg = root.style.backgroundColor
+
+    meta?.setAttribute('content', PAGE_DARK)
+    root.style.backgroundColor = PAGE_DARK
+
+    return () => {
+      if (prevMeta != null) meta?.setAttribute('content', prevMeta)
+      root.style.backgroundColor = prevBg
+    }
+  }, [])
+}
+
 const NAV = [
   { label: 'Features', href: '#features' },
   { label: 'How it works', href: '#how' },
@@ -224,8 +255,13 @@ function LandingNav() {
 }
 
 export default function LandingPage() {
+  useDarkBrowserChrome()
+
   return (
-    <div className="landing relative min-h-screen overflow-x-clip bg-canvas">
+    // The page's own ground is dark. Every scene paints its own surface over it,
+    // so this is invisible everywhere except the overscroll — which is the point:
+    // it is what the browser samples, not what the reader looks at.
+    <div className="landing relative min-h-screen overflow-x-clip bg-[hsl(243_20%_3.5%)]">
       <LandingNav />
       <main>
         {/* 01 — the opening frame, and the search that starts the task */}

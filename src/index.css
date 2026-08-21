@@ -187,18 +187,30 @@
     scroll-behavior: smooth;
   }
 
-  body {
-    @apply bg-canvas font-sans text-base text-ink antialiased;
-    /* Not a flat fill. Two very wide, very pale washes — violet from the top
-       left, a cooler blue from the top right — over the canvas, fixed so they
-       don't slide while you scroll. Wide enough that no edge or band is
-       visible; the glass cards need something to sit on. */
+  /* The page's ground. Not a flat fill: two very wide, very pale washes —
+     violet from the top left, a cooler blue from the top right — over the
+     canvas, fixed so they don't slide while you scroll. Wide enough that no edge
+     or band is visible; the glass cards need something to sit on.
+
+     Its own class rather than only a `body` rule, because a section sometimes
+     has to paint it for itself. On the landing page the document background is
+     dark — Safari tints its status bar and bottom toolbar from it — and the
+     scenes that were letting the body's light ground show through now carry it
+     themselves instead. `background-attachment: fixed` is what makes that
+     substitution invisible: the washes resolve against the viewport, so they
+     land in the same place either way. */
+  .page-ground {
+    @apply bg-canvas;
     background-image:
       radial-gradient(115% 85% at 8% -12%, hsl(var(--wash-1)) 0%, transparent 58%),
       radial-gradient(105% 75% at 96% -6%, hsl(var(--wash-2)) 0%, transparent 54%),
       radial-gradient(90% 60% at 50% 108%, hsl(var(--wash-3)) 0%, transparent 60%);
     background-attachment: fixed;
     background-repeat: no-repeat;
+  }
+
+  body {
+    @apply page-ground font-sans text-base text-ink antialiased;
     font-feature-settings:
       'cv05' 1,
       'cv11' 1,

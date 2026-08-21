@@ -12,7 +12,7 @@ export function DeveloperScene() {
   const { t } = useI18n()
 
   return (
-    <Scene id="developers" ground="paper" measure="full">
+    <Scene id="developers" ground="paper" measure="full" className="page-ground">
       <div className="mx-auto max-w-[62.5rem]">
         <div className="grid justify-items-center text-center">
           <Reveal>

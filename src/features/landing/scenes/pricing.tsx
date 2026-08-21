@@ -79,7 +79,7 @@ export function PricingScene() {
   ]
 
   return (
-    <Scene id="pricing" ground="paper" measure="full">
+    <Scene id="pricing" ground="paper" measure="full" className="page-ground">
       <div className="mx-auto max-w-[62.5rem]">
         <div className="grid justify-items-center text-center">
           <Reveal>

@@ -96,7 +96,7 @@ export function FeatureScene() {
   // `mesh` is the dashboard's own hero atmosphere, dialled back: a treatment
   // tuned for a header band is too much colour to fill a whole scene with.
   return (
-    <Scene id="features" ground="mesh" groundOpacity={0.5} edge="fade-y" measure="full">
+    <Scene id="features" ground="mesh" groundOpacity={0.5} edge="fade-y" measure="full" className="page-ground">
       <div className="grid justify-items-center text-center">
         <Reveal>
           <Eyebrow tone="brand">{t('Usually four vendors')}</Eyebrow>
