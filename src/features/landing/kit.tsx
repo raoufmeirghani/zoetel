@@ -194,8 +194,66 @@ export function Title({
   )
 }
 
-export function Eyebrow({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <p className={cn('eyebrow', className)}>{children}</p>
+/**
+ * The label that opens a scene.
+ *
+ * `tone` because the same label has to sit on three different grounds — the
+ * canvas, onyx, and a brand-lit band — and `rule` because a mark to its side is
+ * what stops a lone line of small caps reading as a stray caption.
+ */
+export function Eyebrow({
+  children,
+  tone = 'faint',
+  rule,
+  className,
+}: {
+  children: React.ReactNode
+  tone?: 'faint' | 'brand' | 'inverse'
+  /** A short bar on the label's leading edge. */
+  rule?: boolean
+  className?: string
+}) {
+  const tones = {
+    faint: 'text-ink-faint',
+    brand: 'text-brand',
+    // Brand at full strength disappears into onyx; this is the tint the app
+    // already uses for brand-on-dark.
+    inverse: 'text-[hsl(249_88%_78%)]',
+  }
+  return (
+    <p className={cn('eyebrow flex items-center gap-2.5 font-mono tracking-[0.14em]', tones[tone], className)}>
+      {rule && <span aria-hidden className="h-3 w-px shrink-0 bg-current" />}
+      {children}
+    </p>
+  )
+}
+
+/**
+ * A figure and its unit, set at display scale with the unit in brand.
+ *
+ * The two halves are one element on purpose: split across nodes, the bidi
+ * algorithm reorders them in Arabic and "99.99%" comes out as "%99.99".
+ */
+export function Figure({
+  value,
+  unit,
+  label,
+  className,
+}: {
+  value: React.ReactNode
+  unit?: React.ReactNode
+  label: React.ReactNode
+  className?: string
+}) {
+  return (
+    <div className={cn('min-w-0', className)}>
+      <p className="display text-3xl font-medium tracking-tight text-ink sm:text-4xl lg:text-[2.5rem]">
+        <span className="tabular-nums">{value}</span>
+        {unit && <span className="text-brand">{unit}</span>}
+      </p>
+      <p className="eyebrow mt-1.5 font-mono tracking-[0.11em]">{label}</p>
+    </div>
+  )
 }
 
 export function Lede({
