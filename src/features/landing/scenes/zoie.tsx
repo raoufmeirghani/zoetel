@@ -37,7 +37,7 @@ export function ZoieScene() {
   const zoie = useZoieContext()
 
   return (
-    <Scene id="zoie" ground="onyx" measure="full" edge="fade-y" bleed>
+    <Scene id="zoie" ground="onyx" measure="full" edge="none" bleed>
       <Glow x="6%" y="48%" size="50rem" opacity={0.6} />
 
       <div className="mx-auto grid max-w-[80rem] items-center gap-8 pe-6 sm:pe-8 lg:grid-cols-[minmax(0,1fr)_minmax(17.5rem,26.25rem)] lg:gap-14">

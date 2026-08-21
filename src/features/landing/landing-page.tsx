@@ -50,7 +50,8 @@ const NAV = [
 ]
 
 /**
- * Flat over the hero, frosted once the page moves.
+ * Flat and full-width over the hero, then a floating frosted bar once the page
+ * moves.
  *
  * The hero is dark and everything after the marquee is light, so the nav has to
  * invert with the scroll: white on the artwork, ink on the frosted chrome.
@@ -81,15 +82,19 @@ function LandingNav() {
 
   return (
     <header className="fixed inset-x-0 top-0 z-50">
-      <div
-        className={cn(
-          'transition-[background-color,box-shadow,backdrop-filter] duration-300 ease-out',
-          lifted && 'chrome',
-        )}
-      >
+      {/* Two states, one element. Over the hero the bar is the full width of the
+          page and completely transparent — there is artwork behind it that
+          should be visible. Once the page moves it detaches: insets from the
+          edges, takes the application's own `chrome` glass and its radius, and
+          loses a little height. Floating is what tells you it is now a layer
+          above the document rather than part of its top edge. */}
+      <div className={cn('transition-[padding] duration-300 ease-out', lifted && 'px-3 pt-3 sm:px-4 sm:pt-4')}>
         <nav
           aria-label={t('Primary')}
-          className="mx-auto flex h-16 w-full max-w-[80rem] items-center gap-5 px-6 sm:px-8"
+          className={cn(
+            'mx-auto flex items-center gap-5 px-6 transition-all duration-300 ease-out sm:px-8',
+            lifted ? 'chrome h-14 max-w-[78rem] rounded-2xl' : 'h-16 w-full max-w-[80rem]',
+          )}
         >
           <a href="#top" aria-label={t('Zoetel — home')} className="flex shrink-0 items-center gap-2.5">
             {/* `tone="onDark"` exists for exactly this: a surface that is dark

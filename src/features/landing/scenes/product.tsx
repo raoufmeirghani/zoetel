@@ -44,7 +44,7 @@ export function ProductScene() {
   const [step, setStep] = React.useState(0)
 
   return (
-    <Scene id="how" ground="onyx" measure="full" edge="fade-y" bleed>
+    <Scene id="how" ground="onyx" measure="full" edge="none" bleed>
       <Glow x="94%" y="50%" size="48rem" opacity={0.55} />
 
       <div className="mx-auto grid max-w-[80rem] items-center gap-8 ps-6 sm:ps-8 lg:grid-cols-[minmax(17.5rem,25rem)_minmax(0,1fr)] lg:gap-14">

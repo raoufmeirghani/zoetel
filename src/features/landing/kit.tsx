@@ -106,6 +106,13 @@ export function Scene({
   groundOpacity?: number
   /** short: a single beat. full: a chapter. tall: an immersive stretch. */
   measure?: 'flush' | 'short' | 'full' | 'tall'
+  /**
+   * How a coloured ground meets its neighbours. `fade-*` and `curve` suit a
+   * pale wash, where a hard stop would read as a seam. A dark plane is the
+   * opposite: fading onyx into white puts a wide grey gradient across the top
+   * and bottom of the section, which looks like a rendering artefact rather
+   * than a transition — those want `none` and a clean edge.
+   */
   edge?: 'none' | 'fade-y' | 'fade-top' | 'fade-bottom' | 'curve'
   /** Content spans the viewport rather than the reading column. */
   bleed?: boolean
