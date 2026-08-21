@@ -26,9 +26,10 @@ import { ClosingScene } from './scenes/close'
  * the screens legible — who the carriers are, what a number can point at, what it
  * costs.
  *
- * The rhythm is light, white, dark, light, dark, white, tinted, dark. That
- * alternation is the composition: no two adjacent scenes share a ground, so the
- * page has chapters without needing a rule between them.
+ * The rhythm is dark, white, white, dark, light, dark, white, tinted, dark.
+ * That alternation is the composition: the page has chapters without needing a
+ * rule between them. The carrier strip and the features scene are the one place
+ * two light grounds meet, and the strip's own hairline handles it.
  *
  * One principle worth keeping. Nothing here gates visibility on an observer or an
  * animation — every `Reveal` animates opacity *and* offset together from a
@@ -50,7 +51,12 @@ const NAV = [
 /**
  * Flat over the hero, frosted once the page moves.
  *
- * No progress bar: this page is eight scenes, not twelve, and the artwork behind
+ * The hero is dark and everything after the marquee is light, so the nav has to
+ * invert with the scroll: white on the artwork, ink on the frosted chrome.
+ * `lifted` already tracked that boundary for the background — every colour in
+ * here now reads from the same flag, so the two can never disagree.
+ *
+ * No progress bar: this page is nine scenes, not twelve, and the artwork behind
  * the nav is the thing that should be visible at the top of it.
  */
 function LandingNav() {
@@ -85,8 +91,12 @@ function LandingNav() {
           className="mx-auto flex h-16 w-full max-w-[80rem] items-center gap-5 px-6 sm:px-8"
         >
           <a href="#top" aria-label={t('Zoetel — home')} className="flex shrink-0 items-center gap-2.5">
-            <Logo size={26} />
-            <span className="headline text-base font-semibold text-ink">Zoetel</span>
+            {/* `tone="onDark"` exists for exactly this: a surface that is dark
+                regardless of the theme. */}
+            <Logo size={26} tone={lifted ? 'auto' : 'onDark'} />
+            <span className={cn('headline text-base font-semibold', lifted ? 'text-ink' : 'text-white')}>
+              Zoetel
+            </span>
           </a>
 
           <div className="mx-auto hidden items-center gap-4 lg:flex xl:gap-7">
@@ -94,7 +104,10 @@ function LandingNav() {
               <a
                 key={item.label}
                 href={item.href}
-                className="whitespace-nowrap text-sm text-ink-muted transition-colors hover:text-ink"
+                className={cn(
+                  'whitespace-nowrap text-sm transition-colors',
+                  lifted ? 'text-ink-muted hover:text-ink' : 'text-white/70 hover:text-white',
+                )}
               >
                 {t(item.label)}
               </a>
@@ -104,23 +117,39 @@ function LandingNav() {
           <div className="ms-auto flex shrink-0 items-center gap-3 lg:ms-0">
             {/* The one control on this page a visitor may not be able to read the
                 label of, so it names both languages in their own script. */}
-            <LocaleSwitch size="sm" className="max-sm:hidden" />
+            <LocaleSwitch size="sm" onDark={!lifted} className="max-sm:hidden" />
             <Link
               to="/welcome"
-              className="hidden whitespace-nowrap text-sm text-ink-muted transition-colors hover:text-ink sm:block"
+              className={cn(
+                'hidden whitespace-nowrap text-sm transition-colors sm:block',
+                lifted ? 'text-ink-muted hover:text-ink' : 'text-white/70 hover:text-white',
+              )}
             >
               {t('Log in')}
             </Link>
+            {/* `bg-ink` is near-black, which is invisible on the hero. Over the
+                artwork the button inverts to white-on-onyx and keeps the same
+                job: the highest-contrast thing in the bar. */}
             <Link
               to="/welcome"
-              className="whitespace-nowrap rounded-[10px] bg-ink px-4 py-2.5 text-sm font-medium text-ink-inverse transition-colors hover:bg-brand"
+              className={cn(
+                'whitespace-nowrap rounded-[10px] px-4 py-2.5 text-sm font-medium transition-colors',
+                lifted
+                  ? 'bg-ink text-ink-inverse hover:bg-brand'
+                  : 'bg-white text-onyx hover:bg-brand hover:text-brand-fg',
+              )}
             >
               {t('Sign up')}
             </Link>
             <button
               onClick={() => setOpen(true)}
               aria-label={t('Open menu')}
-              className="grid size-10 place-items-center rounded-lg text-ink-muted transition-colors hover:bg-veil hover:text-ink lg:hidden"
+              className={cn(
+                'grid size-10 place-items-center rounded-lg transition-colors lg:hidden',
+                lifted
+                  ? 'text-ink-muted hover:bg-veil hover:text-ink'
+                  : 'text-white/75 hover:bg-white/10 hover:text-white',
+              )}
             >
               <Bars3Icon className="size-5" />
             </button>

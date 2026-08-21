@@ -79,7 +79,7 @@ export function ClosingScene() {
 
       <footer className="relative mx-auto flex w-full max-w-[var(--page-max)] flex-wrap items-center justify-between gap-4 border-t border-white/10 px-6 pb-8 pt-5 sm:px-8">
         <span className="flex items-center gap-2.5">
-          <Logo size={22} />
+          <Logo size={22} tone="onDark" />
           <span className="headline text-base font-semibold text-white">Zoetel</span>
         </span>
         <div className="flex flex-wrap items-center gap-x-5 gap-y-2">

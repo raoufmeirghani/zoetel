@@ -58,6 +58,20 @@ const CAP_OPTS: { value: Capability | 'any'; label: string }[] = [
 ]
 
 /**
+ * The rule between two fields: vertical when they sit in a row, horizontal when
+ * they stack. It used to vanish on a phone, which left the bar as one white
+ * block with three values floating in it.
+ */
+function Divider() {
+  return (
+    <span
+      aria-hidden
+      className="shrink-0 bg-line-soft max-sm:mx-4 max-sm:h-px max-sm:w-[calc(100%-2rem)] sm:h-[30px] sm:w-px sm:self-center"
+    />
+  )
+}
+
+/**
  * One segment of the search bar.
  *
  * A plain button and an absolutely-placed list rather than the app's `Select`:
@@ -188,7 +202,7 @@ export function HeroScene() {
   }
 
   return (
-    <header id="top" className="relative overflow-hidden">
+    <header id="top" className="relative overflow-hidden bg-onyx text-white">
       {/* The background stack sits at the default stacking level with the
           content lifted above it, rather than on a `-z-10` layer.
           `mix-blend-mode` inside a negative-z group makes Chromium stop
@@ -196,35 +210,50 @@ export function HeroScene() {
           render blank — and no amount of `isolation` on the wrapper fixes it.
           Ordinary source order costs nothing and has no such failure mode.
 
-          The asset and the blend are the dashboard header's own, so the page
-          opens on the same landscape the product does. */}
+          The asset is the dashboard header's own, so the page opens on the same
+          landscape the product does. The blend is `screen`, not the `multiply`
+          this used on a light canvas: multiplying a pale landscape into onyx
+          crushes it to black, whereas screening lifts it out as light. Same
+          image, opposite operation — which is why the app's own dark theme
+          already switches between the two.
+
+          `saturate` is doing quiet work here. Screened onto a near-black
+          ground the landscape loses most of its colour and reads as grey
+          smoke; pushing saturation back up keeps the blue in the sky. */}
       <img
         aria-hidden
         src="/usage.webp"
         alt=""
-        className="hero-art pointer-events-none absolute inset-x-0 top-0 h-[88%] w-full object-cover object-[50%_16%] opacity-[0.62] mix-blend-multiply dark:opacity-[0.22] dark:mix-blend-screen"
+        className="hero-art pointer-events-none absolute inset-0 size-full object-cover object-[50%_16%] opacity-[0.34] mix-blend-screen saturate-[1.35]"
       />
+      {/* Dissolves the artwork into the ground, so it has no bottom edge. The
+          image runs the full height and this decides where it stops being
+          visible — which is why there is no band of dead onyx above the fold. */}
       <span
         aria-hidden
-        className="pointer-events-none absolute inset-0 bg-gradient-to-b from-canvas/20 via-canvas/10 to-canvas"
+        className="pointer-events-none absolute inset-0 bg-gradient-to-b from-onyx/10 via-onyx/40 via-65% to-onyx"
       />
+      {/* Brand at 0.2 was tuned against white and disappears on onyx; on a dark
+          ground the light has to be roughly twice as strong to read at all. */}
       <motion.span
         aria-hidden
         className="pointer-events-none absolute -top-[18%] left-1/2 h-[78%] w-[120%] -translate-x-1/2"
         style={{
           background:
-            'radial-gradient(42% 52% at 32% 22%, hsl(var(--brand) / 0.2), transparent 70%), radial-gradient(40% 46% at 74% 10%, hsl(196 82% 58% / 0.16), transparent 72%)',
+            'radial-gradient(42% 52% at 32% 22%, hsl(var(--brand) / 0.42), transparent 70%), radial-gradient(40% 46% at 74% 10%, hsl(196 82% 58% / 0.28), transparent 72%)',
         }}
         animate={{ x: ['-50%', '-51.5%', '-50%'], y: ['0%', '-2%', '0%'], scale: [1, 1.05, 1] }}
         transition={{ duration: 22, repeat: Infinity, ease: 'easeInOut' }}
       />
 
-      <div className="relative z-10 mx-auto grid max-w-[62.5rem] justify-items-center px-6 pb-14 pt-11 text-center sm:px-8 sm:pb-[6.5rem] sm:pt-[5.75rem]">
+      {/* `pt-24` rather than `pt-11`: the nav is fixed and 64px tall, so
+          anything less puts the status pill inside it. */}
+      <div className="relative z-10 mx-auto grid max-w-[62.5rem] justify-items-center px-6 pb-14 pt-24 text-center sm:px-8 sm:pb-[6.5rem] sm:pt-[5.75rem]">
         <motion.div
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: EASE }}
-          className="chrome inline-flex items-center gap-2.5 whitespace-nowrap rounded-full py-1.5 pe-3.5 ps-2.5 text-xs font-medium text-ink-muted"
+          className="inline-flex items-center gap-2.5 whitespace-nowrap rounded-full border border-white/15 bg-white/[0.07] py-1.5 pe-3.5 ps-2.5 text-xs font-medium text-white/75 backdrop-blur"
         >
           <StatusDot tone="success" pulse />
           {t('Egypt-first · NTRA licensed')}
@@ -236,7 +265,7 @@ export function HeroScene() {
           transition={{ duration: 0.65, delay: 0.07, ease: EASE }}
           className="mt-6 sm:mt-9"
         >
-          <Title as="h1" size="xl" className="mx-auto max-w-[20ch]">
+          <Title as="h1" size="xl" className="mx-auto max-w-[20ch] !text-white">
             {/* The article travels with the lead-in, not with the noun: it is
                 one translatable unit that way, and Arabic — which has no
                 indefinite article — maps both variants onto one phrase. */}
@@ -250,7 +279,10 @@ export function HeroScene() {
               initial={{ y: 5 }}
               animate={{ y: 0 }}
               transition={{ duration: 0.48, ease: EASE }}
-              className="inline-block whitespace-nowrap text-brand"
+              // Not `text-brand`: the brand is tuned against white and reads
+              // muddy on onyx. This is the lighter brand the eyebrows and the
+              // code card already use on dark ground.
+              className="inline-block whitespace-nowrap text-[hsl(249_88%_78%)]"
             >
               {t(WORDS[word].noun)}.
             </motion.span>
@@ -263,7 +295,7 @@ export function HeroScene() {
           transition={{ duration: 0.65, delay: 0.14, ease: EASE }}
           className="mt-5 sm:mt-6"
         >
-          <Lede className="mx-auto max-w-[54ch] text-base sm:text-md">
+          <Lede className="mx-auto max-w-[54ch] text-base !text-white/65 sm:text-md">
             {t(
               'Search live inventory, buy in one click, point it at your stack. Numbers, SIP, SMS and WhatsApp on carrier-grade infrastructure.',
             )}
@@ -277,9 +309,13 @@ export function HeroScene() {
           transition={{ duration: 0.65, delay: 0.21, ease: EASE }}
           className="mt-8 w-full max-w-[45rem] text-start sm:mt-10"
         >
+          {/* Deliberately still light. On a dark ground this is the brightest
+              object on the page, which is correct — it is the one thing the
+              visitor is meant to touch, and a dark bar on a dark hero would
+              make the primary action the least visible thing in it. */}
           <div
             ref={bar}
-            className="flex flex-wrap items-stretch gap-1 rounded-[20px] border border-line bg-surface p-1.5 shadow-xl"
+            className="flex flex-wrap items-stretch gap-1 rounded-[20px] border border-white/10 bg-surface p-1.5 shadow-[0_8px_16px_-8px_rgb(0_0_0/0.5),0_32px_64px_-20px_rgb(0_0_0/0.65)]"
           >
             <Field
               label="Country"
@@ -292,7 +328,7 @@ export function HeroScene() {
               open={open === 'country'}
               onToggle={() => setOpen(open === 'country' ? null : 'country')}
             />
-            <span aria-hidden className="w-px shrink-0 self-center bg-line-soft max-sm:hidden sm:h-[30px]" />
+            <Divider />
             <Field
               label="Number type"
               value={type}
@@ -304,7 +340,7 @@ export function HeroScene() {
               open={open === 'type'}
               onToggle={() => setOpen(open === 'type' ? null : 'type')}
             />
-            <span aria-hidden className="w-px shrink-0 self-center bg-line-soft max-sm:hidden sm:h-[30px]" />
+            <Divider />
             <Field
               label="Capability"
               value={cap}
@@ -327,7 +363,7 @@ export function HeroScene() {
           </div>
 
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 px-2 pt-3">
-            <span className="inline-flex items-center gap-2 text-sm text-ink-muted">
+            <span className="inline-flex items-center gap-2 text-sm text-white/70">
               <StatusDot tone="success" pulse />
               {matches === null
                 ? t('{n} numbers available across 190+ countries', { n: num(2400) })
@@ -335,7 +371,7 @@ export function HeroScene() {
                   ? t('No numbers match — widen your preferences')
                   : t('{n} numbers available in {country}', { n: matches, country: t(countryName) })}
             </span>
-            <span className="eyebrow font-mono tracking-[0.11em]">
+            <span className="eyebrow font-mono tracking-[0.11em] !text-white/40">
               {t('Create an account to see the exact numbers')}
             </span>
           </div>
@@ -356,7 +392,7 @@ export function HeroScene() {
           </Link>
           <a
             href="#developers"
-            className="inline-flex items-center rounded-xl border border-line bg-surface/70 px-5 py-3 text-md text-ink transition-colors hover:border-ink"
+            className="inline-flex items-center rounded-xl border border-white/20 bg-white/[0.06] px-5 py-3 text-md text-white/85 transition-colors hover:bg-white/[0.12] hover:text-white"
           >
             {t('View documentation')}
           </a>

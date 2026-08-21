@@ -24,10 +24,19 @@ const ORDER = Object.keys(LOCALES) as Locale[]
  */
 export function LocaleSwitch({
   size = 'md',
+  onDark,
   className,
 }: {
   /** `sm` for dense chrome; `md` where it should be easy to hit. */
   size?: 'sm' | 'md'
+  /**
+   * For the trigger only, and only where it sits on a dark plane the theme
+   * doesn't know about — the landing hero. `chrome` is a light frosted surface
+   * by definition, so over onyx it reads as a white lozenge with white text
+   * beside it. The menu itself keeps the app's own surface either way; a
+   * dropdown is a layer above the page, not part of its ground.
+   */
+  onDark?: boolean
   className?: string
 }) {
   const { locale, setLocale, t } = useI18n()
@@ -37,13 +46,15 @@ export function LocaleSwitch({
       <MenuTrigger
         aria-label={t('Language')}
         className={cn(
-          'chrome inline-flex shrink-0 items-center gap-1.5 rounded-full pe-2.5 ps-3',
-          'text-ink-subtle transition-colors hover:text-ink data-[state=open]:text-ink',
+          'inline-flex shrink-0 items-center gap-1.5 rounded-full pe-2.5 ps-3 transition-colors',
+          onDark
+            ? 'border border-white/15 bg-white/[0.07] text-white/75 backdrop-blur hover:text-white data-[state=open]:text-white'
+            : 'chrome text-ink-subtle hover:text-ink data-[state=open]:text-ink',
           size === 'sm' ? 'h-9 text-xs sm:h-8' : 'h-10 text-sm sm:h-9',
           className,
         )}
       >
-        <Languages className="size-4 shrink-0 text-ink-faint" />
+        <Languages className={cn('size-4 shrink-0', onDark ? 'text-white/55' : 'text-ink-faint')} />
         {/* The trigger is set in the language it names, so the glyphs
             themselves tell you which one is active. */}
         <span lang={locale} className="font-medium">
