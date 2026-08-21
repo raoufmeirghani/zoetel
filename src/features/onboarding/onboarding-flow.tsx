@@ -50,6 +50,17 @@ import type { Currency, PlanKind } from '@/lib/types'
 import { useDirSign, useI18n } from '@/lib/i18n'
 import { LocaleSwitch } from '@/components/shared/locale-switch'
 
+/**
+ * The welcome step is hidden for now, so the flow opens on the first real
+ * question instead of a splash screen. Everything about it is still here — its
+ * markup, its copy, its quote on the side rail — because "for now" means one
+ * constant to flip back, not a deletion to reconstruct.
+ *
+ * Every index in this file counts from `STEPS`, so the entry stays in the array
+ * and `FIRST_STEP` decides where the flow actually starts.
+ */
+const FIRST_STEP = 1
+
 const STEPS = [
   { id: 'welcome', label: 'Welcome' },
   { id: 'type', label: 'Account' },
@@ -103,7 +114,9 @@ export default function OnboardingFlow() {
     [markOnboarded, navigate],
   )
 
-  const [step, setStep] = React.useState(onboarding.completed ? 0 : onboarding.step)
+  const [step, setStep] = React.useState(
+    onboarding.completed ? FIRST_STEP : Math.max(onboarding.step, FIRST_STEP),
+  )
   const [direction, setDirection] = React.useState(1)
   const [showPassword, setShowPassword] = React.useState(false)
   const [plan, setPlan] = React.useState<PlanKind | null>(onboarding.plan)
@@ -394,7 +407,9 @@ export default function OnboardingFlow() {
                       })}
                     </div>
                     <Nav
-                      onBack={() => go(0)}
+                      // Nothing behind this step now, so Back leaves rather
+                      // than returning to a screen the flow skipped.
+                      onBack={() => leave('/landing')}
                       onNext={() => go(2)}
                       nextDisabled={!values.accountType}
                       hint={t('You can change this later, though it restarts verification.')}
@@ -695,7 +710,9 @@ export default function OnboardingFlow() {
                 {/* ── 6 Funding ─────────────────────── */}
                 {current.id === 'funding' && (
                   <StepShell
-                    title={t('How would you like to pay?')}
+                    // The landing page's line, so the promise someone read
+                    // before signing up is the one they meet inside the flow.
+                    title={t('Two ways to pay. Neither needs a meeting.')}
                     description={t(
                       'Start with pay as you go — you can move to a committed plan any time, and discounts apply automatically as volume grows.',
                     )}
