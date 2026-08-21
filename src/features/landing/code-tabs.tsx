@@ -187,10 +187,7 @@ export function CodeTabs({ className }: { className?: string }) {
 
   return (
     <div
-      className={cn(
-        'overflow-hidden rounded-[20px] border border-white/[0.09] bg-onyx shadow-xl',
-        className,
-      )}
+      className={cn('overflow-hidden rounded-[20px] border border-white/[0.09] bg-onyx shadow-xl', className)}
     >
       {/* Language rail. The sliding pill is the same layout animation the
           application's tabs use, so switching feels identical to the product. */}
@@ -203,7 +200,7 @@ export function CodeTabs({ className }: { className?: string }) {
               onClick={() => setLang(l)}
               aria-pressed={active}
               className={cn(
-                'relative shrink-0 rounded-lg px-3 py-1.5 font-mono text-2xs uppercase tracking-[0.05em] transition-colors',
+                'relative shrink-0 rounded-lg px-3 py-1.5 font-mono text-2xs uppercase tracking-[0.11em] transition-colors',
                 active ? 'text-white' : 'text-white/45 hover:text-white/80',
               )}
             >
@@ -244,7 +241,7 @@ export function CodeTabs({ className }: { className?: string }) {
         </AnimatePresence>
 
         <div className="grid content-start gap-3.5 border-t border-white/[0.07] bg-white/[0.025] px-5 py-5 lg:border-t-0">
-          <span className="eyebrow flex items-center gap-2.5 font-mono tracking-[0.1em] !text-white/50">
+          <span className="eyebrow flex items-center gap-2.5 font-mono tracking-[0.11em] !text-white/50">
             <StatusDot tone="success" />
             {t('201 Created · {n}ms', { n: snippet.latency })}
           </span>
@@ -269,7 +266,7 @@ export function CodeTabs({ className }: { className?: string }) {
           <div
             key={s}
             className={cn(
-              'eyebrow border-white/[0.07] px-4 py-3 font-mono tracking-[0.1em]',
+              'eyebrow border-white/[0.07] px-4 py-3 font-mono tracking-[0.11em]',
               i < SURFACES.length - 1 && 'border-e',
               i < 2 && 'border-b sm:border-b-0',
               s === 'Zoie' ? '!text-[hsl(249_88%_78%)]' : '!text-white/55',

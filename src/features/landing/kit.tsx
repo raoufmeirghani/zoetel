@@ -11,9 +11,17 @@ import { cn } from '@/lib/utils'
  * canvas — the transition between two scenes becomes part of the composition,
  * so there is never a rule or a gap left doing that work.
  *
- * Everything here draws on the application's tokens. What differs from the app
- * is scale: type steps up, and the vertical rhythm is several times the
- * dashboard's, because this is read at arm's length.
+ * Everything here draws on the application's tokens. Two things differ from the
+ * app, both on purpose:
+ *
+ * - **Scale.** Type steps up and the vertical measure is several times the
+ *   dashboard's, because this is read at arm's length rather than worked in.
+ * - **Icons.** This surface uses Heroicons' *solid* set; the product uses
+ *   lucide's strokes. A stroked icon is right in a dense interface, where it
+ *   has to sit beside text at 13px without shouting. On a marketing page an
+ *   icon is a landmark, not a label, and a filled mark carries at a glance.
+ *   Keep the split at this boundary — mixing the two inside one screen is what
+ *   makes an icon set look accidental.
  */
 
 export const EASE = [0.16, 1, 0.3, 1] as const
@@ -106,7 +114,7 @@ export function Scene({
   const pad = {
     flush: '',
     short: 'py-20 sm:py-24',
-    full: 'py-28 sm:py-36 lg:py-44',
+    full: 'py-24 sm:py-32 lg:py-36',
     tall: 'py-32 sm:py-44 lg:py-56',
   }
   const edges = {
@@ -197,20 +205,18 @@ export function Title({
 /**
  * The label that opens a scene.
  *
- * `tone` because the same label has to sit on three different grounds — the
- * canvas, onyx, and a brand-lit band — and `rule` because a mark to its side is
- * what stops a lone line of small caps reading as a stray caption.
+ * `tone` only, because the same label has to sit on three different grounds —
+ * the canvas, onyx, and a brand-lit band. An earlier version could also draw a
+ * small rule beside itself; one scene used it and the others didn't, which is
+ * exactly the kind of near-consistency that makes a page look assembled.
  */
 export function Eyebrow({
   children,
   tone = 'faint',
-  rule,
   className,
 }: {
   children: React.ReactNode
   tone?: 'faint' | 'brand' | 'inverse'
-  /** A short bar on the label's leading edge. */
-  rule?: boolean
   className?: string
 }) {
   const tones = {
@@ -220,12 +226,7 @@ export function Eyebrow({
     // already uses for brand-on-dark.
     inverse: 'text-[hsl(249_88%_78%)]',
   }
-  return (
-    <p className={cn('eyebrow flex items-center gap-2.5 font-mono tracking-[0.14em]', tones[tone], className)}>
-      {rule && <span aria-hidden className="h-3 w-px shrink-0 bg-current" />}
-      {children}
-    </p>
-  )
+  return <p className={cn('eyebrow font-mono tracking-[0.11em]', tones[tone], className)}>{children}</p>
 }
 
 /**

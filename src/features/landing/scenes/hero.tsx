@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowRight, Check, ChevronDown, Search } from 'lucide-react'
+import { ArrowRightIcon, CheckIcon, ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/24/solid'
 import { StatusDot } from '@/components/ui/status'
 import { COUNTRIES } from '@/lib/data/countries'
 import { searchInventory } from '@/lib/data/numbers'
@@ -98,7 +98,7 @@ function Field<T extends string>({
         <span className="eyebrow font-mono tracking-[0.11em]">{t(label)}</span>
         <span className="flex w-full items-center gap-1.5 text-md font-medium text-ink">
           <span className="min-w-0 truncate">{t(current.label)}</span>
-          <ChevronDown
+          <ChevronDownIcon
             className={cn(
               'ms-auto size-3.5 shrink-0 text-ink-faint transition-transform',
               open && 'rotate-180',
@@ -130,7 +130,7 @@ function Field<T extends string>({
                 )}
               >
                 <span className="min-w-0 truncate">{t(o.label)}</span>
-                {on && <Check className="ms-auto size-3.5 shrink-0 text-brand" />}
+                {on && <CheckIcon className="ms-auto size-3.5 shrink-0 text-brand" />}
               </button>
             )
           })}
@@ -321,7 +321,7 @@ export function HeroScene() {
               onClick={search}
               className="inline-flex shrink-0 items-center justify-center gap-2 rounded-[14px] bg-brand px-5 py-3.5 text-md font-medium text-brand-fg shadow-brand transition-[background-color,transform] hover:-translate-y-px hover:bg-brand-hover max-sm:w-full"
             >
-              <Search className="size-4" />
+              <MagnifyingGlassIcon className="size-[18px]" />
               {t('Search')}
             </button>
           </div>
@@ -335,7 +335,7 @@ export function HeroScene() {
                   ? t('No numbers match — widen your preferences')
                   : t('{n} numbers available in {country}', { n: matches, country: t(countryName) })}
             </span>
-            <span className="eyebrow font-mono tracking-[0.08em]">
+            <span className="eyebrow font-mono tracking-[0.11em]">
               {t('Create an account to see the exact numbers')}
             </span>
           </div>
@@ -352,7 +352,7 @@ export function HeroScene() {
             className="inline-flex items-center gap-2 rounded-xl bg-brand px-5 py-3 text-md font-medium text-brand-fg shadow-brand transition-[background-color,transform] hover:-translate-y-px hover:bg-brand-hover"
           >
             {t('Start free')}
-            <ArrowRight className="size-4 opacity-75" />
+            <ArrowRightIcon className="size-4 opacity-75" />
           </Link>
           <a
             href="#developers"

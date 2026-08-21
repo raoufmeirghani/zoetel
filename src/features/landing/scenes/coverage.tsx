@@ -37,7 +37,7 @@ export function CoverageScene() {
         <span className="absolute inset-0 bg-gradient-to-b from-[hsl(224_45%_96%/0.62)] via-surface/10 to-surface/90 dark:from-onyx-2/60 dark:via-onyx-2/30 dark:to-onyx-2" />
       </div>
 
-      <div className="mx-auto w-full max-w-[var(--page-max)] px-6 pb-10 pt-20 sm:px-8 sm:pb-14 sm:pt-32">
+      <div className="mx-auto w-full max-w-[var(--page-max)] px-6 pb-12 pt-24 sm:px-8 sm:pb-16 sm:pt-32 lg:pt-36">
         <div className="grid items-end gap-6 lg:grid-cols-2 lg:gap-16">
           <Reveal>
             <Title size="md" className="max-w-[20ch]">

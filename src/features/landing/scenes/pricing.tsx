@@ -1,4 +1,4 @@
-import { ArrowRight, Check } from 'lucide-react'
+import { ArrowRightIcon, CheckCircleIcon } from '@heroicons/react/24/solid'
 import { Link } from 'react-router-dom'
 import { useI18n } from '@/lib/i18n'
 import { money } from '@/lib/format'
@@ -23,8 +23,8 @@ const ENTRY_MONTHLY = 1.1
 
 function Tick({ tone }: { tone: 'light' | 'dark' }) {
   return (
-    <Check
-      className={cn('mt-0.5 size-4 shrink-0', tone === 'light' ? 'text-brand' : 'text-[hsl(249_88%_78%)]')}
+    <CheckCircleIcon
+      className={cn('mt-0.5 size-[18px] shrink-0', tone === 'light' ? 'text-brand' : 'text-[hsl(249_88%_78%)]')}
     />
   )
 }
@@ -80,7 +80,7 @@ export function PricingScene() {
                 className="mt-1 inline-flex w-fit items-center gap-2 rounded-xl bg-brand px-5 py-3 text-sm font-medium text-brand-fg shadow-brand transition-colors hover:bg-brand-hover"
               >
                 {t('Start free')}
-                <ArrowRight className="size-4 opacity-75" />
+                <ArrowRightIcon className="size-4 opacity-75" />
               </Link>
             </div>
 
@@ -105,7 +105,7 @@ export function PricingScene() {
                 className="mt-1 inline-flex w-fit items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-white/[0.18]"
               >
                 {t('Talk to sales')}
-                <ArrowRight className="size-4 opacity-75" />
+                <ArrowRightIcon className="size-4 opacity-75" />
               </Link>
             </div>
           </div>

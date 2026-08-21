@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRightIcon } from '@heroicons/react/24/solid'
 import { Link } from 'react-router-dom'
 import { Logo } from '@/components/layout/logo'
 import { useI18n } from '@/lib/i18n'
@@ -65,7 +65,7 @@ export function ClosingScene() {
               className="inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 text-md font-medium text-onyx transition-transform hover:-translate-y-px"
             >
               {t('Start free')}
-              <ArrowRight className="size-4 opacity-60" />
+              <ArrowRightIcon className="size-4 opacity-60" />
             </Link>
             <Link
               to="/pricing"
@@ -87,14 +87,14 @@ export function ClosingScene() {
             <a
               key={l.label}
               href={l.href}
-              className="eyebrow font-mono tracking-[0.1em] !text-white/45 transition-colors hover:!text-white"
+              className="eyebrow font-mono tracking-[0.11em] !text-white/45 transition-colors hover:!text-white"
             >
               {t(l.label)}
             </a>
           ))}
           {/* The long form, not "© 2026 Zoetel": the licensing basis is the one
               fact a telecom buyer looks for in a footer. */}
-          <span className="eyebrow font-mono tracking-[0.1em] !text-white/45">
+          <span className="eyebrow font-mono tracking-[0.11em] !text-white/45">
             {t('© {year} Zoetel. Numbers provisioned under NTRA-licensed carrier agreements.', {
               year: new Date().getFullYear(),
             })}

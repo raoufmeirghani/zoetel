@@ -44,7 +44,7 @@ export function ProductScene() {
   const [step, setStep] = React.useState(0)
 
   return (
-    <section id="how" className="relative isolate overflow-hidden bg-onyx py-16 sm:py-24 lg:py-28">
+    <section id="how" className="relative isolate overflow-hidden bg-onyx py-24 sm:py-32 lg:py-36">
       <span
         aria-hidden
         className="pointer-events-none absolute -end-[6%] top-[10%] -z-10 h-[80%] w-[70%]"
@@ -90,7 +90,7 @@ export function ProductScene() {
                   >
                     <span
                       className={cn(
-                        'eyebrow font-mono tracking-[0.14em] transition-colors duration-500',
+                        'eyebrow font-mono tracking-[0.11em] transition-colors duration-500',
                         on ? '!text-[hsl(249_88%_78%)]' : '!text-white/35',
                       )}
                     >

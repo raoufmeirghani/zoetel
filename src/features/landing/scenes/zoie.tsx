@@ -1,4 +1,12 @@
-import { ArrowUpRight } from 'lucide-react'
+import {
+  ArrowUpRightIcon,
+  ArrowUturnRightIcon,
+  ArrowsRightLeftIcon,
+  CalendarDaysIcon,
+  ChatBubbleLeftRightIcon,
+  PhoneArrowDownLeftIcon,
+  UserGroupIcon,
+} from '@heroicons/react/24/solid'
 import { useI18n } from '@/lib/i18n'
 import { openZoie, useZoieContext } from '@/lib/zoie'
 import { Eyebrow, Reveal, Title } from '../kit'
@@ -15,12 +23,12 @@ import { Eyebrow, Reveal, Title } from '../kit'
  */
 
 const ROWS = [
-  { label: 'AI voice agents', meta: 'inbound · outbound' },
-  { label: 'AI SMS & WhatsApp', meta: 'conversational' },
-  { label: 'Appointment booking', meta: 'calendar' },
-  { label: 'Lead qualification', meta: 'scoring' },
-  { label: 'CRM sync', meta: 'two-way' },
-  { label: 'Human handoff', meta: 'warm transfer' },
+  { icon: PhoneArrowDownLeftIcon, label: 'AI voice agents', meta: 'inbound · outbound' },
+  { icon: ChatBubbleLeftRightIcon, label: 'AI SMS & WhatsApp', meta: 'conversational' },
+  { icon: CalendarDaysIcon, label: 'Appointment booking', meta: 'calendar' },
+  { icon: UserGroupIcon, label: 'Lead qualification', meta: 'scoring' },
+  { icon: ArrowsRightLeftIcon, label: 'CRM sync', meta: 'two-way' },
+  { icon: ArrowUturnRightIcon, label: 'Human handoff', meta: 'warm transfer' },
 ]
 
 export function ZoieScene() {
@@ -28,7 +36,7 @@ export function ZoieScene() {
   const zoie = useZoieContext()
 
   return (
-    <section id="zoie" className="relative isolate overflow-hidden bg-onyx py-16 sm:py-24 lg:py-28">
+    <section id="zoie" className="relative isolate overflow-hidden bg-onyx py-24 sm:py-32 lg:py-36">
       <span
         aria-hidden
         className="pointer-events-none absolute -start-[8%] top-[6%] -z-10 h-[88%] w-[74%]"
@@ -55,7 +63,7 @@ export function ZoieScene() {
           </div>
         </Reveal>
 
-        <div className="grid gap-5 ps-6 sm:gap-7 sm:ps-8 max-lg:order-1 lg:ps-0">
+        <div className="grid gap-5 ps-6 max-lg:order-1 sm:gap-7 sm:ps-8 lg:ps-0">
           <div>
             <Reveal>
               <Eyebrow tone="inverse">{t('Zoie · AI layer')}</Eyebrow>
@@ -79,10 +87,13 @@ export function ZoieScene() {
               {ROWS.map((r) => (
                 <li
                   key={r.label}
-                  className="flex items-baseline gap-3 border-b border-white/10 py-2.5 text-sm font-medium text-white"
+                  className="flex items-center gap-3 border-b border-white/10 py-3 text-sm font-medium text-white"
                 >
+                  <r.icon className="size-4 shrink-0 text-[hsl(249_88%_78%)]" />
                   {t(r.label)}
-                  <span className="eyebrow ms-auto font-mono tracking-[0.09em] !text-white/40">{t(r.meta)}</span>
+                  <span className="eyebrow ms-auto font-mono tracking-[0.11em] !text-white/40">
+                    {t(r.meta)}
+                  </span>
                 </li>
               ))}
             </ul>
@@ -95,11 +106,11 @@ export function ZoieScene() {
               className="inline-flex items-center gap-2 rounded-xl bg-brand px-5 py-3 text-sm font-medium text-brand-fg shadow-brand transition-colors hover:bg-brand-hover"
             >
               {t('Open Zoie')}
-              <ArrowUpRight className="size-4 opacity-80" />
+              <ArrowUpRightIcon className="size-4 opacity-80" />
             </button>
             {/* Kept verbatim. Zoie's separateness has to be stated plainly on
                 the page, not implied by an icon on the button. */}
-            <p className="mt-4 font-mono text-2xs leading-relaxed tracking-[0.06em] text-white/35">
+            <p className="eyebrow mt-4 font-mono normal-case leading-relaxed tracking-[0.11em] !text-white/35">
               {t('Separate product · opens in a new tab · runs on your Zoetel numbers')}
             </p>
           </Reveal>

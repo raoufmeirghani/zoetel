@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Link } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Menu, X } from 'lucide-react'
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/solid'
 import { Logo } from '@/components/layout/logo'
 import { LocaleSwitch } from '@/components/shared/locale-switch'
 import { useI18n } from '@/lib/i18n'
@@ -122,7 +122,7 @@ function LandingNav() {
               aria-label={t('Open menu')}
               className="grid size-10 place-items-center rounded-lg text-ink-muted transition-colors hover:bg-veil hover:text-ink lg:hidden"
             >
-              <Menu className="size-[18px]" />
+              <Bars3Icon className="size-5" />
             </button>
           </div>
         </nav>
@@ -135,7 +135,7 @@ function LandingNav() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-50 bg-canvas pt-safe lg:hidden"
+            className="pt-safe fixed inset-0 z-50 bg-canvas lg:hidden"
           >
             <div className="flex h-16 items-center justify-between px-6">
               <span className="flex items-center gap-2.5">
@@ -147,7 +147,7 @@ function LandingNav() {
                 aria-label={t('Close menu')}
                 className="grid size-10 place-items-center rounded-lg text-ink-muted hover:bg-veil hover:text-ink"
               >
-                <X className="size-[18px]" />
+                <XMarkIcon className="size-5" />
               </button>
             </div>
             <div className="px-6 pt-6">
