@@ -28,16 +28,14 @@ import { EASE, Lede, Title } from '../kit'
 /**
  * The rotator's vocabulary: the four things a business actually comes here for.
  *
- * The article travels with the lead-in. Fixing "a" in a static half of the
- * sentence produces "a SMS channel" one turn in four, and a headline with a
- * grammatical error in it is worse than a headline that doesn't move.
+ * Each is one key, article included, and the whole phrase is the coloured line.
+ * That does three jobs at once. "an SMS channel" stays grammatical where a fixed
+ * "a" in the lead-in would not. The colour starts at the beginning of the phrase
+ * rather than a word into it. And Arabic — which has no indefinite article —
+ * translates the phrase whole instead of being handed a particle to drop, which
+ * is what an `article` field would have forced.
  */
-const WORDS = [
-  { lead: 'Every business needs a', noun: 'phone number' },
-  { lead: 'Every business needs a', noun: 'SIP trunk' },
-  { lead: 'Every business needs a', noun: 'WhatsApp line' },
-  { lead: 'Every business needs an', noun: 'SMS channel' },
-]
+const WORDS = ['a phone number', 'a SIP trunk', 'a WhatsApp line', 'an SMS channel']
 
 /** `any` is a real option here, not an absent one — hence its own entry. */
 const COUNTRY_OPTS = [
@@ -272,13 +270,10 @@ export function HeroScene() {
               which is the one thing a rotator must never do. `balance` is off
               for the same reason: it would rebalance both lines per word. */}
           <Title as="h1" size="xl" balance={false} className="mx-auto max-w-[22ch] !text-white">
-            {/* The article travels with the lead-in, not with the noun: it is
-                one translatable unit that way, and Arabic — which has no
-                indefinite article — maps both variants onto one phrase. */}
-            <span className="block text-balance">{t(WORDS[word].lead)}</span>
-            {/* The noun and its full stop are one nowrap span, so the period can
-                never orphan onto a line of its own. Motion is transform-only and
-                opacity stays at 1 — a word whose visibility depends on an
+            <span className="block text-balance">{t('Every business needs')}</span>
+            {/* The phrase and its full stop are one nowrap span, so the period
+                can never orphan onto a line of its own. Motion is transform-only
+                and opacity stays at 1 — a word whose visibility depends on an
                 animation is a word that can vanish. */}
             <motion.span
               key={word}
@@ -290,7 +285,7 @@ export function HeroScene() {
               // and the code card already use there.
               className="block whitespace-nowrap text-[hsl(249_88%_78%)]"
             >
-              {t(WORDS[word].noun)}.
+              {t(WORDS[word])}.
             </motion.span>
           </Title>
         </motion.div>

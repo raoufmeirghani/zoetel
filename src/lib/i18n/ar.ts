@@ -1397,7 +1397,7 @@ export const ar: Dictionary = {
     'الجهة التنظيمية في {country} تشترط جهة موثقة لهذا النطاق.',
   'One thing left: give your workspace a phone number. Local Cairo lines activate the moment you check out.':
     'بقيت خطوة واحدة: اختر رقم هاتف لمساحة عملك. خطوط القاهرة المحلية تعمل بمجرد الشراء.',
-  'SIP trunk': 'ربط SIP احترافي',
+  'SIP trunk': 'وصلة SIP',
 
   // ── Pricing page ────────────────────────────────────────────────────────
   'Egypt — toll-free inbound': 'مصر — مجاني وارد',
@@ -1477,9 +1477,10 @@ export const ar: Dictionary = {
   'View documentation': 'تصفّح التوثيق',
   'Carrier partners': 'المشغلون الشركاء',
   'Egypt-first · NTRA licensed': 'مصر أولًا · مرخص من NTRA',
-  'phone number': 'رقم هاتف احترافي',
-  'WhatsApp line': 'خط واتساب للأعمال',
-  'SMS channel': 'قناة رسائل نصية',
+  'a phone number': 'رقم هاتف احترافي',
+  'a SIP trunk': 'ربط SIP احترافي',
+  'a WhatsApp line': 'خط واتساب للأعمال',
+  'an SMS channel': 'قناة رسائل نصية',
   'Search live inventory, buy in one click, point it at your stack. Numbers, SIP, SMS and WhatsApp on carrier-grade infrastructure.':
     'ابحث في الأرقام المتوفرة مباشرة، اشترِ خلال ثوانٍ، ثم اربطها بمنظومتك. أرقام هاتف، وخدمات SIP، والرسائل النصية، وواتساب — جميعها على بنية تحتية بمستوى شركات الاتصالات.',
   'Number type': 'نوع الرقم',
@@ -1572,8 +1573,7 @@ export const ar: Dictionary = {
   'Contact sales': 'تواصل مع المبيعات',
   Zoie: 'Zoie',
   'Copy snippet': 'نسخ الكود',
-  'Every business needs a': 'كل نشاط تجاري يحتاج إلى',
-  'Every business needs an': 'كل نشاط تجاري يحتاج إلى',
+  'Every business needs': 'كل نشاط تجاري يحتاج إلى',
   'Start free': 'ابدأ مجانًا',
   '© {year} Zoetel. Numbers provisioned under NTRA-licensed carrier agreements.':
     '© {year} Zoetel. يتم توفير الأرقام عبر شركات اتصالات مرخصة من الجهاز القومي لتنظيم الاتصالات (NTRA).',
