@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Field } from '@/components/ui/label'
 import { useI18n } from '@/lib/i18n'
+import { useApp } from '@/store/app'
 import { cn } from '@/lib/utils'
 import { AuthShell, FederatedButtons, OrDivider } from './auth-shell'
 
@@ -14,6 +15,11 @@ import { AuthShell, FederatedButtons, OrDivider } from './auth-shell'
  * Three fields, because every one of them is needed to provision anything, and
  * the rest of what onboarding asks for can wait until it is actually required.
  *
+ * What it collects is written into the onboarding draft on submit, which is what
+ * lets the flow skip its own profile step. Asking for a name, an email and a
+ * password on this page and then asking for all three again two screens later is
+ * the single most annoying thing a signup can do.
+ *
  * Any search params arrive from the landing hero's number search — country, type,
  * capability — and are handed straight through to onboarding so the preferences
  * someone set before signing up are still set afterwards.
@@ -22,6 +28,7 @@ export default function SignupPage() {
   const { t } = useI18n()
   const navigate = useNavigate()
   const [params] = useSearchParams()
+  const patchOnboarding = useApp((s) => s.patchOnboarding)
 
   const [name, setName] = React.useState('')
   const [email, setEmail] = React.useState('')
@@ -38,6 +45,7 @@ export default function SignupPage() {
   const submit = (e: React.FormEvent) => {
     e.preventDefault()
     setBusy(true)
+    patchOnboarding({ name, email, password })
     const q = params.toString()
     setTimeout(() => navigate(q ? `/welcome?${q}` : '/welcome'), 450)
   }

@@ -79,7 +79,16 @@ export default function MarketplacePage() {
   const [refineOpen, setRefineOpen] = React.useState(false)
   const [region, setRegion] = React.useState('any')
   const [city, setCity] = React.useState('any')
-  const [caps, setCaps] = React.useState<Capability[]>([])
+  // `cap` arrives from the landing hero, and from onboarding's last step when
+  // someone searched before signing up. Accepted repeated or comma-separated so
+  // one shape covers both a single pick and a set of them.
+  const [caps, setCaps] = React.useState<Capability[]>(
+    () =>
+      params
+        .getAll('cap')
+        .flatMap((v) => v.split(','))
+        .filter(Boolean) as Capability[],
+  )
   const [sort, setSort] = React.useState<Sort>('price-asc')
   const [onlySaved, setOnlySaved] = React.useState(false)
 

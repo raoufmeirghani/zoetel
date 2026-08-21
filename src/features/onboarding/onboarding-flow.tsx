@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -50,17 +50,6 @@ import type { Currency, PlanKind } from '@/lib/types'
 import { useDirSign, useI18n } from '@/lib/i18n'
 import { LocaleSwitch } from '@/components/shared/locale-switch'
 
-/**
- * The welcome step is hidden for now, so the flow opens on the first real
- * question instead of a splash screen. Everything about it is still here — its
- * markup, its copy, its quote on the side rail — because "for now" means one
- * constant to flip back, not a deletion to reconstruct.
- *
- * Every index in this file counts from `STEPS`, so the entry stays in the array
- * and `FIRST_STEP` decides where the flow actually starts.
- */
-const FIRST_STEP = 1
-
 const STEPS = [
   { id: 'welcome', label: 'Welcome' },
   { id: 'type', label: 'Account' },
@@ -86,6 +75,14 @@ const schema = z.object({
   useCase: z.string(),
 })
 
+/**
+ * The slice of the schema the signup page also collects.
+ *
+ * Derived from `schema` rather than restated, so a rule that changes there
+ * cannot silently stop applying to a prefill that arrived from signup.
+ */
+const SIGNUP_FIELDS = schema.pick({ name: true, email: true, password: true })
+
 type FormValues = z.infer<typeof schema>
 
 const EASE = [0.16, 1, 0.3, 1] as const
@@ -105,6 +102,25 @@ export default function OnboardingFlow() {
   const submitVerification = useApp((s) => s.submitVerification)
   const markOnboarded = useApp((s) => s.markOnboarded)
 
+  /**
+   * The number search someone ran on the landing page, forwarded here by signup.
+   *
+   * Nothing in the flow reads it — it is carried, not used — and handed to the
+   * marketplace at the end so the country, type and capability they picked before
+   * they had an account are still picked when they arrive to buy. Only those three
+   * keys travel; the rest of the query string is signup's business.
+   */
+  const [params] = useSearchParams()
+  const numberSearch = React.useMemo(() => {
+    const q = new URLSearchParams()
+    for (const key of ['country', 'type', 'cap']) {
+      const v = params.get(key)
+      if (v) q.set(key, v)
+    }
+    const s = q.toString()
+    return s ? `/numbers/buy?${s}` : '/numbers/buy'
+  }, [params])
+
   /** Any route out of onboarding counts as "seen", so we never trap the user here. */
   const leave = React.useCallback(
     (to: string) => {
@@ -114,8 +130,41 @@ export default function OnboardingFlow() {
     [markOnboarded, navigate],
   )
 
-  const [step, setStep] = React.useState(
-    onboarding.completed ? FIRST_STEP : Math.max(onboarding.step, FIRST_STEP),
+  /**
+   * Steps the flow does not ask, by id.
+   *
+   * `welcome` is hidden for now — a splash screen between a signup and the first
+   * real question. `profile` is hidden once the signup page has supplied a name,
+   * an email and a password, because asking for all three again two screens later
+   * is the most annoying thing a signup can do. It still appears for anyone who
+   * reached onboarding without passing through signup.
+   *
+   * Every index in this file counts from `STEPS`, so entries stay in the array
+   * and this decides what is reachable. One `Set` to change when a step comes
+   * back, rather than renumbering the file.
+   */
+  const hidden = React.useMemo(() => {
+    const set = new Set(['welcome'])
+    // Only skipped when what arrived would actually pass the step's own
+    // validation. A prefill that wouldn't has to be shown and fixed, rather than
+    // failing later on a screen that isn't asking about it.
+    const prefill = { name: onboarding.name, email: onboarding.email, password: onboarding.password }
+    if (SIGNUP_FIELDS.safeParse(prefill).success) set.add('profile')
+    return set
+  }, [onboarding.name, onboarding.email, onboarding.password])
+
+  /** Walks past hidden steps in whichever direction the flow is travelling. */
+  const reachable = React.useCallback(
+    (i: number, dir: 1 | -1) => {
+      let n = Math.min(Math.max(i, 0), STEPS.length - 1)
+      while (n > 0 && n < STEPS.length - 1 && hidden.has(STEPS[n].id)) n += dir
+      return n
+    },
+    [hidden],
+  )
+
+  const [step, setStep] = React.useState(() =>
+    reachable(onboarding.completed ? 1 : Math.max(onboarding.step, 1), 1),
   )
   const [direction, setDirection] = React.useState(1)
   const [showPassword, setShowPassword] = React.useState(false)
@@ -153,9 +202,11 @@ export default function OnboardingFlow() {
         if (!ok) return
       }
     }
-    setDirection(next > step ? 1 : -1)
-    setStep(next)
-    patchOnboarding({ ...values, step: next, plan })
+    const dir = next > step ? 1 : -1
+    const landing = reachable(next, dir)
+    setDirection(dir)
+    setStep(landing)
+    patchOnboarding({ ...values, step: landing, plan })
   }
 
   const finish = async () => {
@@ -171,7 +222,10 @@ export default function OnboardingFlow() {
   const current = STEPS[step]
   /** Zod carries the English message; the dictionary turns it into copy. */
   const err = (m?: string) => (m ? t(m) : undefined)
-  const progress = (step / (STEPS.length - 1)) * 100
+  /** The questions actually asked, so "step 3 of 5" counts what the user sees. */
+  const asked = STEPS.slice(1, 7).filter((x) => !hidden.has(x.id))
+  const position = asked.findIndex((x) => x.id === current.id) + 1
+  const progress = position > 0 ? (position / asked.length) * 100 : step === 0 ? 0 : 100
   const docs = verification.docs
   const uploadedDocs = docs.filter((d) => d.status !== 'missing').length
 
@@ -194,9 +248,9 @@ export default function OnboardingFlow() {
 
         <div className="relative mt-14 flex-1">
           <StepList
-            steps={STEPS.slice(1, 7).map((s, i) => ({
+            steps={asked.map((s, i) => ({
               label: t(s.label),
-              state: step - 1 > i ? 'done' : step - 1 === i ? 'active' : 'pending',
+              state: position - 1 > i ? 'done' : position - 1 === i ? 'active' : 'pending',
             }))}
             className="[&_p.text-ink-subtle]:text-white/40 [&_p]:text-white/85"
           />
@@ -250,7 +304,7 @@ export default function OnboardingFlow() {
             <LocaleSwitch size="sm" />
             {step > 0 && step < 7 && (
               <span className="hidden text-sm tabular-nums text-ink-faint sm:inline">
-                {t('Step {n} of {total}', { n: step, total: STEPS.length - 2 })}
+                {t('Step {n} of {total}', { n: position, total: asked.length })}
               </span>
             )}
             {step < 7 && (
@@ -843,7 +897,7 @@ export default function OnboardingFlow() {
                         variant="primary"
                         size="xl"
                         block
-                        onClick={() => leave('/numbers/buy')}
+                        onClick={() => leave(numberSearch)}
                         icon={<Phone />}
                       >
                         {t('Buy your first phone number')}
