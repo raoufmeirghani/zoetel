@@ -202,7 +202,10 @@ export function HeroScene() {
   }
 
   return (
-    <header id="top" className="relative overflow-hidden bg-onyx text-white">
+    <header
+      id="top"
+      className="relative flex min-h-svh flex-col justify-center overflow-hidden bg-[hsl(240_16%_5%)] text-white"
+    >
       {/* The background stack sits at the default stacking level with the
           content lifted above it, rather than on a `-z-10` layer.
           `mix-blend-mode` inside a negative-z group makes Chromium stop
@@ -224,14 +227,14 @@ export function HeroScene() {
         aria-hidden
         src="/usage.webp"
         alt=""
-        className="hero-art pointer-events-none absolute inset-0 size-full object-cover object-[50%_16%] opacity-[0.34] mix-blend-screen saturate-[1.35]"
+        className="hero-art pointer-events-none absolute inset-0 size-full object-cover object-[50%_16%] opacity-[0.28] mix-blend-screen saturate-[1.4]"
       />
       {/* Dissolves the artwork into the ground, so it has no bottom edge. The
           image runs the full height and this decides where it stops being
           visible — which is why there is no band of dead onyx above the fold. */}
       <span
         aria-hidden
-        className="pointer-events-none absolute inset-0 bg-gradient-to-b from-onyx/10 via-onyx/40 via-65% to-onyx"
+        className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[hsl(240_16%_5%/0.15)] via-[hsl(240_16%_5%/0.5)] via-60% to-[hsl(240_16%_5%)]"
       />
       {/* Brand at 0.2 was tuned against white and disappears on onyx; on a dark
           ground the light has to be roughly twice as strong to read at all. */}
@@ -248,7 +251,7 @@ export function HeroScene() {
 
       {/* `pt-24` rather than `pt-11`: the nav is fixed and 64px tall, so
           anything less puts the status pill inside it. */}
-      <div className="relative z-10 mx-auto grid max-w-[62.5rem] justify-items-center px-6 pb-14 pt-24 text-center sm:px-8 sm:pb-[6.5rem] sm:pt-[5.75rem]">
+      <div className="relative z-10 mx-auto grid w-full max-w-[62.5rem] justify-items-center px-6 pb-20 pt-28 text-center sm:px-8 sm:pb-28 sm:pt-32">
         <motion.div
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
@@ -265,11 +268,16 @@ export function HeroScene() {
           transition={{ duration: 0.65, delay: 0.07, ease: EASE }}
           className="mt-6 sm:mt-9"
         >
-          <Title as="h1" size="xl" className="mx-auto max-w-[20ch] !text-white">
+          {/* Two blocks, not one wrapping paragraph, so the coloured noun is
+              always the second line. Left to wrap, a short noun rides up onto
+              line one and the headline changes shape every three seconds —
+              which is the one thing a rotator must never do. `balance` is off
+              for the same reason: it would rebalance both lines per word. */}
+          <Title as="h1" size="xl" balance={false} className="mx-auto max-w-[22ch] !text-white">
             {/* The article travels with the lead-in, not with the noun: it is
                 one translatable unit that way, and Arabic — which has no
                 indefinite article — maps both variants onto one phrase. */}
-            {t(WORDS[word].lead)}{' '}
+            <span className="block text-balance">{t(WORDS[word].lead)}</span>
             {/* The noun and its full stop are one nowrap span, so the period can
                 never orphan onto a line of its own. Motion is transform-only and
                 opacity stays at 1 — a word whose visibility depends on an
@@ -280,9 +288,9 @@ export function HeroScene() {
               animate={{ y: 0 }}
               transition={{ duration: 0.48, ease: EASE }}
               // Not `text-brand`: the brand is tuned against white and reads
-              // muddy on onyx. This is the lighter brand the eyebrows and the
-              // code card already use on dark ground.
-              className="inline-block whitespace-nowrap text-[hsl(249_88%_78%)]"
+              // muddy on a dark ground. This is the lighter brand the eyebrows
+              // and the code card already use there.
+              className="block whitespace-nowrap text-[hsl(249_88%_78%)]"
             >
               {t(WORDS[word].noun)}.
             </motion.span>

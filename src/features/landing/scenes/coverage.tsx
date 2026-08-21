@@ -1,3 +1,4 @@
+import { BoltIcon, ClockIcon, GlobeAltIcon, SignalIcon } from '@heroicons/react/24/solid'
 import { useI18n } from '@/lib/i18n'
 import { Figure, Reveal, Title } from '../kit'
 
@@ -16,11 +17,11 @@ import { Figure, Reveal, Title } from '../kit'
 const FIGURES = [
   // TODO(client): unverified. Confirm against real platform telemetry, or cut
   // the strip — an invented uptime figure is a liability, not a proof point.
-  { value: '99.99', unit: '%', label: 'Platform uptime' },
-  { value: '60', unit: 's', label: 'To first call' },
-  { value: '41', unit: 'ms', label: 'Median latency' },
+  { icon: BoltIcon, value: '99.99', unit: '%', label: 'Platform uptime' },
+  { icon: ClockIcon, value: '60', unit: 's', label: 'To first call' },
+  { icon: SignalIcon, value: '41', unit: 'ms', label: 'Median latency' },
   // This one is real: the pricing page publishes rates for 190+ destinations.
-  { value: '190', unit: '+', label: 'Countries' },
+  { icon: GlobeAltIcon, value: '190', unit: '+', label: 'Countries' },
 ]
 
 export function CoverageScene() {
@@ -37,7 +38,7 @@ export function CoverageScene() {
         <span className="absolute inset-0 bg-gradient-to-b from-[hsl(224_45%_96%/0.62)] via-surface/10 to-surface/90 dark:from-onyx-2/60 dark:via-onyx-2/30 dark:to-onyx-2" />
       </div>
 
-      <div className="mx-auto w-full max-w-[var(--page-max)] px-6 pb-12 pt-24 sm:px-8 sm:pb-16 sm:pt-32 lg:pt-36">
+      <div className="mx-auto w-full max-w-[var(--page-max)] px-6 pb-16 pt-28 sm:px-8 sm:pb-20 sm:pt-40 lg:pt-48">
         <div className="grid items-end gap-6 lg:grid-cols-2 lg:gap-16">
           <Reveal>
             <Title size="md" className="max-w-[20ch]">
@@ -56,7 +57,7 @@ export function CoverageScene() {
         <Reveal delay={0.1}>
           <div className="mt-12 grid grid-cols-2 gap-6 border-t border-ink/15 pt-6 sm:mt-20 sm:gap-8 lg:grid-cols-4">
             {FIGURES.map((f) => (
-              <Figure key={f.label} value={f.value} unit={f.unit} label={t(f.label)} />
+              <Figure key={f.label} icon={f.icon} value={f.value} unit={f.unit} label={t(f.label)} />
             ))}
           </div>
         </Reveal>

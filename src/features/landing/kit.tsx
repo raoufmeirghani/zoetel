@@ -113,9 +113,9 @@ export function Scene({
 }) {
   const pad = {
     flush: '',
-    short: 'py-20 sm:py-24',
-    full: 'py-24 sm:py-32 lg:py-36',
-    tall: 'py-32 sm:py-44 lg:py-56',
+    short: 'py-24 sm:py-32',
+    full: 'py-28 sm:py-40 lg:py-48',
+    tall: 'py-36 sm:py-52 lg:py-64',
   }
   const edges = {
     none: '',
@@ -239,15 +239,23 @@ export function Figure({
   value,
   unit,
   label,
+  icon: Icon,
   className,
 }: {
   value: React.ReactNode
   unit?: React.ReactNode
   label: React.ReactNode
+  /** Sits above the figure, so four numbers in a row read as four subjects. */
+  icon?: React.ComponentType<{ className?: string }>
   className?: string
 }) {
   return (
     <div className={cn('min-w-0', className)}>
+      {Icon && (
+        <span className="mb-4 grid size-9 place-items-center rounded-lg bg-brand-soft text-brand">
+          <Icon className="size-[18px]" />
+        </span>
+      )}
       <p className="display text-3xl font-medium tracking-tight text-ink sm:text-4xl lg:text-[2.5rem]">
         <span className="tabular-nums">{value}</span>
         {unit && <span className="text-brand">{unit}</span>}

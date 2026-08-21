@@ -44,7 +44,7 @@ export function ProductScene() {
   const [step, setStep] = React.useState(0)
 
   return (
-    <section id="how" className="relative isolate overflow-hidden bg-onyx py-24 sm:py-32 lg:py-36">
+    <section id="how" className="relative isolate overflow-hidden bg-onyx py-28 sm:py-40 lg:py-48">
       <span
         aria-hidden
         className="pointer-events-none absolute -end-[6%] top-[10%] -z-10 h-[80%] w-[70%]"

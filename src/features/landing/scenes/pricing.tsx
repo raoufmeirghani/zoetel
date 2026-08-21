@@ -1,24 +1,29 @@
-import { ArrowRightIcon, CheckCircleIcon } from '@heroicons/react/24/solid'
+import {
+  ArrowRightIcon,
+  ArrowTrendingDownIcon,
+  CheckCircleIcon,
+  RocketLaunchIcon,
+} from '@heroicons/react/24/solid'
 import { Link } from 'react-router-dom'
 import { useI18n } from '@/lib/i18n'
 import { money } from '@/lib/format'
+import { useApp } from '@/store/app'
 import { cn } from '@/lib/utils'
 import { Eyebrow, Reveal, Scene, Title } from '../kit'
 
 /**
  * Scene 08 — what it costs.
  *
- * Two cards, and the point of the headline is that neither of them is a form. The
- * left card is the one almost everyone takes; the dark one exists so the reader
- * knows there is a floor under high volume, not to be chosen from a landing page.
+ * The two plans are the application's own, copied from `pricing/pricing-page.tsx`
+ * rather than written for the landing page: same names, same taglines, same
+ * anchors, same six lines each. A visitor who reads this and then signs up
+ * should find the identical two cards inside the product, and the prototype's
+ * invented "$0.95 a month" is exactly the kind of drift that breaks that.
+ *
+ * The rate itself comes from the rate table via `money()`, so it follows the
+ * reader's display currency instead of being hard-coded in dollars.
  */
 
-/**
- * The entry price comes from the rate table rather than the design file — the
- * prototype said "$0.95 a month", which is below anything the product actually
- * sells. `money()` also formats it in the reader's currency and isolates it for
- * Arabic.
- */
 const ENTRY_MONTHLY = 1.1
 
 function Tick({ tone }: { tone: 'light' | 'dark' }) {
@@ -31,16 +36,45 @@ function Tick({ tone }: { tone: 'light' | 'dark' }) {
 
 export function PricingScene() {
   const { t } = useI18n()
+  const currency = useApp((s) => s.workspace.currency)
 
-  const payg = [
-    t('Numbers from {price} a month', { price: money(ENTRY_MONTHLY, 'USD', { trimZeros: false }) }),
-    t('Per-second calls, per-message SMS'),
-    t('No minimums, no commitment'),
-  ]
-  const volume = [
-    t('Lower per-minute and per-message rates'),
-    t('Dedicated routes and named support'),
-    t('Regulatory help for new markets'),
+  const PLANS = [
+    {
+      kind: 'payg' as const,
+      icon: RocketLaunchIcon,
+      name: t('Pay as you go'),
+      tagline: t('Perfect for startups and first integrations'),
+      price: t('No commitment'),
+      priceSub: t('Top up your wallet, pay only for what you use'),
+      features: [
+        t('Numbers from {price}/month', { price: money(ENTRY_MONTHLY, currency) }),
+        t('Per-second voice billing'),
+        t('All API and SIP features included'),
+        t('Unlimited API keys and webhooks'),
+        t('Community and email support'),
+        t('Cancel or pause any time'),
+      ],
+      cta: t('Start free'),
+      to: '/welcome',
+    },
+    {
+      kind: 'volume' as const,
+      icon: ArrowTrendingDownIcon,
+      name: t('Volume pricing'),
+      tagline: t('For teams with predictable monthly traffic'),
+      price: t('Up to 24% lower'),
+      priceSub: t('Committed monthly minutes at discounted rates'),
+      features: [
+        t('Automatic tier discounts up to 24%'),
+        t('Dedicated carrier routes and priority capacity'),
+        t('Named technical account manager'),
+        t('Custom SLA with quality guarantees'),
+        t('Monthly invoicing with net-30 terms'),
+        t('SSO, audit exports and role policies'),
+      ],
+      cta: t('Talk to sales'),
+      to: '/pricing',
+    },
   ]
 
   return (
@@ -58,56 +92,78 @@ export function PricingScene() {
         </div>
 
         <Reveal delay={0.1}>
-          <div className="mt-9 grid gap-4 sm:mt-12 lg:grid-cols-2">
-            <div className="grid content-start gap-4.5 rounded-[20px] border border-line bg-surface p-6 sm:p-8">
-              <Eyebrow>{t('Pay as you go')}</Eyebrow>
-              <p>
-                <span className="display text-3xl font-semibold tracking-tight text-ink sm:text-[2.5rem]">
-                  {money(0, 'USD', { trimZeros: true })}
-                </span>
-                <span className="text-sm text-ink-faint"> {t('to start · then per use')}</span>
-              </p>
-              <ul className="grid gap-2.5">
-                {payg.map((line) => (
-                  <li key={line} className="flex gap-2.5 text-sm leading-relaxed text-ink-muted">
-                    <Tick tone="light" />
-                    {line}
-                  </li>
-                ))}
-              </ul>
-              <Link
-                to="/welcome"
-                className="mt-1 inline-flex w-fit items-center gap-2 rounded-xl bg-brand px-5 py-3 text-sm font-medium text-brand-fg shadow-brand transition-colors hover:bg-brand-hover"
-              >
-                {t('Start free')}
-                <ArrowRightIcon className="size-4 opacity-75" />
-              </Link>
-            </div>
+          <div className="mt-12 grid gap-4 sm:mt-16 lg:grid-cols-2">
+            {PLANS.map((p) => {
+              const dark = p.kind === 'volume'
+              return (
+                <div
+                  key={p.kind}
+                  className={cn(
+                    'grid content-start gap-5 rounded-[20px] p-6 sm:p-8',
+                    dark ? 'bg-onyx' : 'border border-line bg-surface',
+                  )}
+                >
+                  <div className="flex items-center gap-3">
+                    <span
+                      className={cn(
+                        'grid size-10 shrink-0 place-items-center rounded-xl',
+                        dark ? 'bg-white/10 text-[hsl(249_88%_78%)]' : 'bg-brand-soft text-brand',
+                      )}
+                    >
+                      <p.icon className="size-[18px]" />
+                    </span>
+                    <span className="min-w-0">
+                      <Eyebrow className={cn(dark && '!text-white/55')}>{p.name}</Eyebrow>
+                      <p className={cn('mt-1 text-sm', dark ? 'text-white/55' : 'text-ink-subtle')}>
+                        {p.tagline}
+                      </p>
+                    </span>
+                  </div>
 
-            <div className="grid content-start gap-4.5 rounded-[20px] bg-onyx p-6 sm:p-8">
-              <Eyebrow className="!text-white/55">{t('Volume')}</Eyebrow>
-              <p>
-                <span className="display text-3xl font-semibold tracking-tight text-white sm:text-[2.5rem]">
-                  {t('Custom')}
-                </span>
-                <span className="text-sm text-white/55"> · {t('committed rates')}</span>
-              </p>
-              <ul className="grid gap-2.5">
-                {volume.map((line) => (
-                  <li key={line} className="flex gap-2.5 text-sm leading-relaxed text-white/80">
-                    <Tick tone="dark" />
-                    {line}
-                  </li>
-                ))}
-              </ul>
-              <Link
-                to="/pricing"
-                className="mt-1 inline-flex w-fit items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-white/[0.18]"
-              >
-                {t('Talk to sales')}
-                <ArrowRightIcon className="size-4 opacity-75" />
-              </Link>
-            </div>
+                  <p>
+                    <span
+                      className={cn(
+                        'display text-3xl font-semibold tracking-tight sm:text-[2.5rem]',
+                        dark ? 'text-white' : 'text-ink',
+                      )}
+                    >
+                      {p.price}
+                    </span>
+                  </p>
+                  <p className={cn('-mt-3 text-sm', dark ? 'text-white/55' : 'text-ink-subtle')}>
+                    {p.priceSub}
+                  </p>
+
+                  <ul className="grid gap-2.5">
+                    {p.features.map((line) => (
+                      <li
+                        key={line}
+                        className={cn(
+                          'flex gap-2.5 text-sm leading-relaxed',
+                          dark ? 'text-white/80' : 'text-ink-muted',
+                        )}
+                      >
+                        <Tick tone={dark ? 'dark' : 'light'} />
+                        {line}
+                      </li>
+                    ))}
+                  </ul>
+
+                  <Link
+                    to={p.to}
+                    className={cn(
+                      'mt-1 inline-flex w-fit items-center gap-2 rounded-xl px-5 py-3 text-sm font-medium transition-colors',
+                      dark
+                        ? 'border border-white/20 bg-white/10 text-white hover:bg-white/[0.18]'
+                        : 'bg-brand text-brand-fg shadow-brand hover:bg-brand-hover',
+                    )}
+                  >
+                    {p.cta}
+                    <ArrowRightIcon className="size-4 opacity-75" />
+                  </Link>
+                </div>
+              )
+            })}
           </div>
         </Reveal>
       </div>

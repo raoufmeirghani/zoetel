@@ -36,7 +36,7 @@ export function ZoieScene() {
   const zoie = useZoieContext()
 
   return (
-    <section id="zoie" className="relative isolate overflow-hidden bg-onyx py-24 sm:py-32 lg:py-36">
+    <section id="zoie" className="relative isolate overflow-hidden bg-onyx py-28 sm:py-40 lg:py-48">
       <span
         aria-hidden
         className="pointer-events-none absolute -start-[8%] top-[6%] -z-10 h-[88%] w-[74%]"
