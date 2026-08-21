@@ -4,7 +4,14 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/zoetel.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#ffffff" />
+    <!-- Safari reads `theme-color` when it parses the document and does not
+         reliably re-read it afterwards, so this has to be a literal in the HTML
+         rather than something a route sets on mount. `#07070b` is the landing
+         hero's ground: black chrome above and below the page, in both themes.
+         It tints the browser bars only — no section on any page changes. -->
+    <meta name="theme-color" content="#07070b" />
+    <!-- Installed to the home screen, the status bar takes this instead. -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta
       name="description"
       content="Zoetel — voice infrastructure for modern businesses. Buy numbers, run SIP trunks, and ship voice in minutes."

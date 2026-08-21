@@ -11,7 +11,12 @@ export function useThemeEffect() {
         theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)
       root.setAttribute('data-theme', dark ? 'dark' : 'light')
       root.style.colorScheme = dark ? 'dark' : 'light'
-      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#0e0e12' : '#ffffff')
+      // `theme-color` is deliberately not touched here. It is a literal in
+      // `index.html` — black, in both themes — because Safari reads it when it
+      // parses the document and ignores changes made afterwards. This hook used
+      // to set it to `#ffffff` in light mode, which ran on mount and quietly
+      // overwrote the literal, so the browser bars came out white no matter what
+      // any page asked for. One owner, and it is the markup.
     }
     apply()
     if (theme !== 'system') return

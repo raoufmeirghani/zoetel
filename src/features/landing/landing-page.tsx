@@ -41,33 +41,35 @@ import { ClosingScene } from './scenes/close'
  * page rendered blank.
  */
 
-/** The hero's ground, and the page's identity dark. */
+/** The hero's ground. Matches the `theme-color` literal in `index.html`. */
 const PAGE_DARK = 'hsl(243 20% 3.5%)'
 
 /**
- * Tells the browser chrome this page is dark.
+ * Paints the document itself dark for the length of this page.
  *
- * Two separate things need saying and neither can be reached from a class on a
- * div inside `#root`. `theme-color` is what iOS Safari tints its status bar and
- * bottom toolbar from. The `html` background is what paints the overscroll area
- * — rubber-band past the top of a dark hero and you should not see white.
+ * `theme-color` is not set here — Safari reads that at parse time and ignores it
+ * afterwards, so it is a literal in `index.html`. What this handles is the other
+ * half: the overscroll area, which comes from the document background rather
+ * than from any element inside `#root`. Rubber-band past the top of a dark hero
+ * and you should not see white.
  *
- * Both are restored on unmount, because the rest of the application is light and
- * a stale dark status bar over a white dashboard looks like a bug.
+ * Both `html` and `body` need it. `body` carries the application's light ground,
+ * and a background on `html` alone leaves that light sheet painting over the
+ * whole viewport — which was the bug in the first attempt at this.
+ *
+ * Restored on unmount, because the rest of the application is light.
  */
-function useDarkBrowserChrome() {
+function useDarkDocument() {
   React.useEffect(() => {
-    const meta = document.querySelector('meta[name="theme-color"]')
-    const root = document.documentElement
-    const prevMeta = meta?.getAttribute('content') ?? null
-    const prevBg = root.style.backgroundColor
+    const { documentElement: html, body } = document
+    const prev = { html: html.style.backgroundColor, body: body.style.backgroundColor }
 
-    meta?.setAttribute('content', PAGE_DARK)
-    root.style.backgroundColor = PAGE_DARK
+    html.style.backgroundColor = PAGE_DARK
+    body.style.backgroundColor = PAGE_DARK
 
     return () => {
-      if (prevMeta != null) meta?.setAttribute('content', prevMeta)
-      root.style.backgroundColor = prevBg
+      html.style.backgroundColor = prev.html
+      body.style.backgroundColor = prev.body
     }
   }, [])
 }
@@ -255,7 +257,7 @@ function LandingNav() {
 }
 
 export default function LandingPage() {
-  useDarkBrowserChrome()
+  useDarkDocument()
 
   return (
     // The page's own ground is dark. Every scene paints its own surface over it,
