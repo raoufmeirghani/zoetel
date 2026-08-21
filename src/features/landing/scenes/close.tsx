@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { ArrowRightIcon } from '@heroicons/react/24/solid'
 import { Link } from 'react-router-dom'
+import { Button } from '@/components/ui/button'
 import { Logo } from '@/components/layout/logo'
 import { useI18n } from '@/lib/i18n'
 import { Reveal, Title } from '../kit'
@@ -60,19 +61,17 @@ export function ClosingScene() {
         </Reveal>
         <Reveal delay={0.08}>
           <div className="mt-7 flex flex-wrap justify-center gap-2.5 sm:mt-9">
-            <Link
-              to="/welcome"
-              className="inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 text-md font-medium text-onyx transition-transform hover:-translate-y-px"
-            >
-              {t('Start free')}
-              <ArrowRightIcon className="size-4 opacity-60" />
-            </Link>
-            <Link
-              to="/pricing"
-              className="inline-flex items-center rounded-xl border border-white/20 bg-white/[0.05] px-5 py-3 text-md text-white/85 transition-colors hover:bg-white/[0.11] hover:text-white"
-            >
-              {t('Contact sales')}
-            </Link>
+            {/* White rather than brand: the plane behind it is already brand,
+                so a brand button would disappear into its own glow. */}
+            <Button size="xl" asChild className="border-0 bg-white text-onyx shadow-none hover:bg-white/90">
+              <Link to="/welcome">
+                {t('Start free')}
+                <ArrowRightIcon className="opacity-60" />
+              </Link>
+            </Button>
+            <Button variant="glassOnDark" size="xl" asChild>
+              <Link to="/pricing">{t('Contact sales')}</Link>
+            </Button>
           </div>
         </Reveal>
       </div>

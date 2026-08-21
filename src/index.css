@@ -315,6 +315,36 @@
       0 32px 64px -24px rgb(0 0 0 / 0.7);
   }
 
+  /* The same glass, for a plane that is dark regardless of the theme — the
+     landing page's hero and its onyx scenes. `[data-theme='dark'] .glass` has
+     exactly these values, but it only applies in dark mode, and a white 42%
+     sheet over onyx is a milky slab rather than glass. Same relationship as
+     `Logo tone="onDark"`: the theme can't know about a plane the page invented.
+
+     Kept beside `.glass` rather than in the landing feature so the two can't
+     drift; if the light recipe changes, this one is right underneath it. */
+  .glass-on-dark {
+    background: hsl(0 0% 100% / 0.06);
+    -webkit-backdrop-filter: blur(30px) saturate(140%);
+    backdrop-filter: blur(30px) saturate(140%);
+    box-shadow:
+      inset 0 1px 0 0 hsl(0 0% 100% / 0.09),
+      0 0 0 1px hsl(0 0% 100% / 0.11),
+      0 2px 4px -2px rgb(0 0 0 / 0.45),
+      0 16px 40px -20px rgb(0 0 0 / 0.65);
+  }
+
+  .glass-panel-on-dark {
+    background: hsl(0 0% 100% / 0.08);
+    -webkit-backdrop-filter: blur(34px) saturate(140%);
+    backdrop-filter: blur(34px) saturate(140%);
+    box-shadow:
+      inset 0 1px 0 0 hsl(0 0% 100% / 0.12),
+      0 0 0 1px hsl(0 0% 100% / 0.14),
+      0 8px 16px -10px rgb(0 0 0 / 0.55),
+      0 32px 64px -24px rgb(0 0 0 / 0.75);
+  }
+
   /* Translucency on these surfaces assumes the blur is actually painting. If it
      isn't, a 74%-opaque sheet leaves the page behind it perfectly readable —
      which is exactly what a popup must never do. When backdrop-filter is
@@ -331,6 +361,14 @@
 
     .glass {
       background: hsl(var(--surface) / 0.96);
+    }
+
+    .glass-on-dark {
+      background: hsl(240 12% 12%);
+    }
+
+    .glass-panel-on-dark {
+      background: hsl(240 12% 14%);
     }
   }
 

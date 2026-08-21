@@ -1,6 +1,6 @@
 import { BoltIcon, ClockIcon, GlobeAltIcon, SignalIcon } from '@heroicons/react/24/solid'
 import { useI18n } from '@/lib/i18n'
-import { Figure, Reveal, Title } from '../kit'
+import { Figure, Lede, Reveal, Title } from '../kit'
 
 /**
  * Scene 06 — reach.
@@ -46,11 +46,11 @@ export function CoverageScene() {
             </Title>
           </Reveal>
           <Reveal delay={0.06}>
-            <p className="max-w-[34ch] text-md leading-relaxed text-ink-muted">
+            <Lede className="max-w-[34ch]">
               {t(
                 'Redundant carriers, encrypted media, automatic failover. You see a number and a rate; the interconnects stay ours.',
               )}
-            </p>
+            </Lede>
           </Reveal>
         </div>
 

@@ -31,10 +31,10 @@ export function CarrierScene() {
   return (
     <section
       aria-label={t('Carrier partners')}
-      // No top hairline: this strip used to follow a light hero and needed one.
-      // It now follows onyx, where the tonal jump is the edge and a pale rule on
-      // top of it would just be a seam.
-      className="relative overflow-hidden border-b border-line-soft bg-surface py-6 sm:py-8"
+      // No top hairline: this strip follows the hero's dark plane, where the
+      // tonal jump is the edge and a pale rule on top of it would be a seam.
+      // `glass` rather than a solid fill so the hero's light bleeds up into it.
+      className="glass relative overflow-hidden rounded-none py-6 sm:py-8"
       style={{
         maskImage: 'linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent)',
         WebkitMaskImage: 'linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent)',

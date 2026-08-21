@@ -5,6 +5,7 @@ import {
   RocketLaunchIcon,
 } from '@heroicons/react/24/solid'
 import { Link } from 'react-router-dom'
+import { Button } from '@/components/ui/button'
 import { useI18n } from '@/lib/i18n'
 import { money } from '@/lib/format'
 import { useApp } from '@/store/app'
@@ -78,7 +79,7 @@ export function PricingScene() {
   ]
 
   return (
-    <Scene id="pricing" ground="bare" measure="full" className="border-t border-line-soft bg-surface-3">
+    <Scene id="pricing" ground="paper" measure="full">
       <div className="mx-auto max-w-[62.5rem]">
         <div className="grid justify-items-center text-center">
           <Reveal>
@@ -99,8 +100,8 @@ export function PricingScene() {
                 <div
                   key={p.kind}
                   className={cn(
-                    'grid content-start gap-5 rounded-[20px] p-6 sm:p-8',
-                    dark ? 'bg-onyx' : 'border border-line bg-surface',
+                    'grid content-start gap-5 rounded-[28px] p-6 sm:p-8',
+                    dark ? 'glass-on-dark bg-onyx/80' : 'glass',
                   )}
                 >
                   <div className="flex items-center gap-3">
@@ -149,18 +150,17 @@ export function PricingScene() {
                     ))}
                   </ul>
 
-                  <Link
-                    to={p.to}
-                    className={cn(
-                      'mt-1 inline-flex w-fit items-center gap-2 rounded-xl px-5 py-3 text-sm font-medium transition-colors',
-                      dark
-                        ? 'border border-white/20 bg-white/10 text-white hover:bg-white/[0.18]'
-                        : 'bg-brand text-brand-fg shadow-brand hover:bg-brand-hover',
-                    )}
+                  <Button
+                    variant={dark ? 'glassOnDark' : 'primary'}
+                    size="lg"
+                    asChild
+                    className={cn('mt-1 w-fit', !dark && 'shadow-brand')}
                   >
-                    {p.cta}
-                    <ArrowRightIcon className="size-4 opacity-75" />
-                  </Link>
+                    <Link to={p.to}>
+                      {p.cta}
+                      <ArrowRightIcon className="opacity-75" />
+                    </Link>
+                  </Button>
                 </div>
               )
             })}

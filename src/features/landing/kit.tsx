@@ -398,6 +398,16 @@ export function LineWipe({
 /* ── Product framing ───────────────────────────────────────────────────── */
 
 /**
+ * The lift under a screenshot that bleeds off the page: a deep black cast so it
+ * reads as an object above the plane, plus an indigo bloom so it belongs to the
+ * scene it sits in. Declared once because the product and Zoie scenes are
+ * mirror images and had a copy each.
+ */
+export const SCREEN_LIFT = {
+  boxShadow: '0 50px 110px -50px rgb(0 0 0 / 0.9), 0 0 120px -60px hsl(var(--brand) / 0.75)',
+} as const
+
+/**
  * How a product fragment is presented: floating in light, never inside a card.
  *
  * The frame is a hairline and a shadow plus a pool of light beneath it — the

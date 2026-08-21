@@ -20,6 +20,14 @@ const buttonVariants = cva(
         secondary:
           'bg-surface text-ink shadow-[0_0_0_1px_hsl(var(--line-strong)),0_1px_2px_rgb(17_18_28/0.04)] hover:bg-surface-2 hover:shadow-[0_0_0_1px_hsl(var(--line-strong)),0_2px_6px_-2px_rgb(17_18_28/0.08)]',
         outline: 'border border-line-strong bg-transparent text-ink hover:bg-surface-2',
+        /**
+         * Frosted. `.glass` brings its own hairline and cast shadow, so there is
+         * no ring to add. It needs something behind it to be glass rather than a
+         * grey button — use it over artwork, not on a bare canvas.
+         */
+        glass: 'glass text-ink hover:bg-surface/60',
+        /** The same, for a plane that is dark whatever the theme is. */
+        glassOnDark: 'glass-on-dark text-white hover:bg-white/[0.12]',
         ghost: 'text-ink-muted hover:bg-surface-3 hover:text-ink',
         subtle: 'bg-surface-3 text-ink hover:bg-line',
         destructive:

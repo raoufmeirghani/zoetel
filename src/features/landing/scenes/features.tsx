@@ -52,8 +52,10 @@ function Card({
       viewport={{ once: true, margin: '-10% 0px' }}
       transition={{ duration: 0.6, delay, ease: EASE }}
       className={cn(
-        'group grid content-start gap-6 rounded-[22px] border border-line-soft bg-surface-3 p-5 transition-[background-color,transform] duration-300',
-        'hover:-translate-y-[3px] hover:bg-veil-strong sm:p-7',
+        // The application's card treatment, at the application's radius. Glass
+        // needs something behind it, which is what the scene's mesh is for.
+        'glass group grid content-start gap-6 rounded-[28px] p-5 transition-transform duration-300',
+        'hover:-translate-y-[3px] sm:p-7',
         className,
       )}
     >
@@ -79,6 +81,8 @@ function Card({
 function Panel({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
     <div
+      // Solid, not glass: nesting glass inside glass reads as a mistake, and
+      // this panel is standing in for a real product surface anyway.
       className={cn('w-full overflow-hidden rounded-[14px] border border-line bg-surface shadow-md', className)}
     >
       {children}
@@ -89,8 +93,10 @@ function Panel({ children, className }: { children: React.ReactNode; className?:
 export function FeatureScene() {
   const { t } = useI18n()
 
+  // `mesh` is the dashboard's own hero atmosphere, dialled back: a treatment
+  // tuned for a header band is too much colour to fill a whole scene with.
   return (
-    <Scene id="features" ground="bare" measure="full" className="bg-surface">
+    <Scene id="features" ground="mesh" groundOpacity={0.5} edge="fade-y" measure="full">
       <div className="grid justify-items-center text-center">
         <Reveal>
           <Eyebrow tone="brand">{t('Features')}</Eyebrow>

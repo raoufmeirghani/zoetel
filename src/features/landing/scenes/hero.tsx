@@ -2,6 +2,7 @@ import * as React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ArrowRightIcon, CheckIcon, ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/24/solid'
+import { Button } from '@/components/ui/button'
 import { StatusDot } from '@/components/ui/status'
 import { COUNTRIES } from '@/lib/data/countries'
 import { searchInventory } from '@/lib/data/numbers'
@@ -66,7 +67,7 @@ function Divider() {
   return (
     <span
       aria-hidden
-      className="shrink-0 bg-line-soft max-sm:mx-4 max-sm:h-px max-sm:w-[calc(100%-2rem)] sm:h-[30px] sm:w-px sm:self-center"
+      className="shrink-0 bg-white/10 max-sm:mx-4 max-sm:h-px max-sm:w-[calc(100%-2rem)] sm:h-[30px] sm:w-px sm:self-center"
     />
   )
 }
@@ -106,17 +107,14 @@ function Field<T extends string>({
         aria-haspopup="listbox"
         className={cn(
           'grid w-full gap-0.5 rounded-[14px] px-4 py-3 text-start transition-colors',
-          open ? 'bg-surface-3' : 'hover:bg-surface-3/60',
+          open ? 'bg-white/10' : 'hover:bg-white/[0.06]',
         )}
       >
-        <span className="eyebrow font-mono tracking-[0.11em]">{t(label)}</span>
-        <span className="flex w-full items-center gap-1.5 text-md font-medium text-ink">
+        <span className="eyebrow font-mono tracking-[0.11em] !text-white/45">{t(label)}</span>
+        <span className="flex w-full items-center gap-1.5 text-md font-medium text-white">
           <span className="min-w-0 truncate">{t(current.label)}</span>
           <ChevronDownIcon
-            className={cn(
-              'ms-auto size-3.5 shrink-0 text-ink-faint transition-transform',
-              open && 'rotate-180',
-            )}
+            className={cn('ms-auto size-3.5 shrink-0 text-white/45 transition-transform', open && 'rotate-180')}
           />
         </span>
       </button>
@@ -140,7 +138,7 @@ function Field<T extends string>({
                 onClick={() => onPick(o.value)}
                 className={cn(
                   'flex items-center gap-2 rounded-[9px] px-2.5 py-2 text-start text-sm transition-colors',
-                  on ? 'bg-brand-soft font-medium text-brand-ink' : 'text-ink-muted hover:bg-veil',
+                  on ? 'bg-brand-soft font-medium text-brand-ink' : 'text-ink-muted hover:bg-veil-strong',
                 )}
               >
                 <span className="min-w-0 truncate">{t(o.label)}</span>
@@ -256,7 +254,7 @@ export function HeroScene() {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: EASE }}
-          className="inline-flex items-center gap-2.5 whitespace-nowrap rounded-full border border-white/15 bg-white/[0.07] py-1.5 pe-3.5 ps-2.5 text-xs font-medium text-white/75 backdrop-blur"
+          className="glass-on-dark inline-flex items-center gap-2.5 whitespace-nowrap rounded-full py-1.5 pe-3.5 ps-2.5 text-xs font-medium text-white/80"
         >
           <StatusDot tone="success" pulse />
           {t('Egypt-first · NTRA licensed')}
@@ -317,13 +315,14 @@ export function HeroScene() {
           transition={{ duration: 0.65, delay: 0.21, ease: EASE }}
           className="mt-8 w-full max-w-[45rem] text-start sm:mt-10"
         >
-          {/* Deliberately still light. On a dark ground this is the brightest
-              object on the page, which is correct — it is the one thing the
-              visitor is meant to touch, and a dark bar on a dark hero would
-              make the primary action the least visible thing in it. */}
+          {/* `glass-panel-on-dark` rather than a solid sheet: the same
+              popup-grade glass the app's side panel uses, so the artwork reads
+              through the bar instead of being covered by it. It is still the
+              brightest object in the hero — which is correct, it is the one
+              thing the visitor is meant to touch. */}
           <div
             ref={bar}
-            className="flex flex-wrap items-stretch gap-1 rounded-[20px] border border-white/10 bg-surface p-1.5 shadow-[0_8px_16px_-8px_rgb(0_0_0/0.5),0_32px_64px_-20px_rgb(0_0_0/0.65)]"
+            className="glass-panel-on-dark flex flex-wrap items-stretch gap-1 rounded-[20px] p-1.5"
           >
             <Field
               label="Country"
@@ -360,14 +359,15 @@ export function HeroScene() {
               open={open === 'cap'}
               onToggle={() => setOpen(open === 'cap' ? null : 'cap')}
             />
-            <button
-              type="button"
+            <Button
+              variant="primary"
+              size="xl"
               onClick={search}
-              className="inline-flex shrink-0 items-center justify-center gap-2 rounded-[14px] bg-brand px-5 py-3.5 text-md font-medium text-brand-fg shadow-brand transition-[background-color,transform] hover:-translate-y-px hover:bg-brand-hover max-sm:w-full"
+              icon={<MagnifyingGlassIcon />}
+              className="shrink-0 rounded-[14px] shadow-brand max-sm:w-full"
             >
-              <MagnifyingGlassIcon className="size-[18px]" />
               {t('Search')}
-            </button>
+            </Button>
           </div>
 
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 px-2 pt-3">
@@ -391,19 +391,15 @@ export function HeroScene() {
           transition={{ duration: 0.65, delay: 0.28, ease: EASE }}
           className="mt-7 flex flex-wrap justify-center gap-2.5 sm:mt-8"
         >
-          <Link
-            to="/welcome"
-            className="inline-flex items-center gap-2 rounded-xl bg-brand px-5 py-3 text-md font-medium text-brand-fg shadow-brand transition-[background-color,transform] hover:-translate-y-px hover:bg-brand-hover"
-          >
-            {t('Start free')}
-            <ArrowRightIcon className="size-4 opacity-75" />
-          </Link>
-          <a
-            href="#developers"
-            className="inline-flex items-center rounded-xl border border-white/20 bg-white/[0.06] px-5 py-3 text-md text-white/85 transition-colors hover:bg-white/[0.12] hover:text-white"
-          >
-            {t('View documentation')}
-          </a>
+          <Button variant="primary" size="xl" asChild className="shadow-brand">
+            <Link to="/welcome">
+              {t('Start free')}
+              <ArrowRightIcon className="opacity-75" />
+            </Link>
+          </Button>
+          <Button variant="glassOnDark" size="xl" asChild>
+            <a href="#developers">{t('View documentation')}</a>
+          </Button>
         </motion.div>
       </div>
     </header>

@@ -1,6 +1,6 @@
 import { useI18n } from '@/lib/i18n'
 import { CodeTabs } from '../code-tabs'
-import { Eyebrow, Reveal, Scene, Title } from '../kit'
+import { Eyebrow, Lede, Reveal, Scene, Title } from '../kit'
 
 /**
  * Scene 07 — the API.
@@ -12,7 +12,7 @@ export function DeveloperScene() {
   const { t } = useI18n()
 
   return (
-    <Scene id="developers" ground="bare" measure="full" className="bg-surface">
+    <Scene id="developers" ground="paper" measure="full">
       <div className="mx-auto max-w-[62.5rem]">
         <div className="grid justify-items-center text-center">
           <Reveal>
@@ -24,11 +24,11 @@ export function DeveloperScene() {
             </Title>
           </Reveal>
           <Reveal delay={0.12}>
-            <p className="mt-4 max-w-[48ch] text-md leading-relaxed text-ink-muted">
+            <Lede className="mt-4 max-w-[48ch]">
               {t(
                 'A single REST surface for numbers, SIP, messaging and voice apps. Idempotent writes, signed webhooks, predictable errors.',
               )}
-            </p>
+            </Lede>
           </Reveal>
         </div>
 

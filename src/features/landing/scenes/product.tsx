@@ -2,7 +2,7 @@ import * as React from 'react'
 import { motion } from 'framer-motion'
 import { useI18n } from '@/lib/i18n'
 import { cn } from '@/lib/utils'
-import { EASE, Eyebrow, Reveal, Title } from '../kit'
+import { EASE, Eyebrow, Glow, Lede, Reveal, SCREEN_LIFT, Scene, Title } from '../kit'
 
 /**
  * Scene 04 — the product.
@@ -44,14 +44,8 @@ export function ProductScene() {
   const [step, setStep] = React.useState(0)
 
   return (
-    <section id="how" className="relative isolate overflow-hidden bg-onyx py-28 sm:py-40 lg:py-48">
-      <span
-        aria-hidden
-        className="pointer-events-none absolute -end-[6%] top-[10%] -z-10 h-[80%] w-[70%]"
-        style={{
-          background: 'radial-gradient(46% 46% at 50% 50%, hsl(var(--brand) / 0.34), transparent 70%)',
-        }}
-      />
+    <Scene id="how" ground="onyx" measure="full" edge="fade-y" bleed>
+      <Glow x="94%" y="50%" size="48rem" opacity={0.55} />
 
       <div className="mx-auto grid max-w-[80rem] items-center gap-8 ps-6 sm:ps-8 lg:grid-cols-[minmax(17.5rem,25rem)_minmax(0,1fr)] lg:gap-14">
         <div className="grid gap-6 pe-6 sm:gap-9 sm:pe-8 lg:pe-0">
@@ -65,11 +59,11 @@ export function ProductScene() {
               </Title>
             </Reveal>
             <Reveal delay={0.12}>
-              <p className="mt-4 text-md leading-relaxed text-white/55">
+              <Lede className="mt-4 !text-white/55">
                 {t(
                   'Buy a number, point it somewhere, watch it run. Three screens, one control plane, no implementation project.',
                 )}
-              </p>
+              </Lede>
             </Reveal>
           </div>
 
@@ -126,9 +120,7 @@ export function ProductScene() {
         <Reveal delay={0.1} className="min-w-0 max-lg:pe-6 max-sm:pe-0 lg:-me-[clamp(40px,9vw,140px)]">
           <div
             className="grid overflow-hidden rounded-s-2xl border border-e-0 border-white/15 max-lg:rounded-e-2xl max-lg:border-e"
-            style={{
-              boxShadow: '0 50px 110px -50px rgb(0 0 0 / 0.9), 0 0 120px -60px hsl(var(--brand) / 0.75)',
-            }}
+            style={SCREEN_LIFT}
           >
             {STEPS.map((s, i) => (
               <motion.img
@@ -148,6 +140,6 @@ export function ProductScene() {
           </div>
         </Reveal>
       </div>
-    </section>
+    </Scene>
   )
 }

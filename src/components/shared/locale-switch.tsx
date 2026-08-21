@@ -48,7 +48,7 @@ export function LocaleSwitch({
         className={cn(
           'inline-flex shrink-0 items-center gap-1.5 rounded-full pe-2.5 ps-3 transition-colors',
           onDark
-            ? 'border border-white/15 bg-white/[0.07] text-white/75 backdrop-blur hover:text-white data-[state=open]:text-white'
+            ? 'glass-on-dark text-white/80 hover:text-white data-[state=open]:text-white'
             : 'chrome text-ink-subtle hover:text-ink data-[state=open]:text-ink',
           size === 'sm' ? 'h-9 text-xs sm:h-8' : 'h-10 text-sm sm:h-9',
           className,

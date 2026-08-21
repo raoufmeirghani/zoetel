@@ -2,6 +2,7 @@ import * as React from 'react'
 import { Link } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/solid'
+import { Button } from '@/components/ui/button'
 import { Logo } from '@/components/layout/logo'
 import { LocaleSwitch } from '@/components/shared/locale-switch'
 import { useI18n } from '@/lib/i18n'
@@ -199,18 +200,12 @@ function LandingNav() {
                 ))}
               </ul>
               <div className="mt-8 grid gap-2.5">
-                <Link
-                  to="/welcome"
-                  className="rounded-xl bg-brand px-5 py-3.5 text-center text-md font-medium text-brand-fg shadow-brand"
-                >
-                  {t('Start free')}
-                </Link>
-                <Link
-                  to="/welcome"
-                  className="rounded-xl border border-line bg-surface px-5 py-3.5 text-center text-md font-medium text-ink"
-                >
-                  {t('Log in')}
-                </Link>
+                <Button variant="primary" size="xl" block asChild className="shadow-brand">
+                  <Link to="/welcome">{t('Start free')}</Link>
+                </Button>
+                <Button variant="secondary" size="xl" block asChild>
+                  <Link to="/welcome">{t('Log in')}</Link>
+                </Button>
               </div>
               <div className="mt-8 flex justify-center">
                 <LocaleSwitch />
