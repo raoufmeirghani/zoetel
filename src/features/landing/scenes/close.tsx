@@ -108,7 +108,7 @@ export function ClosingScene() {
             {/* White rather than brand: the plane behind it is already brand,
                 so a brand button would disappear into its own glow. */}
             <Button size="xl" asChild className="border-0 bg-white text-onyx shadow-none hover:bg-white/90">
-              <Link to="/welcome">
+              <Link to="/signup">
                 {t('Start free')}
                 <ArrowRightIcon className="opacity-60" />
               </Link>

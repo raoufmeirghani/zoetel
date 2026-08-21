@@ -13,6 +13,8 @@ import { useApp } from '@/store/app'
 
 const Dashboard = lazy(() => import('@/features/dashboard/dashboard-page'))
 const LandingPage = lazy(() => import('@/features/landing/landing-page'))
+const LoginPage = lazy(() => import('@/features/auth/login-page'))
+const SignupPage = lazy(() => import('@/features/auth/signup-page'))
 const NumbersPage = lazy(() => import('@/features/numbers/numbers-page'))
 const MarketplacePage = lazy(() => import('@/features/numbers/marketplace-page'))
 const CheckoutPage = lazy(() => import('@/features/numbers/checkout-page'))
@@ -93,6 +95,11 @@ export function App() {
                 <Suspense fallback={<RouteFallback />}>
                   <Routes>
                     <Route path="/welcome/*" element={<OnboardingFlow />} />
+                    {/* Auth sits outside the shell and outside `RequireOnboarding`:
+                        these are the two pages someone reaches with no account at
+                        all, so neither can depend on having one. */}
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route path="/signup" element={<SignupPage />} />
                     {/* Always reachable, so someone who already has an account
                         can still open the marketing page. */}
                     <Route path="/landing" element={<LandingPage />} />

@@ -210,12 +210,16 @@ export function Title({
 }
 
 /**
- * The label that opens a scene.
+ * The label that opens a scene, as a pill.
  *
- * `tone` only, because the same label has to sit on three different grounds —
- * the canvas, onyx, and a brand-lit band. An earlier version could also draw a
- * small rule beside itself; one scene used it and the others didn't, which is
- * exactly the kind of near-consistency that makes a page look assembled.
+ * It carries the problem the section is about to answer, so it has to read as a
+ * statement rather than as a caption — a line of bare small-caps above a
+ * headline gets skimmed past, and a chip does not. It is also the same object as
+ * the hero's status pill, which means the page has one way of labelling things
+ * instead of two.
+ *
+ * `tone` because the same pill has to sit on three grounds: the canvas, onyx,
+ * and a brand-lit plane.
  */
 export function Eyebrow({
   children,
@@ -226,14 +230,26 @@ export function Eyebrow({
   tone?: 'faint' | 'brand' | 'inverse'
   className?: string
 }) {
+  // Each carries a hairline as well as a fill. `bg-brand-soft` on the mesh is
+  // pale enough that the fill alone leaves the pill reading as loose text, and a
+  // chip whose edge you cannot find is not a chip. (`glass-on-dark` draws its own
+  // hairline in its box-shadow, so it needs no ring.)
   const tones = {
-    faint: 'text-ink-faint',
-    brand: 'text-brand',
-    // Brand at full strength disappears into onyx; this is the tint the app
-    // already uses for brand-on-dark.
-    inverse: 'text-[hsl(249_88%_78%)]',
+    faint: 'bg-veil-strong text-ink-subtle ring-1 ring-inset ring-line',
+    brand: 'bg-brand-soft text-brand-ink ring-1 ring-inset ring-brand-ring/70',
+    inverse: 'glass-on-dark !text-[hsl(249_88%_78%)]',
   }
-  return <p className={cn('eyebrow font-mono tracking-[0.11em]', tones[tone], className)}>{children}</p>
+  return (
+    <p
+      className={cn(
+        'eyebrow inline-flex items-center rounded-full px-3 py-1.5 font-mono tracking-[0.11em]',
+        tones[tone],
+        className,
+      )}
+    >
+      {children}
+    </p>
+  )
 }
 
 /**

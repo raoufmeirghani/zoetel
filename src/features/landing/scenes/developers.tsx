@@ -16,7 +16,7 @@ export function DeveloperScene() {
       <div className="mx-auto max-w-[62.5rem]">
         <div className="grid justify-items-center text-center">
           <Reveal>
-            <Eyebrow tone="brand">{t('Developers')}</Eyebrow>
+            <Eyebrow tone="brand">{t('No sales call for a key')}</Eyebrow>
           </Reveal>
           <Reveal delay={0.06}>
             <Title size="md" className="mt-4 max-w-[22ch]">

@@ -99,7 +99,7 @@ export function FeatureScene() {
     <Scene id="features" ground="mesh" groundOpacity={0.5} edge="fade-y" measure="full">
       <div className="grid justify-items-center text-center">
         <Reveal>
-          <Eyebrow tone="brand">{t('Features')}</Eyebrow>
+          <Eyebrow tone="brand">{t('Usually four vendors')}</Eyebrow>
         </Reveal>
         <Reveal delay={0.06}>
           <Title size="md" className="mt-4 max-w-[22ch]">

@@ -1582,4 +1582,28 @@ export const ar: Dictionary = {
   Legal: 'الشؤون القانونية',
   'Acceptable use policy': 'سياسة الاستخدام المقبول',
   'NTRA compliance': 'الامتثال لـ NTRA',
+
+  // ── Section pills, and the auth pages ───────────────────────────────────
+  'Usually four vendors': 'عادةً أربعة موردين',
+  'No implementation project': 'بلا مشروع تنفيذ',
+  'The part you never want to own': 'الجزء الذي لا تريد تحمّله',
+  'When nobody can pick up': 'حين لا يوجد من يرد',
+  'No sales call for a key': 'بلا مكالمة مبيعات للحصول على مفتاح',
+  'Published, not quoted': 'أسعار معلنة، لا عروض سعر',
+  'Sign in to Zoetel': 'تسجيل الدخول إلى Zoetel',
+  'Your numbers, connections and wallet are where you left them.': 'أرقامك واتصالاتك ومحفظتك كما تركتها.',
+  'New here?': 'جديد هنا؟',
+  'Create an account': 'أنشئ حسابًا',
+  'Create account': 'إنشاء الحساب',
+  'Already have an account?': 'لديك حساب بالفعل؟',
+  'Sign in': 'تسجيل الدخول',
+  'Forgot?': 'نسيتها؟',
+  'you@company.com': 'you@company.com',
+  'No card today. Local numbers activate the moment you check out.':
+    'بلا بطاقة اليوم. الأرقام المحلية تعمل بمجرد إتمام الشراء.',
+  'Continue with Google': 'المتابعة بحساب Google',
+  'Continue with Apple': 'المتابعة بحساب Apple',
+  'Sign up with Google': 'إنشاء حساب بـ Google',
+  'Sign up with Apple': 'إنشاء حساب بـ Apple',
+  'A Zoie voice agent and the skills it can run': 'مساعد صوتي في Zoie والمهارات التي يستطيع تنفيذها',
 }

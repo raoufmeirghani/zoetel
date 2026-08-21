@@ -82,7 +82,7 @@ export function ProductScene() {
         <div className="grid gap-6 pe-6 sm:gap-9 sm:pe-8 lg:pe-0">
           <div>
             <Reveal>
-              <Eyebrow tone="inverse">{t('The product')}</Eyebrow>
+              <Eyebrow tone="inverse">{t('No implementation project')}</Eyebrow>
             </Reveal>
             <Reveal delay={0.06}>
               <Title size="md" className="mt-3.5 !text-white">

@@ -19,8 +19,15 @@ import { Eyebrow, Glow, Lede, Reveal, SCREEN_LIFT, Scene, Title } from '../kit'
  * flipped. That is the argument in the composition — Zoie is not a tier above the
  * platform, it is the same platform with the call handed somewhere else.
  *
- * The screen is the routing panel, which already lists "An AI voice agent" beside
- * "My own PBX or softswitch". The product makes the case; the copy only frames it.
+ * The screen is Zoie's own — an agent with its skills listed — rather than
+ * Zoetel's routing panel. It used to be the latter, on the argument that the
+ * routing screen already offers an AI agent as a destination. Showing the actual
+ * product is the stronger claim: the reader can see there is a real thing on the
+ * other side of the button, not just a menu item promising one.
+ *
+ * It is also the only light screenshot on the page, which is deliberate — Zoie is
+ * a separate product, and it looking different is the point rather than a
+ * mismatch to correct.
  */
 
 const ROWS = [
@@ -47,8 +54,8 @@ export function ZoieScene() {
             style={SCREEN_LIFT}
           >
             <img
-              src="/screens/routing.png"
-              alt={t("Choosing an AI voice agent as a number's destination")}
+              src="/screens/zoie.png"
+              alt={t('A Zoie voice agent and the skills it can run')}
               loading="lazy"
               dir="ltr"
               className="block h-auto w-full"
@@ -59,7 +66,7 @@ export function ZoieScene() {
         <div className="grid gap-5 ps-6 max-lg:order-1 sm:gap-7 sm:ps-8 lg:ps-0">
           <div>
             <Reveal>
-              <Eyebrow tone="inverse">{t('Zoie · AI layer')}</Eyebrow>
+              <Eyebrow tone="inverse">{t('When nobody can pick up')}</Eyebrow>
             </Reveal>
             <Reveal delay={0.06}>
               <Title size="sm" className="mt-3.5 !text-white sm:text-4xl">

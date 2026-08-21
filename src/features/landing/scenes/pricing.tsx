@@ -56,7 +56,7 @@ export function PricingScene() {
         t('Cancel or pause any time'),
       ],
       cta: t('Start free'),
-      to: '/welcome',
+      to: '/signup',
     },
     {
       kind: 'volume' as const,
@@ -83,7 +83,7 @@ export function PricingScene() {
       <div className="mx-auto max-w-[62.5rem]">
         <div className="grid justify-items-center text-center">
           <Reveal>
-            <Eyebrow tone="brand">{t('Pricing')}</Eyebrow>
+            <Eyebrow tone="brand">{t('Published, not quoted')}</Eyebrow>
           </Reveal>
           <Reveal delay={0.06}>
             <Title size="md" className="mt-4 max-w-[20ch]">

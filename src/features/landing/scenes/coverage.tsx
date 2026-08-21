@@ -1,6 +1,6 @@
 import { BoltIcon, ClockIcon, GlobeAltIcon, SignalIcon } from '@heroicons/react/24/solid'
 import { useI18n } from '@/lib/i18n'
-import { Figure, Lede, Reveal, Title } from '../kit'
+import { Eyebrow, Figure, Lede, Reveal, Title } from '../kit'
 
 /**
  * Scene 06 — reach.
@@ -41,7 +41,8 @@ export function CoverageScene() {
       <div className="mx-auto w-full max-w-[var(--page-max)] px-6 pb-16 pt-28 sm:px-8 sm:pb-20 sm:pt-40 lg:pt-48">
         <div className="grid items-end gap-6 lg:grid-cols-2 lg:gap-16">
           <Reveal>
-            <Title size="md" className="max-w-[20ch]">
+            <Eyebrow tone="brand">{t('The part you never want to own')}</Eyebrow>
+            <Title size="md" className="mt-4 max-w-[20ch]">
               {t('Real infrastructure in 190+ countries. None of it your problem.')}
             </Title>
           </Reveal>

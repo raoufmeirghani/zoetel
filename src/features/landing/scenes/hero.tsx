@@ -196,13 +196,13 @@ export function HeroScene() {
     if (country !== 'any') q.set('country', country)
     if (type !== 'any') q.set('type', type)
     if (cap !== 'any') q.set('cap', cap)
-    navigate(`/welcome?${q}`)
+    navigate(`/signup?${q}`)
   }
 
   return (
     <header
       id="top"
-      className="relative flex min-h-svh flex-col justify-center overflow-hidden bg-[hsl(240_16%_5%)] text-white"
+      className="relative flex min-h-svh flex-col justify-center overflow-hidden bg-[hsl(243_20%_3.5%)] text-white"
     >
       {/* The background stack sits at the default stacking level with the
           content lifted above it, rather than on a `-z-10` layer.
@@ -225,7 +225,7 @@ export function HeroScene() {
         aria-hidden
         src="/usage.webp"
         alt=""
-        className="hero-art pointer-events-none absolute inset-0 size-full object-cover object-[50%_16%] opacity-[0.28] mix-blend-screen saturate-[1.4]"
+        className="hero-art pointer-events-none absolute inset-0 size-full object-cover object-[50%_16%] opacity-[0.24] mix-blend-screen saturate-[1.5]"
       />
       {/* Dissolves the artwork into the ground, so it has no bottom edge. The
           image runs the full height and this decides where it stops being
@@ -392,7 +392,7 @@ export function HeroScene() {
           className="mt-7 flex flex-wrap justify-center gap-2.5 sm:mt-8"
         >
           <Button variant="primary" size="xl" asChild className="shadow-brand">
-            <Link to="/welcome">
+            <Link to="/signup">
               {t('Start free')}
               <ArrowRightIcon className="opacity-75" />
             </Link>

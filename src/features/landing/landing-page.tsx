@@ -125,7 +125,7 @@ function LandingNav() {
                 label of, so it names both languages in their own script. */}
             <LocaleSwitch size="sm" onDark={!lifted} className="max-sm:hidden" />
             <Link
-              to="/welcome"
+              to="/login"
               className={cn(
                 'hidden whitespace-nowrap text-sm transition-colors sm:block',
                 lifted ? 'text-ink-muted hover:text-ink' : 'text-white/70 hover:text-white',
@@ -137,7 +137,7 @@ function LandingNav() {
                 artwork the button inverts to white-on-onyx and keeps the same
                 job: the highest-contrast thing in the bar. */}
             <Link
-              to="/welcome"
+              to="/signup"
               className={cn(
                 'whitespace-nowrap rounded-[10px] px-4 py-2.5 text-sm font-medium transition-colors',
                 lifted
@@ -206,10 +206,10 @@ function LandingNav() {
               </ul>
               <div className="mt-8 grid gap-2.5">
                 <Button variant="primary" size="xl" block asChild className="shadow-brand">
-                  <Link to="/welcome">{t('Start free')}</Link>
+                  <Link to="/signup">{t('Start free')}</Link>
                 </Button>
                 <Button variant="secondary" size="xl" block asChild>
-                  <Link to="/welcome">{t('Log in')}</Link>
+                  <Link to="/login">{t('Log in')}</Link>
                 </Button>
               </div>
               <div className="mt-8 flex justify-center">
