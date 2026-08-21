@@ -60,12 +60,20 @@ const CAP_OPTS: { value: Capability | 'any'; label: string }[] = [
  * The rule between two fields: vertical when they sit in a row, horizontal when
  * they stack. It used to vanish on a phone, which left the bar as one white
  * block with three values floating in it.
+ *
+ * `axis="vertical"` keeps it upright at every width, for the two fields that
+ * share a row on a phone.
  */
-function Divider() {
+function Divider({ axis = 'auto' }: { axis?: 'auto' | 'vertical' }) {
   return (
     <span
       aria-hidden
-      className="shrink-0 bg-white/10 max-sm:mx-4 max-sm:h-px max-sm:w-[calc(100%-2rem)] sm:h-[30px] sm:w-px sm:self-center"
+      className={cn(
+        'shrink-0 self-center bg-white/10',
+        axis === 'vertical'
+          ? 'h-[30px] w-px'
+          : 'max-sm:mx-4 max-sm:h-px max-sm:w-[calc(100%-2rem)] sm:h-[30px] sm:w-px',
+      )}
     />
   )
 }
@@ -85,6 +93,7 @@ function Field<T extends string>({
   onPick,
   open,
   onToggle,
+  paired,
 }: {
   label: string
   value: T
@@ -92,12 +101,21 @@ function Field<T extends string>({
   onPick: (v: T) => void
   open: boolean
   onToggle: () => void
+  /**
+   * Shares its row with the next field on a phone instead of taking one of its
+   * own. Three stacked fields put the button that searches them 676px down the
+   * page — past the bottom of the browser — so two of them pair up and the bar
+   * costs one row less. Everything else here is that pairing paying for itself:
+   * tighter padding, a smaller value, and a menu allowed to be as narrow as the
+   * field so it can't hang off the card.
+   */
+  paired?: boolean
 }) {
   const { t } = useI18n()
   const current = options.find((o) => o.value === value) ?? options[0]
 
   return (
-    <div className="relative min-w-0 flex-1 basis-[10.5rem]">
+    <div className={cn('relative min-w-0 flex-1 basis-[10.5rem]', paired && 'max-sm:basis-[7rem]')}>
       <button
         type="button"
         onClick={onToggle}
@@ -105,11 +123,17 @@ function Field<T extends string>({
         aria-haspopup="listbox"
         className={cn(
           'grid w-full gap-0.5 rounded-[14px] px-4 py-3 text-start transition-colors',
+          paired && 'max-sm:px-3',
           open ? 'bg-white/10' : 'hover:bg-white/[0.06]',
         )}
       >
         <span className="eyebrow font-mono tracking-[0.11em] !text-white/45">{t(label)}</span>
-        <span className="flex w-full items-center gap-1.5 text-md font-medium text-white">
+        <span
+          className={cn(
+            'flex w-full items-center gap-1.5 text-md font-medium text-white',
+            paired && 'max-sm:text-sm',
+          )}
+        >
           <span className="min-w-0 truncate">{t(current.label)}</span>
           <ChevronDownIcon
             className={cn('ms-auto size-3.5 shrink-0 text-white/45 transition-transform', open && 'rotate-180')}
@@ -123,7 +147,10 @@ function Field<T extends string>({
           initial={{ opacity: 0, y: -4 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.16, ease: EASE }}
-          className="absolute inset-x-0 top-[calc(100%+6px)] z-20 grid min-w-[11.5rem] gap-0.5 rounded-[14px] border border-line bg-surface p-1.5 shadow-pop"
+          className={cn(
+            'absolute inset-x-0 top-[calc(100%+6px)] z-20 grid min-w-[11.5rem] gap-0.5 rounded-[14px] border border-line bg-surface p-1.5 shadow-pop',
+            paired && 'max-sm:min-w-0',
+          )}
         >
           {options.map((o) => {
             const on = o.value === value
@@ -245,9 +272,18 @@ export function HeroScene() {
         transition={{ duration: 22, repeat: Infinity, ease: 'easeInOut' }}
       />
 
-      {/* `pt-24` rather than `pt-11`: the nav is fixed and 64px tall, so
+      {/* Two rhythms, not one scaled down.
+          On a phone every gap here is paying rent against a viewport that is
+          roughly 660–780px tall once the browser takes its share, and the thing
+          a visitor came to press has to be inside it without a scroll. So the
+          spacing tightens, the search bar loses a row, and the whisper line
+          under it stands down — the headline, the bar and both buttons all land
+          above the fold. From `sm` up there is room to breathe and the original
+          spacing returns untouched.
+
+          `pt-20` rather than `pt-11`: the nav is fixed and 64px tall, so
           anything less puts the status pill inside it. */}
-      <div className="relative z-10 mx-auto grid w-full max-w-[62.5rem] justify-items-center px-6 pb-20 pt-28 text-center sm:px-8 sm:pb-28 sm:pt-32">
+      <div className="relative z-10 mx-auto grid w-full max-w-[62.5rem] justify-items-center px-6 pb-14 pt-20 text-center sm:px-8 sm:pb-28 sm:pt-32">
         <motion.div
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
@@ -262,7 +298,7 @@ export function HeroScene() {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.65, delay: 0.07, ease: EASE }}
-          className="mt-6 sm:mt-9"
+          className="mt-5 sm:mt-9"
         >
           {/* Two blocks, not one wrapping paragraph, so the coloured noun is
               always the second line. Left to wrap, a short noun rides up onto
@@ -294,7 +330,7 @@ export function HeroScene() {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.65, delay: 0.14, ease: EASE }}
-          className="mt-5 sm:mt-6"
+          className="mt-4 sm:mt-6"
         >
           <Lede className="mx-auto max-w-[54ch] text-base !text-white/65 sm:text-md">
             {t(
@@ -308,7 +344,7 @@ export function HeroScene() {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.65, delay: 0.21, ease: EASE }}
-          className="relative z-20 mt-8 w-full max-w-[45rem] text-start sm:mt-10"
+          className="relative z-20 mt-6 w-full max-w-[45rem] text-start sm:mt-10"
         >
           {/* `glass-panel-on-dark` rather than a solid sheet: the same
               popup-grade glass the app's side panel uses, so the artwork reads
@@ -341,8 +377,9 @@ export function HeroScene() {
               }}
               open={open === 'type'}
               onToggle={() => setOpen(open === 'type' ? null : 'type')}
+              paired
             />
-            <Divider />
+            <Divider axis="vertical" />
             <Field
               label="Capability"
               value={cap}
@@ -353,6 +390,7 @@ export function HeroScene() {
               }}
               open={open === 'cap'}
               onToggle={() => setOpen(open === 'cap' ? null : 'cap')}
+              paired
             />
             <Button
               variant="primary"
@@ -374,7 +412,10 @@ export function HeroScene() {
                   ? t('No numbers match — widen your preferences')
                   : t('{n} numbers available in {country}', { n: matches, country: t(countryName) })}
             </span>
-            <span className="eyebrow font-mono tracking-[0.11em] !text-white/40">
+            {/* A whisper, and the only line here a phone can do without: the
+                count above it is the proof, and pressing Search asks for the
+                account anyway. */}
+            <span className="eyebrow font-mono tracking-[0.11em] !text-white/40 max-sm:hidden">
               {t('Create an account to see the exact numbers')}
             </span>
           </div>
@@ -384,15 +425,17 @@ export function HeroScene() {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.65, delay: 0.28, ease: EASE }}
-          className="relative z-10 mt-7 flex flex-wrap justify-center gap-2.5 sm:mt-8"
+          className="relative z-10 mt-5 grid w-full max-w-[24rem] gap-2 sm:mt-8 sm:flex sm:max-w-none sm:flex-wrap sm:justify-center sm:gap-2.5"
         >
-          <Button variant="primary" size="xl" asChild className="shadow-brand">
+          {/* 44px on a phone rather than 52: it is the minimum a thumb needs and
+              the two of them together cost one button's height less. */}
+          <Button variant="primary" size="xl" asChild className="shadow-brand max-sm:h-11">
             <Link to="/signup">
               {t('Start free')}
               <ArrowRightIcon className="opacity-75" />
             </Link>
           </Button>
-          <Button variant="glassOnDark" size="xl" asChild>
+          <Button variant="glassOnDark" size="xl" asChild className="max-sm:h-11">
             <a href="#developers">{t('View documentation')}</a>
           </Button>
         </motion.div>
