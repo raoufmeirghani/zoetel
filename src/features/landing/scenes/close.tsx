@@ -1,9 +1,11 @@
 import { motion } from 'framer-motion'
-import { ArrowRightIcon } from '@heroicons/react/24/solid'
+import { ArrowRightIcon, ArrowUpRightIcon } from '@heroicons/react/24/solid'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Logo } from '@/components/layout/logo'
+import { StatusDot } from '@/components/ui/status'
 import { useI18n } from '@/lib/i18n'
+import { cn } from '@/lib/utils'
 import { Reveal, Title } from '../kit'
 
 /**
@@ -14,20 +16,62 @@ import { Reveal, Title } from '../kit'
  * hairlines over it are the only ornament on this page: they give the dark plane
  * a grain so it doesn't read as a flat rectangle at the end of a long scroll.
  *
- * The footer shares the section, not a separate band — the page should finish,
- * not trail off.
+ * The footer shares the section rather than sitting in a band of its own, so the
+ * page finishes instead of trailing off. It is a real sitemap: a page that ends
+ * in five links and a copyright tells a visitor there is nothing else here,
+ * which for a platform this size is the wrong thing to say.
  */
 
-const LINKS = [
-  { label: 'Features', href: '#features' },
-  { label: 'How it works', href: '#how' },
-  { label: 'Zoie', href: '#zoie' },
-  { label: 'Developers', href: '#developers' },
-  { label: 'Pricing', href: '#pricing' },
+const COLUMNS: { heading: string; links: { label: string; to?: string; href?: string }[] }[] = [
+  {
+    heading: 'Platform',
+    links: [
+      { label: 'Phone numbers', to: '/numbers' },
+      { label: 'SIP connections', to: '/sip' },
+      { label: 'Messaging', to: '/analytics' },
+      { label: 'Usage & quality', to: '/analytics' },
+      { label: 'Billing & wallet', to: '/billing' },
+    ],
+  },
+  {
+    heading: 'Developers',
+    links: [
+      { label: 'API reference', to: '/developers' },
+      { label: 'Webhooks', to: '/developers/webhooks' },
+      { label: 'Request logs', to: '/developers/logs' },
+      { label: 'SDKs', to: '/developers' },
+      { label: 'How it works', href: '#how' },
+    ],
+  },
+  {
+    heading: 'Company',
+    links: [
+      { label: 'Features', href: '#features' },
+      { label: 'Pricing', href: '#pricing' },
+      { label: 'Contact sales', to: '/pricing' },
+      { label: 'Support', to: '/pricing' },
+      // The one genuinely external link here, and the only one that needs the
+      // affordance saying so.
+      { label: 'Zoie', href: 'https://us.zoie.ai/?from=zoetel-landing' },
+    ],
+  },
+  {
+    heading: 'Legal',
+    links: [
+      { label: 'Terms', href: '#pricing' },
+      { label: 'Privacy', href: '#pricing' },
+      { label: 'Acceptable use policy', href: '#pricing' },
+      { label: 'NTRA compliance', to: '/verification' },
+      { label: 'Data residency', to: '/settings' },
+    ],
+  },
 ]
+
+const FOOTER_LINK = 'text-sm text-white/50 transition-colors hover:text-white'
 
 export function ClosingScene() {
   const { t } = useI18n()
+  const external = (href?: string) => !!href && href.startsWith('http')
 
   return (
     <section id="start" className="relative isolate overflow-hidden bg-onyx-2 text-white">
@@ -76,28 +120,69 @@ export function ClosingScene() {
         </Reveal>
       </div>
 
-      <footer className="relative mx-auto flex w-full max-w-[var(--page-max)] flex-wrap items-center justify-between gap-4 border-t border-white/10 px-6 pb-8 pt-5 sm:px-8">
-        <span className="flex items-center gap-2.5">
-          <Logo size={22} tone="onDark" />
-          <span className="headline text-base font-semibold text-white">Zoetel</span>
-        </span>
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-          {LINKS.map((l) => (
-            <a
-              key={l.label}
-              href={l.href}
-              className="eyebrow font-mono tracking-[0.11em] !text-white/45 transition-colors hover:!text-white"
-            >
-              {t(l.label)}
-            </a>
-          ))}
-          {/* The long form, not "© 2026 Zoetel": the licensing basis is the one
-              fact a telecom buyer looks for in a footer. */}
-          <span className="eyebrow font-mono tracking-[0.11em] !text-white/45">
-            {t('© {year} Zoetel. Numbers provisioned under NTRA-licensed carrier agreements.', {
-              year: new Date().getFullYear(),
-            })}
-          </span>
+      <footer className="relative border-t border-white/10">
+        <div className="mx-auto w-full max-w-[var(--page-max)] px-6 py-14 sm:px-8 sm:py-16">
+          <div className="grid gap-12 lg:grid-cols-[19rem_1fr] lg:gap-16">
+            {/* The identity column earns its width: the mark, what the company
+                actually is, and the one operational fact a buyer checks before
+                they check anything else. */}
+            <div>
+              <span className="flex items-center gap-2.5">
+                <Logo size={26} tone="onDark" />
+                <span className="headline text-lg font-semibold text-white">Zoetel</span>
+              </span>
+              <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/55">
+                {t(
+                  'Cloud telephony for Egypt and the region. Numbers, SIP, messaging and the APIs to drive them.',
+                )}
+              </p>
+              <span className="mt-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.06] px-3 py-1.5 text-xs font-medium text-white/75">
+                <StatusDot tone="success" pulse />
+                {t('All systems operational')}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-4">
+              {COLUMNS.map((col) => (
+                <div key={col.heading}>
+                  <p className="eyebrow font-mono tracking-[0.11em] !text-white/40">{t(col.heading)}</p>
+                  <ul className="mt-4 grid gap-2.5">
+                    {col.links.map((l) => (
+                      <li key={`${col.heading}-${l.label}`}>
+                        {l.to ? (
+                          <Link to={l.to} className={FOOTER_LINK}>
+                            {t(l.label)}
+                          </Link>
+                        ) : (
+                          <a
+                            href={l.href}
+                            {...(external(l.href) ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                            className={cn('group inline-flex items-center gap-1', FOOTER_LINK)}
+                          >
+                            {t(l.label)}
+                            {external(l.href) && (
+                              <ArrowUpRightIcon className="size-3 text-white/30 transition-transform group-hover:-translate-y-px" />
+                            )}
+                          </a>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-14 flex flex-col gap-3 border-t border-white/10 pt-8 sm:flex-row sm:items-center sm:justify-between">
+            {/* The long form, not "© 2026 Zoetel": the licensing basis is the one
+                fact a telecom buyer looks for in a footer. */}
+            <p className="text-xs text-white/40">
+              {t('© {year} Zoetel. Numbers provisioned under NTRA-licensed carrier agreements.', {
+                year: new Date().getFullYear(),
+              })}
+            </p>
+            <p className="text-xs text-white/40">{t('Cairo · Frankfurt')}</p>
+          </div>
         </div>
       </footer>
     </section>

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { motion } from 'framer-motion'
+import { motion, useInView } from 'framer-motion'
 import { useI18n } from '@/lib/i18n'
 import { cn } from '@/lib/utils'
 import { EASE, Eyebrow, Glow, Lede, Reveal, SCREEN_LIFT, Scene, Title } from '../kit'
@@ -11,9 +11,19 @@ import { EASE, Eyebrow, Glow, Lede, Reveal, SCREEN_LIFT, Scene, Title } from '..
  * step, with the window running off the end of the page so it reads as a detail
  * of something larger rather than a screenshot of something small.
  *
- * Deliberately not scroll-driven. An earlier revision tied the active screen to
- * scroll position; it took control away from the reader and was cut.
+ * The screens advance on their own. Scroll-coupling was tried and cut — it took
+ * control away from the reader — but a click-only switcher has the opposite
+ * problem: most visitors never discover there are three screens, so two thirds
+ * of the section is invisible to them. A timer shows all three without being
+ * asked.
+ *
+ * Clicking still works and stops the timer for good. Someone who has taken hold
+ * of the control is reading, and continuing to move the thing under them is the
+ * rudest thing this page could do.
  */
+
+/** Long enough to read the step and take in the screen it belongs to. */
+const DWELL = 5000
 
 const STEPS = [
   {
@@ -42,12 +52,33 @@ const STEPS = [
 export function ProductScene() {
   const { t } = useI18n()
   const [step, setStep] = React.useState(0)
+  const [held, setHeld] = React.useState(false)
+
+  // Only runs while the section is on screen: a timer ticking through a scene
+  // nobody is looking at burns frames and lands the reader mid-cycle when they
+  // do arrive.
+  const section = React.useRef<HTMLDivElement>(null)
+  const seen = useInView(section, { amount: 0.35 })
+
+  React.useEffect(() => {
+    if (held || !seen) return
+    const id = setInterval(() => setStep((i) => (i + 1) % STEPS.length), DWELL)
+    return () => clearInterval(id)
+  }, [held, seen])
+
+  const pick = (i: number) => {
+    setStep(i)
+    setHeld(true)
+  }
 
   return (
     <Scene id="how" ground="onyx" measure="full" edge="none" bleed>
       <Glow x="94%" y="50%" size="48rem" opacity={0.55} />
 
-      <div className="mx-auto grid max-w-[80rem] items-center gap-8 ps-6 sm:ps-8 lg:grid-cols-[minmax(17.5rem,25rem)_minmax(0,1fr)] lg:gap-14">
+      <div
+        ref={section}
+        className="mx-auto grid max-w-[80rem] items-center gap-8 ps-6 sm:ps-8 lg:grid-cols-[minmax(17.5rem,25rem)_minmax(0,1fr)] lg:gap-14"
+      >
         <div className="grid gap-6 pe-6 sm:gap-9 sm:pe-8 lg:pe-0">
           <div>
             <Reveal>
@@ -68,18 +99,21 @@ export function ProductScene() {
           </div>
 
           <Reveal delay={0.16}>
-            <div className="grid gap-4 sm:gap-6">
+            {/* Wider gaps and more inset than a dense list wants. Three items
+                carrying a label, a heading and a sentence each need the room —
+                packed tight they read as one block of text with rules in it. */}
+            <div className="grid gap-8 sm:gap-10">
               {STEPS.map((s, i) => {
                 const on = i === step
                 return (
                   <button
                     key={s.title}
                     type="button"
-                    onClick={() => setStep(i)}
+                    onClick={() => pick(i)}
                     aria-current={on}
                     className={cn(
-                      'grid gap-1.5 border-s-2 ps-4 text-start transition-colors duration-500',
-                      on ? 'border-brand' : 'border-white/15 hover:border-white/30',
+                      'grid gap-2 border-s-2 ps-5 text-start transition-colors duration-500',
+                      on ? 'border-brand' : 'border-white/12 hover:border-white/30',
                     )}
                   >
                     <span

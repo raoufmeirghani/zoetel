@@ -257,7 +257,7 @@ export function HeroScene() {
           className="glass-on-dark inline-flex items-center gap-2.5 whitespace-nowrap rounded-full py-1.5 pe-3.5 ps-2.5 text-xs font-medium text-white/80"
         >
           <StatusDot tone="success" pulse />
-          {t('Egypt-first · NTRA licensed')}
+          {t('NTRA licensed carrier')}
         </motion.div>
 
         <motion.div

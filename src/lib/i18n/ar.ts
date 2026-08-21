@@ -1571,4 +1571,15 @@ export const ar: Dictionary = {
   'Start free': 'ابدأ مجانًا',
   '© {year} Zoetel. Numbers provisioned under NTRA-licensed carrier agreements.':
     '© {year} Zoetel. الأرقام مفعلة باتفاقيات مع مشغلين مرخصين من NTRA.',
+
+  // ── Landing footer ──────────────────────────────────────────────────────
+  'NTRA licensed carrier': 'مشغل مرخص من NTRA',
+  'Cloud telephony for Egypt and the region. Numbers, SIP, messaging and the APIs to drive them.':
+    'اتصالات سحابية لمصر والمنطقة. أرقام و SIP ورسائل والواجهات البرمجية التي تشغلها.',
+  'All systems operational': 'كل الخدمات تعمل',
+  'Cairo · Frankfurt': 'القاهرة · فرانكفورت',
+  Platform: 'المنصة',
+  Legal: 'الشؤون القانونية',
+  'Acceptable use policy': 'سياسة الاستخدام المقبول',
+  'NTRA compliance': 'الامتثال لـ NTRA',
 }
