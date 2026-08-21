@@ -18,8 +18,8 @@ const FIGURES = [
   // TODO(client): unverified. Confirm against real platform telemetry, or cut
   // the strip — an invented uptime figure is a liability, not a proof point.
   { icon: BoltIcon, value: '99.99', unit: '%', label: 'Platform uptime' },
-  { icon: ClockIcon, value: '60', unit: 's', label: 'To first call' },
-  { icon: SignalIcon, value: '41', unit: 'ms', label: 'Median latency' },
+  { icon: ClockIcon, value: '60', unit: 'seconds (unit)', label: 'To first call' },
+  { icon: SignalIcon, value: '41', unit: 'milliseconds (unit)', label: 'Median latency' },
   // This one is real: the pricing page publishes rates for 190+ destinations.
   { icon: GlobeAltIcon, value: '190', unit: '+', label: 'Countries' },
 ]
@@ -58,7 +58,7 @@ export function CoverageScene() {
         <Reveal delay={0.1}>
           <div className="mt-12 grid grid-cols-2 gap-6 border-t border-ink/15 pt-6 sm:mt-20 sm:gap-8 lg:grid-cols-4">
             {FIGURES.map((f) => (
-              <Figure key={f.label} icon={f.icon} value={f.value} unit={f.unit} label={t(f.label)} />
+              <Figure key={f.label} icon={f.icon} value={f.value} unit={t(f.unit)} label={t(f.label)} />
             ))}
           </div>
         </Reveal>

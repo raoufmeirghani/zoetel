@@ -254,7 +254,7 @@ export function HeroScene() {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: EASE }}
-          className="glass-on-dark inline-flex items-center gap-2.5 whitespace-nowrap rounded-full py-1.5 pe-3.5 ps-2.5 text-xs font-medium text-white/80"
+          className="glass-on-dark inline-flex max-w-full items-center gap-2.5 rounded-full py-1.5 pe-3.5 ps-2.5 text-center text-xs font-medium text-white/80"
         >
           <StatusDot tone="success" pulse />
           {t('NTRA licensed carrier')}
@@ -313,7 +313,7 @@ export function HeroScene() {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.65, delay: 0.21, ease: EASE }}
-          className="mt-8 w-full max-w-[45rem] text-start sm:mt-10"
+          className="relative z-20 mt-8 w-full max-w-[45rem] text-start sm:mt-10"
         >
           {/* `glass-panel-on-dark` rather than a solid sheet: the same
               popup-grade glass the app's side panel uses, so the artwork reads
@@ -389,7 +389,7 @@ export function HeroScene() {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.65, delay: 0.28, ease: EASE }}
-          className="mt-7 flex flex-wrap justify-center gap-2.5 sm:mt-8"
+          className="relative z-10 mt-7 flex flex-wrap justify-center gap-2.5 sm:mt-8"
         >
           <Button variant="primary" size="xl" asChild className="shadow-brand">
             <Link to="/signup">

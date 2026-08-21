@@ -173,7 +173,7 @@ export function ClosingScene() {
             </div>
           </div>
 
-          <div className="mt-14 flex flex-col gap-3 border-t border-white/10 pt-8 sm:flex-row sm:items-center sm:justify-between">
+          <div className="mt-14 border-t border-white/10 pt-8">
             {/* The long form, not "© 2026 Zoetel": the licensing basis is the one
                 fact a telecom buyer looks for in a footer. */}
             <p className="text-xs text-white/40">
@@ -181,7 +181,6 @@ export function ClosingScene() {
                 year: new Date().getFullYear(),
               })}
             </p>
-            <p className="text-xs text-white/40">{t('Cairo · Frankfurt')}</p>
           </div>
         </div>
       </footer>
